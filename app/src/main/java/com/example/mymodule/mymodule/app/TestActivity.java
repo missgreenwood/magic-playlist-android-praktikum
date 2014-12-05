@@ -3,8 +3,10 @@ package com.example.mymodule.mymodule.app;
 import android.os.Environment;
 import android.support.v7.app.ActionBarActivity;
 import android.os.Bundle;
+import android.util.Log;
 import android.view.Menu;
 import android.view.MenuItem;
+import android.widget.Toast;
 
 import com.example.mymodule.mediawrappers.LocalFileStreamingMediaWrapper;
 import com.example.mymodule.mediawrappers.RemoteStreamingMediaWrapper;
@@ -18,6 +20,13 @@ public class TestActivity extends ActionBarActivity {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_test);
 
+        Song testSong = new Song("Radiohead", "Videotape");
+        LocalFileStreamingMediaWrapper testLocalWrapper = new LocalFileStreamingMediaWrapper(this, testSong);
+        String path = testLocalWrapper.computePlayPath(testSong);
+        Toast.makeText(this, "Pfad: "+path, Toast.LENGTH_LONG).show();
+        Log.d("", "playpath: " + path);
+
+
         //Geht auch! Song per Drag and Drop in Genymotion ziehen, während Genymotion läuft
 
         String songpath = Environment.getExternalStorageDirectory().getPath() + "/Download/song.mp3";
@@ -26,8 +35,8 @@ public class TestActivity extends ActionBarActivity {
 
         //String songpath="https://api.soundcloud.com/tracks/41772991/stream?client_id=9998e443138603b1b6be051350158448";
         // String songpath = "http://freedownloads.last.fm/download/384950466/Thirteen+Thirtyfive.mp3";
-        RemoteStreamingMediaWrapper remoteStreamingMediaWrapper = new RemoteStreamingMediaWrapper(this, songpath);
-        remoteStreamingMediaWrapper.play();
+        //RemoteStreamingMediaWrapper remoteStreamingMediaWrapper = new RemoteStreamingMediaWrapper(this, songpath);
+        //remoteStreamingMediaWrapper.play();
     }
 
 
