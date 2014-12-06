@@ -9,7 +9,10 @@ import android.view.MenuItem;
 import android.widget.Toast;
 
 import com.example.mymodule.mediawrappers.LocalFileStreamingMediaWrapper;
-import com.example.mymodule.mediawrappers.RemoteStreamingMediaWrapper;
+import com.example.mymodule.mediawrappers.SoundCloudStreamingMediaWrapper;
+import com.example.mymodule.mediawrappers.SpotifyMediaWrapper;
+
+import org.json.JSONException;
 
 
 public class TestActivity extends ActionBarActivity {
@@ -20,11 +23,22 @@ public class TestActivity extends ActionBarActivity {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_test);
 
+        SoundCloudStreamingMediaWrapper sw = new SoundCloudStreamingMediaWrapper(this, new Song("some artistist","Paranoid Android"));
+
+           sw.playSong();
+
+
+
+
+        /*
         Song testSong = new Song("Radiohead", "Videotape");
         LocalFileStreamingMediaWrapper testLocalWrapper = new LocalFileStreamingMediaWrapper(this, testSong);
-        String path = testLocalWrapper.computePlayPath(testSong);
-        Toast.makeText(this, "Pfad: "+path, Toast.LENGTH_LONG).show();
-        Log.d("", "playpath: " + path);
+        testLocalWrapper.playSong();
+        */
+        //Toast.makeText(this, "Pfad: "+path, Toast.LENGTH_LONG).show();
+        //Log.d("", "playpath: " + path);
+
+
 
 
         //Geht auch! Song per Drag and Drop in Genymotion ziehen, während Genymotion läuft
