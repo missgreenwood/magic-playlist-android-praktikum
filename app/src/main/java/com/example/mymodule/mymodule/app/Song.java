@@ -14,6 +14,11 @@ public class Song {
     private String artist;
     private String songname;
 
+    public Song(String artist, String songname) {
+        this.artist = artist;
+        this.songname = songname;
+    }
+
 
 //TODO: weitere Metadaten
 
