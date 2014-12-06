@@ -7,6 +7,8 @@ import android.util.Log;
 
 import com.example.mymodule.mymodule.app.Song;
 
+import org.json.JSONException;
+
 /**
  * Created by lotta on 02.12.14.
  */
@@ -43,12 +45,16 @@ public abstract class FileStreamingMediaWrapper extends AbstractMediaWrapper {
     public FileStreamingMediaWrapper(Context context, Song song) {
         this.context = context;
         this.song = song;
-        this.playPath = computePlayPath(song);
+        try {
+           computePlayPath(song);
+        } catch (JSONException e) {
+            e.printStackTrace();
+        }
 
 
     }
 
-    protected abstract String computePlayPath(Song song);
+    protected abstract void computePlayPath(Song song) throws JSONException;
 
 
     public String getPlayPath() {
@@ -62,6 +68,8 @@ public abstract class FileStreamingMediaWrapper extends AbstractMediaWrapper {
     Context context;
     private Song song;
     private String playPath;
+
+    public abstract void playSong();
 
     @Override
     public boolean play() {

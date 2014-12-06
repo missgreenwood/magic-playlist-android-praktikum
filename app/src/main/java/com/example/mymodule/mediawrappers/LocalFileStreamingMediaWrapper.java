@@ -2,8 +2,6 @@ package com.example.mymodule.mediawrappers;
 
 import android.content.Context;
 import android.database.Cursor;
-import android.net.Uri;
-import android.provider.BaseColumns;
 import android.provider.MediaStore;
 import android.util.Log;
 
@@ -19,11 +17,12 @@ public class LocalFileStreamingMediaWrapper extends FileStreamingMediaWrapper {
 
     public LocalFileStreamingMediaWrapper(Context context, Song song) {
         super(context, song);
-        setPlayPath(computePlayPath(song));
+       //computePlayPath(song);
     }
 
     @Override
-    protected String computePlayPath(Song song) {
+    public void computePlayPath(Song song) {
+        Log.d("", "start playpath computation");
         String path = "";
         String[] projection = {
                 MediaStore.Audio.Media.DATA};
@@ -37,14 +36,22 @@ public class LocalFileStreamingMediaWrapper extends FileStreamingMediaWrapper {
         try {
             while (q.moveToNext()) {
                 path = q.getString(0);
-                Log.d("", "path: "+q.getString(0) + "\n");
+                Log.d("", "compute playpath path: "+q.getString(0) + "\n");
             }
         } finally {
             q.close();
         }
 
+        this.setPlayPath(path);
+        //return path;
+    }
 
-        return path;
+    @Override
+    public void playSong() {
+        computePlayPath(getSong());
+        play();
+
+
     }
 
 
