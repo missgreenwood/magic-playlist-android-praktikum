@@ -20,15 +20,41 @@ public class Song {
     private String songname;
     private AbstractMediaWrapper mediaWrapper;
     private String wrapperType;
+
+    /**
+     * Constructor for Song with songname and artist.
+     *
+     * @param artist
+     * @param songname
+     */
     public Song(String artist, String songname) {
         this.artist = artist;
         this.songname = songname;
+    }
+
+    /**
+     * Constructor for Song with songname, artist and media wraper type.
+     *
+     * @param artist
+     * @param songname
+     * @param wrapperType
+     */
+    public Song(String artist, String songname, String wrapperType) {
+        this.artist = artist;
+        this.songname = songname;
+        this.wrapperType = wrapperType;
     }
 
     public AbstractMediaWrapper getMediaWrapper() {
         return mediaWrapper;
     }
 
+    /**
+     * Sets the corresponding media wrapper for a song object; this shouldn't have to be
+     * called explicitly from outside PlayeQueue class.
+     *
+     * @param mediaWrapper
+     */
     public void setMediaWrapper(AbstractMediaWrapper mediaWrapper) {
         this.mediaWrapper = mediaWrapper;
     }
@@ -37,6 +63,12 @@ public class Song {
         return wrapperType;
     }
 
+    /**
+     * Sets the media wrapper type for song. This has to be done if media wrapper type
+     * has not yet been set inside the constructor.
+     *
+     * @param type
+     */
     public void setMediaWrapperType(String type) {
         this.wrapperType = type;
     }
