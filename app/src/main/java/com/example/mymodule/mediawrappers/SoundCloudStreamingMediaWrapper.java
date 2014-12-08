@@ -1,6 +1,7 @@
 package com.example.mymodule.mediawrappers;
 
 import android.content.Context;
+import android.content.Intent;
 import android.util.Log;
 
 import com.example.mymodule.apiwrappers.APIWrapper;
@@ -13,6 +14,7 @@ import org.json.JSONException;
 import org.json.JSONObject;
 
 import java.util.ArrayList;
+import java.util.List;
 
 /**
  * Created by charlotte on 05.12.14.
@@ -25,20 +27,19 @@ public class SoundCloudStreamingMediaWrapper extends RemoteFileStreamingMediaWra
     public static final String GET_METHOD="GET";
     public static final String SOUNDCLOUD_TRACKS_BASE_URL="https://api.soundcloud.com/tracks/";
     public static final String SOUNDCLOUD_STREAM_STRING="stream";
-
-
+    private boolean playState = false;
 
 
     public SoundCloudStreamingMediaWrapper(Context context, String playPath) {
         super(context, playPath);
     }
 
-    public SoundCloudStreamingMediaWrapper(Context context, Song song) {
-        super(context, song);
+    public SoundCloudStreamingMediaWrapper(Context context, List<Song> songs) {
+        super(context, songs);
     }
 
     @Override
-    public void processWebCallResult(String result) {
+    public void processWebCallResult(String result, boolean startPlay) {
 
 
         BasicNameValuePair clientIDPair = new BasicNameValuePair(SOUNDCLOUD_CLIENT_ID_STRING, SOUNDCLOUD_CLIENT_ID);
@@ -73,17 +74,34 @@ public class SoundCloudStreamingMediaWrapper extends RemoteFileStreamingMediaWra
 
             Log.d("","track_url :"+newURL);
             setPlayPath(newURL);
-            play();
 
+
+            // play();
+
+            //TODO: send broadcast
+
+            Intent intent = new Intent();
+
+            if (newURL == null || newURL.equals("")) {
+                intent.setAction(PlayQueue.SONG_NOT_AVAILABLE);
+            } else {
+                intent.setAction(PlayQueue.SONG_AVAILABLE);
+
+            }
+
+            context.sendBroadcast(intent);
+
+            playState = false;
         } catch (JSONException e) {
-            e.printStackTrace();
+
+
         }
 
 
     }
 
     @Override
-    public void computePlayPath(Song song) throws JSONException {
+    public void computePlayPath(Song song) {
         String playpath = null;
 
 
@@ -114,15 +132,18 @@ public class SoundCloudStreamingMediaWrapper extends RemoteFileStreamingMediaWra
     }
 
     @Override
-    public void playSong() {
-        try {
-            computePlayPath(getSong());
+    public boolean lookForSong() {
+
+        // playState=true;
+
+        computePlayPath(getSong(counter));
+
+
 
                     /* This will call play() method itself when its the right time!*/
 
-        } catch (JSONException e) {
-            e.printStackTrace();
-        }
+
+        return true;
 
     }
 
