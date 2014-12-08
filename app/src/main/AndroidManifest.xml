@@ -7,6 +7,7 @@
     <permission android:name="android.permission.ACCESS_NETWORK_STATE" />
     <uses-permission android:name="android.permission.ACCESS_NETWORK_STATE" />
     <uses-permission android:name="android.permission.READ_EXTERNAL_STORAGE" />
+
     <application
         android:allowBackup="true"
         android:icon="@drawable/ic_launcher"
@@ -14,8 +15,8 @@
         android:theme="@style/AppTheme">
 
         <service
-            android:enabled="true"
-            android:name="com.example.mymodule.mediawrappers.FileStreamingMediaService" />
+            android:name="com.example.mymodule.mediawrappers.FileStreamingMediaService"
+            android:enabled="true" />
 
 
         <activity
@@ -25,12 +26,26 @@
         </activity>
         <activity
             android:name=".TestActivity"
-            android:label="@string/title_activity_test">
+            android:label="@string/title_activity_test"
+            android:launchMode="singleInstance">
             <intent-filter>
                 <action android:name="android.intent.action.MAIN" />
 
                 <category android:name="android.intent.category.LAUNCHER" />
             </intent-filter>
+            <intent-filter>
+                <action android:name="android.intent.action.VIEW" />
+
+                <category android:name="android.intent.category.DEFAULT" />
+                <category android:name="android.intent.category.BROWSABLE" />
+
+                <data
+                    android:host="callback"
+                    android:scheme="my-first-android-app-login" />
+
+            </intent-filter>
+
+
         </activity>
 
 
