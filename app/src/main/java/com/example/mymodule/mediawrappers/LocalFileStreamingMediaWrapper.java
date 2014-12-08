@@ -1,11 +1,14 @@
 package com.example.mymodule.mediawrappers;
 
 import android.content.Context;
+import android.content.Intent;
 import android.database.Cursor;
 import android.provider.MediaStore;
 import android.util.Log;
 
 import com.example.mymodule.mymodule.app.Song;
+
+import java.util.List;
 
 /**
  * Created by lotta on 02.12.14.
@@ -15,8 +18,8 @@ public class LocalFileStreamingMediaWrapper extends FileStreamingMediaWrapper {
         super(context, playPath);
     }
 
-    public LocalFileStreamingMediaWrapper(Context context, Song song) {
-        super(context, song);
+    public LocalFileStreamingMediaWrapper(Context context, List<Song> songs) {
+        super(context, songs);
        //computePlayPath(song);
     }
 
@@ -47,10 +50,26 @@ public class LocalFileStreamingMediaWrapper extends FileStreamingMediaWrapper {
     }
 
     @Override
-    public void playSong() {
-        computePlayPath(getSong());
-        play();
+    public boolean lookForSong() {
+        computePlayPath(getSong(counter));
 
+        //TODO: in Methode
+
+        Intent intent = new Intent();
+
+        if (getPlayPath() == null || getPlayPath().equals("")) {
+            intent.setAction(PlayQueue.SONG_NOT_AVAILABLE);
+        } else {
+            intent.setAction(PlayQueue.SONG_AVAILABLE);
+
+        }
+
+        context.sendBroadcast(intent);
+
+
+        // play();
+
+        return true; //TODO: send broadcast
 
     }
 
