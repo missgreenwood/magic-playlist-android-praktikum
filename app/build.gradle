@@ -6,7 +6,7 @@ android {
 
     defaultConfig {
         applicationId "com.example.mymodule.mymodule.app"
-        minSdkVersion 8
+        minSdkVersion 14
         targetSdkVersion 21
         versionCode 1
         versionName "1.0"
@@ -19,7 +19,16 @@ android {
     }
 }
 
+repositories {
+    mavenCentral()
+    flatDir {
+        dirs 'libs'
+    }
+}
+
+
 dependencies {
     compile fileTree(dir: 'libs', include: ['*.jar'])
     compile 'com.android.support:appcompat-v7:21.0.0'
+    compile 'com.spotify.sdk:spotifysdk:1.0.0-beta6@aar' // NOTE: Version must match!
 }
