@@ -92,7 +92,7 @@ public class APIWrapper extends AsyncTask<String, Void, String> {
 
             Log.d("","json array string: "+response);
 
-            parent.processWebCallResult(response);
+            parent.processWebCallResult(response, true);
 
 
 
@@ -135,6 +135,7 @@ public class APIWrapper extends AsyncTask<String, Void, String> {
             } catch (IOException e) {
                 e.printStackTrace();
             }
+
 
 
 
