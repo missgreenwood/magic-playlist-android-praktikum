@@ -39,7 +39,7 @@ public class SoundCloudStreamingMediaWrapper extends RemoteFileStreamingMediaWra
     }
 
     @Override
-    public void processWebCallResult(String result, boolean startPlay) {
+    public void processWebCallResult(String result, String callback) {
 
 
         BasicNameValuePair clientIDPair = new BasicNameValuePair(SOUNDCLOUD_CLIENT_ID_STRING, SOUNDCLOUD_CLIENT_ID);
@@ -124,7 +124,8 @@ public class SoundCloudStreamingMediaWrapper extends RemoteFileStreamingMediaWra
         //APIWrapper apiWrapper=new APIWrapper();
         //String jsonArrayString = apiWrapper.getJSONCall(url, APIWrapper.GET);
 
-        APIWrapper asyncHTTP = new APIWrapper(this);
+        //TODO: String in Variable
+        APIWrapper asyncHTTP = new APIWrapper(this, DEFAULT_CALLBACK);
         asyncHTTP.execute(url);
 
 

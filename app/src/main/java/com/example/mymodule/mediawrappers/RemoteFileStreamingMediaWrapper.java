@@ -2,6 +2,7 @@ package com.example.mymodule.mediawrappers;
 
 import android.content.Context;
 
+import com.example.mymodule.apiwrappers.CallbackInterface;
 import com.example.mymodule.mymodule.app.Song;
 
 import java.util.List;
@@ -9,7 +10,9 @@ import java.util.List;
 /**
  * Created by charlotte on 06.12.14.
  */
-public abstract class RemoteFileStreamingMediaWrapper extends FileStreamingMediaWrapper {
+public abstract class RemoteFileStreamingMediaWrapper extends FileStreamingMediaWrapper implements CallbackInterface {
+
+    public static final String DEFAULT_CALLBACK = "default_callback";
 
 
     public RemoteFileStreamingMediaWrapper(Context context, String playPath) {
@@ -21,6 +24,7 @@ public abstract class RemoteFileStreamingMediaWrapper extends FileStreamingMedia
     }
 
 
-    public abstract void processWebCallResult(String result, boolean startPlay);
+    @Override
+    public abstract void processWebCallResult(String result, String callback);
 
 }

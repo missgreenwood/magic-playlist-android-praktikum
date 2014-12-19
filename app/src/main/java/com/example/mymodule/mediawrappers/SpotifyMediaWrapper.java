@@ -6,7 +6,6 @@ import android.util.Log;
 
 import com.example.mymodule.apiwrappers.APIWrapper;
 import com.example.mymodule.mymodule.app.Song;
-import com.example.mymodule.mymodule.app.TestActivity;
 import com.spotify.sdk.android.Spotify;
 import com.spotify.sdk.android.playback.Config;
 import com.spotify.sdk.android.playback.ConnectionStateCallback;
@@ -21,7 +20,6 @@ import org.json.JSONException;
 import org.json.JSONObject;
 
 import java.util.ArrayList;
-import java.util.List;
 
 /**
  * Created by lotta on 02.12.14.
@@ -101,7 +99,7 @@ public class SpotifyMediaWrapper extends RemoteFileStreamingMediaWrapper impleme
         return true;
     }
 
-    protected void computePlayPath(Song song) {
+    public void computePlayPath(Song song) {
 
 
         String url = SPOTIFY_SEARCH_URL;
@@ -129,7 +127,7 @@ public class SpotifyMediaWrapper extends RemoteFileStreamingMediaWrapper impleme
         //APIWrapper apiWrapper=new APIWrapper();
         //String jsonArrayString = apiWrapper.getJSONCall(url, APIWrapper.GET);
 
-        APIWrapper asyncHTTP = new APIWrapper(this);
+        APIWrapper asyncHTTP = new APIWrapper(this, DEFAULT_CALLBACK);
         asyncHTTP.execute(url);
 
 
@@ -200,7 +198,7 @@ public class SpotifyMediaWrapper extends RemoteFileStreamingMediaWrapper impleme
     }
 
     @Override
-    public void processWebCallResult(String result, boolean startPlay) {
+    public void processWebCallResult(String result, String callback) {
 
 
         String uri = "";

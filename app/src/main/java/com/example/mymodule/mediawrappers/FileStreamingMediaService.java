@@ -25,6 +25,8 @@ public class FileStreamingMediaService extends Service implements MediaPlayer.On
     public static final String ACTION_STOP = "com.example.action.STOP";
     public static final String ACTION_PAUSE = "com.example.action.PAUSE";
     public static final String ACTION_RESUME = "com.example.action.RESUME";
+    public static final String INFO_PlAYPATH = "com.example.info.playpath";
+    public static final String INFO_SONGNAME = "com.example.info.songname";
     public static final int NOTIFICATION_ID = 555; //TODO: was für Nummer?
     public static String TRACK_FINISHED = "track finished";
     AudioState state;
@@ -40,8 +42,8 @@ public class FileStreamingMediaService extends Service implements MediaPlayer.On
         if (intent.getAction().equals(ACTION_PLAY)) {
 
 
-            playPath = intent.getStringExtra("playpath");
-            String songname = intent.getStringExtra("songname");
+            playPath = intent.getStringExtra(INFO_PlAYPATH);
+            String songname = intent.getStringExtra(INFO_SONGNAME);
 
             //TODO: should do something
 
@@ -59,11 +61,7 @@ public class FileStreamingMediaService extends Service implements MediaPlayer.On
                     "Playing " + songname, null);
 
             startForeground(NOTIFICATION_ID, notification);
-
-
             Log.d("", "start play");
-
-
 
             mediaPlayer = new MediaPlayer();  // initialize it here
             mediaPlayer.setOnPreparedListener(this);
@@ -83,14 +81,27 @@ public class FileStreamingMediaService extends Service implements MediaPlayer.On
 
             if (state == AudioState.Playing && mediaPlayer.isPlaying()) {
                 Log.d("", "set state to paused");
-                state = AudioState.Paused;
+
+                try {
+
                 mediaPlayer.pause();
+                    state = AudioState.Paused;
+                } catch (IllegalStateException e) {
+
+                    e.printStackTrace();
+                }
             }
         } else if (intent.getAction().equals(ACTION_RESUME)) {
 
             if (state == AudioState.Paused) {
-                mediaPlayer.start();
-                state = AudioState.Playing;
+
+                try {
+                    mediaPlayer.start();
+                    state = AudioState.Playing;
+                } catch (IllegalStateException e) {
+
+                    e.printStackTrace();
+                }
             }
             // }
 
@@ -107,37 +118,36 @@ public class FileStreamingMediaService extends Service implements MediaPlayer.On
     @Override
     public void onPrepared(MediaPlayer mp) {
         Log.d("", "on prepared called, set state to playing");
-        state = AudioState.Playing;
-        mediaPlayer.start();
 
+        try {
+            mediaPlayer.start();
+            state = AudioState.Playing;
+        } catch (IllegalStateException e) {
+
+            e.printStackTrace();
+        }
     }
 
     @Override
     public void onCompletion(MediaPlayer mp) {
         //TODO: send some stats as broadcast???
-
-
-        state = AudioState.Stopped;
-
-
+        try {
         mediaPlayer.release();
-
+            state = AudioState.Stopped;
         Log.d("", "on completion");
+        } catch (IllegalStateException e) {
 
+            e.printStackTrace();
+        }
 
+        //TODO: finally?
+        //Was tun, wenn die Exception auftritt?
         Intent broadcastIntent = new Intent();
         broadcastIntent.setAction(TRACK_FINISHED);
         sendBroadcast(broadcastIntent);
 
 
-        /*
-        counter++;
-        if (counter<=songs.size()) {
-            Log.d("","Play new song: conuter "+counter);
-            lookForSong();
-        }
 
-        */
         //Intent broadcastIntent = new Intent("")
 
         //TODO: macht das irgendwie Sinn?

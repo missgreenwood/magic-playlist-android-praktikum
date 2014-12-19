@@ -29,6 +29,7 @@ public abstract class FileStreamingMediaWrapper extends AbstractMediaWrapper {
 
     }
 
+
     public FileStreamingMediaWrapper(Context context, List<Song> songs) {
         this.context = context;
         setSong(songs);
@@ -36,43 +37,17 @@ public abstract class FileStreamingMediaWrapper extends AbstractMediaWrapper {
 
     }
 
-    // public Song getSong(int index) {
-    //    return songs.get(index);
-    // }
-
-    // public void setSong(List<Song> songs) {
-    //    this.songs = songs;
-    //  }
+    public abstract boolean lookForSong();
 
     public Context getContext() {
         return context;
     }
-
     public void setContext(Context context) {
         this.context = context;
     }
-        /*
-        try {
-           computePlayPath(song);
-        } catch (JSONException e) {
-            e.printStackTrace();
-        }
-
-        */
-
-    protected abstract void computePlayPath(Song song) throws JSONException;
 
 
-   /* public String getPlayPath() {
-        return playPath;
-    }
 
-    public void setPlayPath(String playPath) {
-        this.playPath = playPath;
-    }*/
-
-
-    public abstract boolean lookForSong();
 
     @Override
     public boolean play() {
@@ -84,8 +59,8 @@ public abstract class FileStreamingMediaWrapper extends AbstractMediaWrapper {
         Log.d("", "play song " + getSong(counter).getSongname());
         //this.setO
         Intent playIntent = new Intent(context, FileStreamingMediaService.class);
-        playIntent.putExtra("playpath", getPlayPath());
-        playIntent.putExtra("songname", getSong(counter).getSongname());
+        playIntent.putExtra(FileStreamingMediaService.INFO_PlAYPATH, getPlayPath());
+        playIntent.putExtra(FileStreamingMediaService.INFO_SONGNAME, getSong(counter).getSongname());
         playIntent.setAction(FileStreamingMediaService.ACTION_PLAY);
         context.startService(playIntent);
         return true;
@@ -97,21 +72,6 @@ public abstract class FileStreamingMediaWrapper extends AbstractMediaWrapper {
         stopIntent.setAction(FileStreamingMediaService.ACTION_STOP);
         context.stopService(stopIntent);
     }
-
-/*
-    public void setCounter(int counter)
-    {
-
-        this.counter=counter;
-    }
-
-
-    public int getCounter()
-    {
-
-       return this.counter;
-    }
-*/
 
 
     @Override
