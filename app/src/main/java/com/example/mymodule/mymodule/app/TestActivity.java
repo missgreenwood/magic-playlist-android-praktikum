@@ -90,7 +90,7 @@ public class TestActivity extends ActionBarActivity implements View.OnClickListe
 
         //  sw.lookForSong();
 
-        /*
+
         songs = new ArrayList<Song>();
 
         //  Song spotify_test=new Song("Radiohead","Paranoid");
@@ -124,7 +124,7 @@ public class TestActivity extends ActionBarActivity implements View.OnClickListe
 
 
         String songpath = Environment.getExternalStorageDirectory().getPath() + "/Download/song.mp3";
-*/
+
 
     }
 
@@ -151,20 +151,23 @@ public class TestActivity extends ActionBarActivity implements View.OnClickListe
     @Override
     public void onClick(View view) {
         Log.d("", "Klick auf Button");
-        if (view == nextButton) {
-            Log.d("", "call play queue next track");
-            playQueue.nextTrack();
+        if (playQueue != null) {
 
-        } else if (view == beforeButton) {
-            Log.d("", "call play queue before track");
-            playQueue.beforeTrack();
+            if (view == nextButton) {
+                Log.d("", "call play queue next track");
+                playQueue.nextTrack();
 
-        } else if (view == pauseButton) {
-            Log.d("", "pause button");
-            playQueue.pausePlayer();
-        } else if (view == resumeButton) {
-            playQueue.resumePlayer();
+            } else if (view == beforeButton) {
+                Log.d("", "call play queue before track");
+                playQueue.beforeTrack();
 
+            } else if (view == pauseButton) {
+                Log.d("", "pause button");
+                playQueue.pausePlayer();
+            } else if (view == resumeButton) {
+                playQueue.resumePlayer();
+
+            }
         }
     }
 
@@ -185,8 +188,8 @@ public class TestActivity extends ActionBarActivity implements View.OnClickListe
             Log.d("", "spotify auth received, uri not null");
 
             AuthenticationResponse response = SpotifyAuthentication.parseOauthResponse(uri);
-            Config playerConfig = new Config(this, response.getAccessToken(), SpotifyMediaWrapper.CLIENT_ID);
-            setSpotifyConfig(playerConfig);
+            //  Config playerConfig = new Config(this, response.getAccessToken(), SpotifyMediaWrapper.CLIENT_ID);
+            //  setSpotifyConfig(playerConfig);
 
             Log.d("", "irgendwas config: " + getSpotifyConfig().oauthToken);
 
