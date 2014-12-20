@@ -14,6 +14,7 @@ import android.widget.Button;
 
 import com.example.mymodule.mediawrappers.PlayQueue;
 import com.example.mymodule.mediawrappers.SpotifyMediaWrapper;
+import com.example.mymodule.metadatawrappers.LastfmMetadataWrapper;
 import com.spotify.sdk.android.Spotify;
 import com.spotify.sdk.android.authentication.AuthenticationResponse;
 import com.spotify.sdk.android.authentication.SpotifyAuthentication;
@@ -82,10 +83,14 @@ public class TestActivity extends ActionBarActivity implements View.OnClickListe
         resumeButton.setOnClickListener(this);
 
 
+        LastfmMetadataWrapper metadataWrapper = new LastfmMetadataWrapper();
+        metadataWrapper.findSimilarArtists("Radiohead", 5);
+
         // SoundCloudStreamingMediaWrapper sw = new SoundCloudStreamingMediaWrapper(this, new Song("some artistist","Paranoid Android"));
 
         //  sw.lookForSong();
 
+        /*
         songs = new ArrayList<Song>();
 
         //  Song spotify_test=new Song("Radiohead","Paranoid");
@@ -119,7 +124,7 @@ public class TestActivity extends ActionBarActivity implements View.OnClickListe
 
 
         String songpath = Environment.getExternalStorageDirectory().getPath() + "/Download/song.mp3";
-
+*/
 
     }
 
@@ -184,21 +189,7 @@ public class TestActivity extends ActionBarActivity implements View.OnClickListe
             setSpotifyConfig(playerConfig);
 
             Log.d("", "irgendwas config: " + getSpotifyConfig().oauthToken);
-            /*Spotify spotify = new Spotify();
-            mPlayer = spotify.getPlayer(playerConfig, this, new Player.InitializationObserver() {
-                @Override
-                public void onInitialized() {
-                    mPlayer.addConnectionStateCallback(MainActivity.this);
-                    mPlayer.addPlayerNotificationCallback(MainActivity.this);
-                    mPlayer.play("spotify:track:2TpxZ7JUBn3uw46aR7qd6V");
-                }
 
-                @Override
-                public void onError(Throwable throwable) {
-                    Log.e("MainActivity", "Could not initialize player: " + throwable.getMessage());
-                }
-            });
-        }*/
 
         }
 

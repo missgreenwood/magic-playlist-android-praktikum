@@ -60,7 +60,7 @@ public class LastfmMetadataWrapper extends AbstractMetadataWrapper {
         Log.d("", "URL: " + url);
 
         //TODO: String in Variable
-        APIWrapper asyncHTTP = new APIWrapper(this, SIMILAR_ARTISTS_CALLBACK);
+        APIWrapper asyncHTTP = new APIWrapper(this, SIMILAR_ARTISTS_CALLBACK, APIWrapper.GET_METHOD);
         asyncHTTP.execute(url);
 
         return url;

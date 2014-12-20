@@ -127,7 +127,7 @@ public class SpotifyMediaWrapper extends RemoteFileStreamingMediaWrapper impleme
         //APIWrapper apiWrapper=new APIWrapper();
         //String jsonArrayString = apiWrapper.getJSONCall(url, APIWrapper.GET);
 
-        APIWrapper asyncHTTP = new APIWrapper(this, DEFAULT_CALLBACK);
+        APIWrapper asyncHTTP = new APIWrapper(this, DEFAULT_CALLBACK, APIWrapper.GET_METHOD);
         asyncHTTP.execute(url);
 
 

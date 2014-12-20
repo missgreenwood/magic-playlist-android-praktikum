@@ -5,6 +5,8 @@ import android.test.TouchUtils;
 import android.view.View;
 import android.widget.Button;
 
+import com.example.mymodule.metadatawrappers.LastfmMetadataWrapper;
+
 /**
  * Created by charlotte on 07.12.14.
  */
@@ -47,6 +49,13 @@ public class MediaPlayTest extends ActivityInstrumentationTestCase2<TestActivity
 
         testPreconditions(); //richtige Stelle?
 
+        LastfmMetadataWrapper metadataWrapper = new LastfmMetadataWrapper();
+
+
+        assertNotNull(metadataWrapper.findSimilarArtists("Radiohead", 5));
+
+
+        /*
         assertNotNull(getActivity().getSongs());
         assertNotNull(getActivity().getPlayQueue());
 
@@ -59,7 +68,7 @@ public class MediaPlayTest extends ActivityInstrumentationTestCase2<TestActivity
         TouchUtils.clickView(this, beforeButton);
         assertTrue(mFirstTestActivity.getPlayQueue().getCounter() == beforeCount - 1);
 
-
+*/
         //TODO: überprüfen, dass nächster Song gespielt wird!
 
     }

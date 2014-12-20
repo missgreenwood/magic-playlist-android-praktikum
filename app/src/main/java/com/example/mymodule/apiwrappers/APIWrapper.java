@@ -7,8 +7,11 @@ import org.apache.http.HttpEntity;
 import org.apache.http.HttpResponse;
 import org.apache.http.NameValuePair;
 import org.apache.http.client.methods.HttpGet;
+import org.apache.http.client.methods.HttpPost;
+import org.apache.http.client.methods.HttpRequestBase;
 import org.apache.http.client.utils.URLEncodedUtils;
 import org.apache.http.impl.client.DefaultHttpClient;
+import org.apache.http.message.AbstractHttpMessage;
 import org.apache.http.util.EntityUtils;
 
 import java.io.ByteArrayOutputStream;
@@ -24,12 +27,16 @@ import java.util.List;
 public class APIWrapper extends AsyncTask<String, Void, String> {
 
 
+    public static final String GET_METHOD = "get_method";
+    public static final String POST_METHOD = "post_method";
     private CallbackInterface parent;
     private String callback;
+    private String method;
 
-    public APIWrapper(CallbackInterface parent, String callback) {
+    public APIWrapper(CallbackInterface parent, String callback, String method) {
         this.parent = parent;
         this.callback = callback;
+        this.method = method;
     }
 
     public static String encodeURL(String baseUrl, List<NameValuePair> params) {
@@ -93,19 +100,28 @@ public class APIWrapper extends AsyncTask<String, Void, String> {
         DefaultHttpClient httpClient = new DefaultHttpClient();
         HttpEntity httpEntity = null;
         String response = null;
-
-
-        HttpGet httpGet = new HttpGet(url[0]);
         HttpResponse httpResponse = null;
-        httpGet.setHeader("Content-Type", "application/json");
+        HttpRequestBase httpMessage = null;
+
+
+        if (method.equals(GET_METHOD)) {
+
+            httpMessage = new HttpGet(url[0]);
+
+        } else if (method.equals(POST_METHOD)) {
+
+            httpMessage = new HttpPost(url[0]);
+
+        }
+
+        httpMessage.setHeader("Content-Type", "application/json");
 
 
         try {
-            httpResponse = httpClient.execute(httpGet);
+            httpResponse = httpClient.execute(httpMessage);
         } catch (IOException e) {
             e.printStackTrace();
         }
-
 
         httpEntity = httpResponse.getEntity();
         Log.d("", "length: " + httpEntity.getContentLength());

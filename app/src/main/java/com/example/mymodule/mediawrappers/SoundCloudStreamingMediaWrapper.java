@@ -125,7 +125,7 @@ public class SoundCloudStreamingMediaWrapper extends RemoteFileStreamingMediaWra
         //String jsonArrayString = apiWrapper.getJSONCall(url, APIWrapper.GET);
 
         //TODO: String in Variable
-        APIWrapper asyncHTTP = new APIWrapper(this, DEFAULT_CALLBACK);
+        APIWrapper asyncHTTP = new APIWrapper(this, DEFAULT_CALLBACK, APIWrapper.GET_METHOD);
         asyncHTTP.execute(url);
 
 
