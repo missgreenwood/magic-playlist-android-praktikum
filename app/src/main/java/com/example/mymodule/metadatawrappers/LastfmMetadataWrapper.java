@@ -12,6 +12,10 @@ import java.util.ArrayList;
 /**
  * Created by charlotte on 19.12.14.
  */
+
+//TODO: sollte das serverseitig passieren???
+
+
 public class LastfmMetadataWrapper extends AbstractMetadataWrapper {
 
 
