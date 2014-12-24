@@ -2,7 +2,10 @@ package com.example.mymodule.mediawrappers;
 
 import android.content.Context;
 
+import com.example.mymodule.apiwrappers.CallbackInterface;
 import com.example.mymodule.mymodule.app.Song;
+
+import org.json.JSONException;
 
 import java.util.List;
 
@@ -26,6 +29,9 @@ public abstract class AbstractMediaWrapper {
     public abstract void pausePlayer();
 
     public abstract void resumePlayer();
+
+    public abstract void computePlayPath(Song song) throws JSONException;
+
 
     public Song getSong(int index) {
         return songs.get(index);

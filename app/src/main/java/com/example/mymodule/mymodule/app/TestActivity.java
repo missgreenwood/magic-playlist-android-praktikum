@@ -14,6 +14,7 @@ import android.widget.Button;
 
 import com.example.mymodule.mediawrappers.PlayQueue;
 import com.example.mymodule.mediawrappers.SpotifyMediaWrapper;
+import com.example.mymodule.metadatawrappers.LastfmMetadataWrapper;
 import com.spotify.sdk.android.Spotify;
 import com.spotify.sdk.android.authentication.AuthenticationResponse;
 import com.spotify.sdk.android.authentication.SpotifyAuthentication;
@@ -82,9 +83,13 @@ public class TestActivity extends ActionBarActivity implements View.OnClickListe
         resumeButton.setOnClickListener(this);
 
 
+        LastfmMetadataWrapper metadataWrapper = new LastfmMetadataWrapper();
+        metadataWrapper.findSimilarArtists("Radiohead", 5);
+
         // SoundCloudStreamingMediaWrapper sw = new SoundCloudStreamingMediaWrapper(this, new Song("some artistist","Paranoid Android"));
 
         //  sw.lookForSong();
+
 
         songs = new ArrayList<Song>();
 
@@ -146,20 +151,23 @@ public class TestActivity extends ActionBarActivity implements View.OnClickListe
     @Override
     public void onClick(View view) {
         Log.d("", "Klick auf Button");
-        if (view == nextButton) {
-            Log.d("", "call play queue next track");
-            playQueue.nextTrack();
+        if (playQueue != null) {
 
-        } else if (view == beforeButton) {
-            Log.d("", "call play queue before track");
-            playQueue.beforeTrack();
+            if (view == nextButton) {
+                Log.d("", "call play queue next track");
+                playQueue.nextTrack();
 
-        } else if (view == pauseButton) {
-            Log.d("", "pause button");
-            playQueue.pausePlayer();
-        } else if (view == resumeButton) {
-            playQueue.resumePlayer();
+            } else if (view == beforeButton) {
+                Log.d("", "call play queue before track");
+                playQueue.beforeTrack();
 
+            } else if (view == pauseButton) {
+                Log.d("", "pause button");
+                playQueue.pausePlayer();
+            } else if (view == resumeButton) {
+                playQueue.resumePlayer();
+
+            }
         }
     }
 
@@ -180,25 +188,11 @@ public class TestActivity extends ActionBarActivity implements View.OnClickListe
             Log.d("", "spotify auth received, uri not null");
 
             AuthenticationResponse response = SpotifyAuthentication.parseOauthResponse(uri);
-            Config playerConfig = new Config(this, response.getAccessToken(), SpotifyMediaWrapper.CLIENT_ID);
-            setSpotifyConfig(playerConfig);
+            //  Config playerConfig = new Config(this, response.getAccessToken(), SpotifyMediaWrapper.CLIENT_ID);
+            //  setSpotifyConfig(playerConfig);
 
             Log.d("", "irgendwas config: " + getSpotifyConfig().oauthToken);
-            /*Spotify spotify = new Spotify();
-            mPlayer = spotify.getPlayer(playerConfig, this, new Player.InitializationObserver() {
-                @Override
-                public void onInitialized() {
-                    mPlayer.addConnectionStateCallback(MainActivity.this);
-                    mPlayer.addPlayerNotificationCallback(MainActivity.this);
-                    mPlayer.play("spotify:track:2TpxZ7JUBn3uw46aR7qd6V");
-                }
 
-                @Override
-                public void onError(Throwable throwable) {
-                    Log.e("MainActivity", "Could not initialize player: " + throwable.getMessage());
-                }
-            });
-        }*/
 
         }
 
