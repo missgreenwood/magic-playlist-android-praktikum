@@ -1,8 +1,6 @@
 <?xml version="1.0" encoding="utf-8"?>
 <!-- @author judith -->
-
 <resources>
-
     <string name="app_name">Magic Playlist</string>
     <string name="hello_world">Hello world!</string>
     <string name="action_settings">Settings</string>
@@ -11,9 +9,8 @@
     <string name="playlist_generator">Playlist Generator</string>
     <string name="playlist_browser">Playlist Browser</string>
     <string name="priority_list">My Priority List</string>
-    <string name="genre">Genre</string>
+    <string name="genres">Genres</string>
     <string name="artists">Artists</string>
     <string name="songs">Songs</string>
     <string name="go">Go!</string>
-
 </resources>

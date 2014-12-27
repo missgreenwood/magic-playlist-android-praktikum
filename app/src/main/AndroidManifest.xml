@@ -24,6 +24,10 @@
             android:label="@string/my_playlists">
         </activity>
         <activity
+            android:name=".GeneratorActivity"
+            android:label="@string/playlist_generator">
+        </activity>
+        <activity
             android:name=".TestActivity"
             android:label="@string/title_activity_test"
             android:launchMode="singleInstance">

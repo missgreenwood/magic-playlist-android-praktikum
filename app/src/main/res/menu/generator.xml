@@ -3,11 +3,11 @@
 <menu xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
     xmlns:tools="http://schemas.android.com/tools"
-    tools:context=".TestActivity">
+    tools:context=".GeneratorActivity">
     <item
         android:id="@+id/action_settings"
         android:icon="@drawable/metrodroid_music"
         android:orderInCategory="100"
         app:showAsAction="never"
-        android:title="@string/title_activity_test" />
+        android:title="@string/playlist_generator"/>
 </menu>
