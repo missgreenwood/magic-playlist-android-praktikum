@@ -2,50 +2,53 @@
 <LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:tools="http://schemas.android.com/tools"
     tools:context=".MainActivity"
-    android:orientation="vertical"
+    android:orientation="horizontal"
     android:layout_height="fill_parent"
     android:layout_width="fill_parent"
     android:background="@drawable/listening" >
-    <RelativeLayout
-        android:layout_height="fill_parent"
+    <LinearLayout
         android:layout_width="0dip"
-        android:layout_weight="0.15">
-    </RelativeLayout>
+        android:layout_height="fill_parent"
+        android:layout_weight=".275"
+        android:orientation="horizontal">
+    </LinearLayout>
+    <LinearLayout
+        android:layout_width="0dip"
+        android:layout_height="wrap_content"
+        android:layout_weight=".7"
+        android:orientation="vertical">
         <Button
-                android:id="@+id/button5"
-                android:text="@string/my_playlists"
-                style="@style/btnStyleOrange"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:layout_marginBottom="20dp"
-                android:layout_marginRight="10dp"/>
-            <Button
-                android:id="@+id/button6"
-                android:text="@string/playlist_generator"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:layout_marginBottom="20dp"
-                android:layout_marginRight="10dp"
-                style="@style/btnStyleOrange" />
-            <Button
-                android:id="@+id/button7"
-                android:text="@string/playlist_browser"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:layout_marginBottom="20dp"
-                android:layout_marginRight="10dp"
-                style="@style/btnStyleOrange" />
-            <Button
-                android:id="@+id/button8"
-                android:text="@string/priority_list"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:layout_marginRight="10dp"
-                style="@style/btnStyleOrange" />
-    <RelativeLayout
-        android:layout_height="fill_parent"
+            android:id="@+id/button5"
+            android:text="@string/my_playlists"
+            android:layout_width="fill_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="20dp"
+            style="@style/btnStyleOrange" />
+        <Button
+            android:id="@+id/button6"
+            android:text="@string/playlist_generator"
+            android:layout_width="fill_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="20dp"
+            style="@style/btnStyleOrange" />
+        <Button
+            android:id="@+id/button7"
+            android:text="@string/playlist_browser"
+            android:layout_width="fill_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="20dp"
+            style="@style/btnStyleOrange" />
+        <Button
+            android:id="@+id/button8"
+            android:text="@string/priority_list"
+            android:layout_width="fill_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="20dp"
+            style="@style/btnStyleOrange" />
+    </LinearLayout>
+    <LinearLayout
         android:layout_width="0dip"
-        android:layout_weight="0.15">
-    </RelativeLayout>
-
+        android:layout_height="fill_parent"
+        android:layout_weight="0.025">
+    </LinearLayout>
 </LinearLayout>
