@@ -3,6 +3,13 @@
 
     <style name="AppTheme" parent="Theme.AppCompat.Light.DarkActionBar">
     </style>
+    <style name="CustomActionBarTheme"
+        parent="@android:style/Theme.Holo.Light.DarkActionBar">
+        <item name="android:actionBarStyle">@style/MyActionBar</item>
+    </style>
+    <style name="MyActionBar">
+        <item name="android:textStyle">bold</item>
+    </style>
 
     <style name="btnStyleOrange" parent="@android:style/Widget.Button">
         <item name="android:textSize">15sp</item>
