@@ -3,18 +3,15 @@
 
     <style name="AppTheme" parent="Theme.AppCompat.Light.DarkActionBar">
     </style>
-    <style name="CustomActionBarTheme"
-        parent="@android:style/Theme.Holo.Light.DarkActionBar">
-        <item name="android:actionBarStyle">@style/MyActionBar</item>
-    </style>
-    <style name="MyActionBar">
-        <item name="android:textStyle">bold</item>
+
+    <style name="MyCustomTheme" parent="@android:style/Theme.Holo.Light">
+        <item name="android:actionBarStyle">@style/MyCustomTheme.MyActionBarTheme</item>
     </style>
 
     <style name="btnStyleOrange" parent="@android:style/Widget.Button">
         <item name="android:textSize">15sp</item>
         <item name="android:textStyle">bold</item>
-        <item name="android:textColor">#FFFFFF</item>
+        <item name="android:textColor">#000000</item>
         <item name="android:gravity">center</item>
         <item name="android:layout_gravity">right</item>
         <item name="android:shadowColor">#000000</item>
@@ -24,6 +21,13 @@
         <item name="android:background">@drawable/button_orange</item>
         <item name="android:padding">10dip</item>
         <item name="android:clickable">true</item>
+    </style>
+    <style name="MyCustomTheme.MyActionBarTheme" parent="@android:style/Widget.Holo.Light.ActionBar">
+        <item name="android:titleTextStyle">@style/MyCustomTheme.MyActionBarTheme.TitleTextStyle</item>
+    </style>
+    <style name="MyCustomTheme.MyActionBarTheme.TitleTextStyle" parent="@android:style/TextAppearance.Holo.Widget.ActionBar.Title">
+        <item name="android:textStyle">bold</item>
+        <item name="android:background">#FFFFFF</item>
     </style>
 
 </resources>
