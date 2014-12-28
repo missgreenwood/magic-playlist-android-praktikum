@@ -6,7 +6,7 @@ import android.content.Intent;
 import android.content.IntentFilter;
 import android.util.Log;
 
-import models.mymodule.app.Song;
+import models.mediaModels.Song;
 
 import java.util.ArrayList;
 import java.util.Random;

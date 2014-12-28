@@ -2,7 +2,7 @@ package models.mediawrappers;
 
 import android.content.Context;
 
-import models.mymodule.app.Song;
+import models.mediaModels.Song;
 
 import org.json.JSONException;
 

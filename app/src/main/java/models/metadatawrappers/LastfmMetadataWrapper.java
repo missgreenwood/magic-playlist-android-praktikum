@@ -3,7 +3,7 @@ package models.metadatawrappers;
 import android.util.Log;
 
 import models.apiwrappers.APIWrapper;
-import models.mymodule.app.Song;
+import models.mediaModels.Song;
 
 import org.apache.http.NameValuePair;
 import org.apache.http.message.BasicNameValuePair;

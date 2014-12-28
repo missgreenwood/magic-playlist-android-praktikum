@@ -1,9 +1,11 @@
-package Tests;
+package tests;
 
 import android.content.Intent;
 import android.test.ActivityUnitTestCase;
 import android.view.ContextThemeWrapper;
 import android.widget.Button;
+
+import controllers.TestActivity;
 
 /**
  * Created by charlotte on 07.12.14.

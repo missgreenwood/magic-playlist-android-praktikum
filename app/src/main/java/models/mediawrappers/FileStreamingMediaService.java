@@ -8,7 +8,7 @@ import android.media.MediaPlayer;
 import android.os.IBinder;
 import android.util.Log;
 
-import models.mymodule.app.R;
+import tests.R;
 
 import java.io.IOException;
 

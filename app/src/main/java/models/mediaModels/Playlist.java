@@ -1,7 +1,5 @@
 package models.mediaModels;
 
-import controllers.Song;
-
 import java.util.ArrayList;
 
 /**

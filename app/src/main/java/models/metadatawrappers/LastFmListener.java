@@ -1,6 +1,6 @@
 package models.metadatawrappers;
 
-import models.mymodule.app.Song;
+import models.mediaModels.Song;
 
 /**
  * Created by TheDaAndy on 28.12.2014.

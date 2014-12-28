@@ -2,9 +2,10 @@ package models.playlistGenerator;
 
 import android.util.Log;
 
+import models.mediaModels.Playlist;
 import models.metadatawrappers.LastFmListener;
 import models.metadatawrappers.LastfmMetadataWrapper;
-import models.mymodule.app.Song;
+import models.mediaModels.Song;
 
 /**
  * Created by TheDaAndy on 27.12.2014.

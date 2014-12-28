@@ -1,10 +1,11 @@
-package Tests;
+package tests;
 
 import android.test.ActivityInstrumentationTestCase2;
 import android.view.View;
 import android.widget.Button;
 
 import models.metadatawrappers.LastfmMetadataWrapper;
+import controllers.TestActivity;
 
 /**
  * Created by charlotte on 07.12.14.
