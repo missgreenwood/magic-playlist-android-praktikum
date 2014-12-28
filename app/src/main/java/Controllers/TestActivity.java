@@ -175,7 +175,7 @@ public class TestActivity extends ActionBarActivity implements View.OnClickListe
 
     public void openPlaylistGenerator()
     {
-        Intent intent = new Intent(this, GeneratorSettingsActivity.class);
+        Intent intent = new Intent(this, GeneratorActivity.class);
         startActivity(intent);
     }
 

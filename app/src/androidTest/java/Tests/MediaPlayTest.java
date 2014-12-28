@@ -49,7 +49,7 @@ public class MediaPlayTest extends ActivityInstrumentationTestCase2<TestActivity
 
         testPreconditions(); //richtige Stelle?
 
-        LastfmMetadataWrapper metadataWrapper = new LastfmMetadataWrapper();
+        LastfmMetadataWrapper metadataWrapper = new LastfmMetadataWrapper(null);
 
 
         assertNotNull(metadataWrapper.findSimilarArtists("Radiohead", 5));
