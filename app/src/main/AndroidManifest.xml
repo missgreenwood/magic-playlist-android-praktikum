@@ -23,7 +23,7 @@
             android:label="@string/my_playlists">
         </activity>
         <activity
-            android:name="controllers.GeneratorSettingsActivity"
+            android:name="controllers.GeneratorActivity"
             android:label="@string/playlist_generator">
         </activity>
         <activity
