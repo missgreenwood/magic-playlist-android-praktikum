@@ -43,15 +43,6 @@ public class PlayQueue {
         this.context = context;
         this.songs = songs;
 
-        BroadcastReceiver broadcastReceiver = new MyBroadcastReceiver();
-
-
-        IntentFilter intentFilter = new IntentFilter();
-        intentFilter.addAction(FileStreamingMediaService.TRACK_FINISHED);
-        intentFilter.addAction(PlayQueue.SONG_AVAILABLE);
-        intentFilter.addAction(PlayQueue.SONG_NOT_AVAILABLE);
-        context.registerReceiver(broadcastReceiver, intentFilter);
-
 
     }
 
@@ -201,29 +192,21 @@ public class PlayQueue {
 
     }
 
-    public class MyBroadcastReceiver extends BroadcastReceiver {
-        @Override
-        public void onReceive(Context context, Intent intent) {
 
-            if (intent.getAction().equals(FileStreamingMediaService.TRACK_FINISHED)) {
-
-                Log.d("", "intent received, track finished");
-                if (counter < songs.size())
-                    nextTrack();
-
-            } else if (intent.getAction().equals(PlayQueue.SONG_AVAILABLE)) {
-                Log.d("", "intent received, playing next song with index: " + counter);
-                getCurrentSong().getMediaWrapper().play();
-
-
-            } else if (intent.getAction().equals(PlayQueue.SONG_NOT_AVAILABLE)) {
-
-                Log.d("", "intent received, try setting next wrapper");
-                trySettingNextWrapper();
-
-            }
-        }
+    public void onTrackFinished() {
+        if (counter < songs.size())
+            nextTrack();
     }
 
+    public void onSongAvailable() {
 
+        Log.d("", "intent received, playing next song with index: " + counter);
+        getCurrentSong().getMediaWrapper().play();
+    }
+
+    public void onSongNotAvailable() {
+
+        Log.d("", "intent received, try setting next wrapper");
+        trySettingNextWrapper();
+    }
 }
