@@ -32,6 +32,7 @@ public class TestActivity extends ActionBarActivity implements View.OnClickListe
     private Button beforeButton;
     private Button pauseButton;
     private Button resumeButton;
+    private Button generatePlaylistButton;
     private PlayQueue playQueue;
     private ArrayList<Song> songs; //TODO: wieder lokale Variable, ist nur wegen der Testklassen
     private Config spotifyConfig;
@@ -77,14 +78,16 @@ public class TestActivity extends ActionBarActivity implements View.OnClickListe
         beforeButton = (Button) this.findViewById(R.id.button2);
         pauseButton = (Button) this.findViewById(R.id.button3);
         resumeButton = (Button) this.findViewById(R.id.button4);
+        generatePlaylistButton = (Button) this.findViewById(R.id.generatePlaylistButton);
         nextButton.setOnClickListener(this);
         beforeButton.setOnClickListener(this);
         pauseButton.setOnClickListener(this);
         resumeButton.setOnClickListener(this);
+        generatePlaylistButton.setOnClickListener(this);
 
 
-        LastfmMetadataWrapper metadataWrapper = new LastfmMetadataWrapper();
-        metadataWrapper.findSimilarArtists("Radiohead", 5);
+//        LastfmMetadataWrapper metadataWrapper = new LastfmMetadataWrapper();
+//        metadataWrapper.findSimilarArtists("Radiohead", 5);
 
         // SoundCloudStreamingMediaWrapper sw = new SoundCloudStreamingMediaWrapper(this, new Song("some artistist","Paranoid Android"));
 
@@ -167,10 +170,17 @@ public class TestActivity extends ActionBarActivity implements View.OnClickListe
             } else if (view == resumeButton) {
                 playQueue.resumePlayer();
 
+            } else if (view == generatePlaylistButton) {
+                this.openPlaylistGenerator();
             }
         }
     }
 
+    public void openPlaylistGenerator()
+    {
+        Intent intent = new Intent(this, GeneratorActivity.class);
+        startActivity(intent);
+    }
 
     //TODO: muss das wirklich hier rein?
 

@@ -4,11 +4,16 @@ package com.example.mymodule.mymodule.app;
         import android.support.v7.app.ActionBarActivity;
         import android.view.Menu;
         import android.view.MenuItem;
+        import android.view.View;
+
+        import playlistGenerator.MainGenerator;
 
 /**
  * Created by judith on 27.12.14.
  */
 public class GeneratorActivity extends ActionBarActivity {
+
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -33,4 +38,10 @@ public class GeneratorActivity extends ActionBarActivity {
         return super.onOptionsItemSelected(item);
     }
     // TODO: implement class
+
+    public void testStartClicked(View view)
+    {
+        MainGenerator generator = new MainGenerator();
+        generator.getNextSong();
+    }
 }

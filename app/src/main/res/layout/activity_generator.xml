@@ -39,6 +39,14 @@
             android:layout_height="wrap_content"
             android:layout_marginTop="20dp"
             style="@style/btnStyleOrange" />
+        <Button
+            android:id="@+id/testStart"
+            android:text="@string/test_start"
+            android:layout_width="fill_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="20dp"
+            android:onClick="testStartClicked"
+            style="@style/btnStyleOrange" />
     </LinearLayout>
     <LinearLayout
         android:layout_width="0dip"

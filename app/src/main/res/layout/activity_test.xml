@@ -45,6 +45,15 @@
             android:layout_height="wrap_content"
             android:layout_marginTop="20dp"
             style="@style/btnStyleOrange" />
+
+        <Button
+            android:id="@+id/generatePlaylistButton"
+            android:text="@string/generate_playlist"
+            android:layout_width="fill_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="20dp"
+            style="@style/btnStyleOrange" />
+
     </LinearLayout>
     <LinearLayout
         android:layout_width="0dip"
