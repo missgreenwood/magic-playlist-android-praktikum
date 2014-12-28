@@ -27,8 +27,6 @@ import java.util.ArrayList;
 public class SpotifyMediaWrapper extends RemoteFileStreamingMediaWrapper implements PlayerNotificationCallback, ConnectionStateCallback {
 
 
-    public static final String CLIENT_ID = "605ac27c70444b499869422e93a492f8";
-    public static final String REDIRECT_URI = "my-first-android-app-login://callback";
     public static String SPOTIFY_SEARCH_URL = "https://api.spotify.com/v1/search";
     public static String TYPE_TRACK_STRING = "type";
     // public int counter;
@@ -61,7 +59,7 @@ public class SpotifyMediaWrapper extends RemoteFileStreamingMediaWrapper impleme
         String accessToken = "BQAikzApJ-5PxbXEEnou32JJeeCdNsY5BBGI2WnDt7C82jCEImuIR7XZgzR9SSiDRMsLnhodWU78sQkJ7AhMPOs5m-g3kgY3QCKUHdHouFjvG0DIa4zwmmkwXGFNDtXsXgotCfOefvFha9tb0xc4SONKC4Z0MoV-5hhN3F4";
 
 
-        Config spotifyConfig = new Config(context, accessToken, SpotifyMediaWrapper.CLIENT_ID);
+        Config spotifyConfig = new Config(context, accessToken, SpotifyLoginHandler.CLIENT_ID);
 
 
         Log.d("", "spotify play, config: " + (spotifyConfig == null));
