@@ -1,6 +1,8 @@
 package controllers;
 
+import android.content.BroadcastReceiver;
 import android.content.Intent;
+import android.content.IntentFilter;
 import android.net.Uri;
 import android.os.Environment;
 import android.support.v7.app.ActionBarActivity;
@@ -12,6 +14,7 @@ import android.view.View;
 import android.widget.Button;
 
 import models.mediaModels.Song;
+import models.mediawrappers.FileStreamingMediaService;
 import models.mediawrappers.PlayQueue;
 import tests.R;
 
@@ -33,6 +36,7 @@ public class TestActivity extends ActionBarActivity implements View.OnClickListe
     private PlayQueue playQueue;
     private ArrayList<Song> songs; //TODO: wieder lokale Variable, ist nur wegen der Testklassen
     private Config spotifyConfig;
+    private MyBroadcastReceiver broadcastReceiver = null;
 
     public ArrayList<Song> getSongs() {
         return songs;
@@ -178,6 +182,37 @@ public class TestActivity extends ActionBarActivity implements View.OnClickListe
         Intent intent = new Intent(this, GeneratorActivity.class);
         startActivity(intent);
     }
+
+
+    @Override
+    protected void onStart() {
+
+
+        IntentFilter intentFilter = new IntentFilter();
+        intentFilter.addAction(FileStreamingMediaService.TRACK_FINISHED);
+        intentFilter.addAction(PlayQueue.SONG_AVAILABLE);
+        intentFilter.addAction(PlayQueue.SONG_NOT_AVAILABLE);
+        broadcastReceiver = new MyBroadcastReceiver();
+        this.registerReceiver(broadcastReceiver, intentFilter);
+
+
+        super.onStart();
+
+
+    }
+
+
+    @Override
+    protected void onStop() {
+
+        unregisterReceiver(broadcastReceiver);
+
+        super.onStop();
+
+
+    }
+
+
 
     //TODO: muss das wirklich hier rein?
 
