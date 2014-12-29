@@ -14,6 +14,7 @@ import tests.R;
  */
 public class SongsFragment extends Fragment {
 
+    Listener listener = null;
 
     public SongsFragment() {
         // Required empty public constructor
@@ -27,5 +28,22 @@ public class SongsFragment extends Fragment {
         return inflater.inflate(R.layout.fragment_songs, container, false);
     }
 
+    public void setListener(Listener listener) {
+        this.listener = listener;
+    }
+
+    private void fireButtonClickedEvent(View view) {
+        if (listener != null) {
+            listener.buttonClicked(view);
+        }
+    }
+
+    public void testStartClicked(View view) {
+        fireButtonClickedEvent(view);
+    }
+
+    public interface Listener {
+        public void buttonClicked(View view);
+    }
 
 }

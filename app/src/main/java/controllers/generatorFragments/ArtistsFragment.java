@@ -14,6 +14,8 @@ import tests.R;
  */
 public class ArtistsFragment extends Fragment {
 
+    Listener listener = null;
+
     public ArtistsFragment() {
         // Required empty public constructor
     }
@@ -26,5 +28,21 @@ public class ArtistsFragment extends Fragment {
         return inflater.inflate(R.layout.fragment_artists, container, false);
     }
 
+    public void setListener(Listener listener) {
+        this.listener = listener;
+    }
 
+    private void fireButtonClickedEvent(View view) {
+        if (listener != null) {
+            listener.buttonClicked(view);
+        }
+    }
+
+    public void testStartClicked(View view) {
+        fireButtonClickedEvent(view);
+    }
+
+    public interface Listener {
+        public void buttonClicked(View view);
+    }
 }

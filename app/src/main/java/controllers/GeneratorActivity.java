@@ -8,8 +8,11 @@ package controllers;
         import android.view.MenuItem;
         import android.view.View;
 
+        import controllers.generatorFragments.ArtistsFragment;
         import controllers.generatorFragments.GeneratorSettingsFragment;
+        import controllers.generatorFragments.GenresListFragment;
         import controllers.generatorFragments.PlaylistFragment;
+        import controllers.generatorFragments.SongsFragment;
         import models.playlistGenerator.MainGenerator;
         import tests.R;
 
@@ -23,6 +26,8 @@ public class GeneratorActivity extends ActionBarActivity implements
 
     private GeneratorSettingsFragment settingsFragment;
     private FragmentManager fragmentManager;
+    private ArtistsFragment artistsFragment;
+    private SongsFragment songsFragment;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -32,11 +37,31 @@ public class GeneratorActivity extends ActionBarActivity implements
         fragmentManager = getFragmentManager();
 
         initGeneratorSettingsView();
+        initArtistsView();
+        initSongsView();
     }
 
     private void initGeneratorSettingsView() {
         settingsFragment = (GeneratorSettingsFragment) fragmentManager.findFragmentById(R.id.generatorSettingsFragment);
         settingsFragment.setListener(this);
+//        FragmentTransaction transaction = fragmentManager.beginTransaction();
+//        transaction.add(R.id.generatorMainViewGroup, settingsFragment);
+//        transaction.addToBackStack(null);
+//        transaction.commit();
+    }
+
+    private void initArtistsView() {
+        artistsFragment = (ArtistsFragment) fragmentManager.findFragmentById(R.id.artistsFragment);
+        artistsFragment.setListener((ArtistsFragment.Listener) this);
+//        FragmentTransaction transaction = fragmentManager.beginTransaction();
+//        transaction.add(R.id.generatorMainViewGroup, settingsFragment);
+//        transaction.addToBackStack(null);
+//        transaction.commit();
+    }
+
+    private void initSongsView() {
+        songsFragment = (SongsFragment) fragmentManager.findFragmentById(R.id.songsFragment);
+        songsFragment.setListener((SongsFragment.Listener) this);
 //        FragmentTransaction transaction = fragmentManager.beginTransaction();
 //        transaction.add(R.id.generatorMainViewGroup, settingsFragment);
 //        transaction.addToBackStack(null);
@@ -64,28 +89,37 @@ public class GeneratorActivity extends ActionBarActivity implements
 
     public void testStartClicked(View view)
     {
-        MainGenerator generator = new MainGenerator();
-        generator.getNextSong();
+        // MainGenerator generator = new MainGenerator();
+        // generator.getNextSong();
+    }
+
+    public void artistsClicked(View view)
+    {
+        //TODO: implement actions on artists button clicked
+    }
+
+    public void songsClicked(View view)
+    {
+        //TODO: implement actions on songs button clicked
     }
 
     @Override
     public void buttonClicked(View view) {
-        switch(view.getId()) {
+        switch (view.getId()) {
             case R.id.testStart:
                 testStartClicked(view);
                 break;
             case R.id.button6:
-                // genresClicked(view);
+                GenresListFragment.genresClicked(view);
                 break;
             case R.id.button7:
-                // artistsClicked(view);
+                artistsClicked(view);
                 break;
             case R.id.button8:
-                // songsClicked(view);
+                songsClicked(view);
                 break;
         }
     }
-
     public void onTrackClick(int id) {
 
     }

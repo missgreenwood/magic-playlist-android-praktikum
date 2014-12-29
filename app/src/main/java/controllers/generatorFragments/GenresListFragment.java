@@ -14,6 +14,12 @@ import tests.R;
 
 public class GenresListFragment extends ListFragment {
 
+    Listener listener = null;
+
+    public GenresListFragment() {
+
+    }
+
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
         ViewGroup rootView = (ViewGroup) inflater.inflate(R.layout.fragment_genres, container, false);
@@ -31,4 +37,25 @@ public class GenresListFragment extends ListFragment {
         TextView tv=(TextView)viewg.findViewById(R.id.txtview);
         Toast.makeText(getActivity(), tv.getText().toString(),Toast.LENGTH_LONG).show();
     }
+
+    public void setListener(Listener listener) {
+        this.listener = listener;
+    }
+
+    private void fireButtonClickedEvent(View view) {
+        if (listener != null) {
+            listener.buttonClicked(view);
+        }
+    }
+
+    public interface Listener {
+        public void buttonClicked(View view);
+    }
+
+    public static void genresClicked(View view)
+    {
+
+    }
+
+
 }
