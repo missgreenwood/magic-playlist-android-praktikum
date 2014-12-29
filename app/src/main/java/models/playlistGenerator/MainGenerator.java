@@ -1,7 +1,5 @@
 package models.playlistGenerator;
 
-import android.util.Log;
-
 import models.mediaModels.Playlist;
 import models.metadatawrappers.LastFmListener;
 import models.metadatawrappers.LastfmMetadataWrapper;
@@ -12,37 +10,66 @@ import models.mediaModels.Song;
  */
 public class MainGenerator implements LastFmListener {
 
+    private static final int ERROR_NO_ARTIST_FOUND = 0;
+    private static final int ERROR_NO_TRACK_FOUND = 1;
+
+
+    private Listener listener;
+
     private Playlist playlist;
     private Song lastSong;
+    private int tryCount = 0;
 
     private LastfmMetadataWrapper lfm;
 
-    public MainGenerator() {
+    public MainGenerator(Listener listener) {
+        this.listener = listener;
         lfm = new LastfmMetadataWrapper(this);
         playlist = new Playlist();
     }
 
-    public void getNextSong() {
-        if (lastSong == null) {
-            lastSong = new Song("Johnny Flynn", "Lost and Found");
+    /**
+     * if old given song is not accepted, increase tryCounter else use new Song to get next song
+     * when call finishes, onSimilarArtistsCallback is called
+     * @param song null if not accepted otherwise initial song or accepted song
+     * */
+    public void getNextSong(Song song) {
+        if (song != null) {
+            lastSong = song;
+            tryCount = 0;
+        } else {
+            tryCount++;
         }
-        lfm.findSimilarArtists(lastSong.getArtist(), 2);
+        lfm.findSimilarArtists(lastSong.getArtist(), tryCount + 1);
     }
 
     @Override
     public void onSimilarArtistsCallback(String[] artists) {
-        lfm.findTopTracks(artists[0], 5);
+        int artistsCount = artists.length;
+        if (artistsCount == tryCount) {
+            lfm.findTopTracks(artists[tryCount], 1);
+        } else if (artistsCount > 0) {
+            lfm.findTopTracks(artists[artistsCount-1], 1);
+        } else {
+            listener.nextSongError(ERROR_NO_ARTIST_FOUND);
+        }
     }
 
     @Override
     public void onTopTracksCallback(Song[] tracks) {
-        Song bestTrack = tracks[0];
-
-        askForTrack(bestTrack.getArtist() + " - " + bestTrack.getSongname());
-        Log.d("track:", bestTrack.getArtist() + " - " + bestTrack.getSongname());
+        if (tracks.length > 0) {
+            listener.nextSongFound(tracks[0]);
+        } else {
+            listener.nextSongError(ERROR_NO_TRACK_FOUND);
+        }
     }
 
-    private void askForTrack(String trackName) {
+    public void addSongToPlaylist(Song song) {
+        playlist.addSong(song);
+    }
 
+    public interface Listener {
+        public void nextSongFound(Song song);
+        public void nextSongError(int errorStatus);
     }
 }

@@ -1,15 +1,18 @@
 package controllers;
 
+        import android.app.AlertDialog;
         import android.app.FragmentManager;
-        import android.app.FragmentTransaction;
+        import android.content.DialogInterface;
         import android.os.Bundle;
         import android.support.v7.app.ActionBarActivity;
+        import android.util.Log;
         import android.view.Menu;
         import android.view.MenuItem;
         import android.view.View;
 
         import controllers.generatorFragments.GeneratorSettingsFragment;
         import controllers.generatorFragments.PlaylistFragment;
+        import models.mediaModels.Song;
         import models.playlistGenerator.MainGenerator;
         import tests.R;
 
@@ -18,11 +21,13 @@ package controllers;
  */
 public class GeneratorActivity extends ActionBarActivity implements
         GeneratorSettingsFragment.Listener,
-        PlaylistFragment.Listener
+        PlaylistFragment.Listener,
+        MainGenerator.Listener
 {
 
     private GeneratorSettingsFragment settingsFragment;
     private FragmentManager fragmentManager;
+    private MainGenerator generator;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -30,7 +35,7 @@ public class GeneratorActivity extends ActionBarActivity implements
         setContentView(R.layout.activity_generator);
 
         fragmentManager = getFragmentManager();
-
+        generator = new MainGenerator(this);
         initGeneratorSettingsView();
     }
 
@@ -64,8 +69,7 @@ public class GeneratorActivity extends ActionBarActivity implements
 
     public void testStartClicked(View view)
     {
-        MainGenerator generator = new MainGenerator();
-        generator.getNextSong();
+        generator.getNextSong(new Song("Johnny Flynn", "lost and found"));
     }
 
     @Override
@@ -87,6 +91,45 @@ public class GeneratorActivity extends ActionBarActivity implements
     }
 
     public void onTrackClick(int id) {
+
+    }
+
+    @Override
+    public void nextSongFound(final Song song) {
+        final MainGenerator _generator = generator;
+        final GeneratorActivity _this = this;
+        AlertDialog.Builder dialogBuilder = new AlertDialog.Builder(this);
+        dialogBuilder.setTitle("Song zu Playliste hinzufügen?")
+                     .setMessage("Song: " + song.getArtist() + " - " + song.getSongname())
+                     .setCancelable(false);
+        dialogBuilder.setPositiveButton("Hinzufügen", new DialogInterface.OnClickListener() {
+            @Override
+            public void onClick(DialogInterface dialog, int which) {
+                _generator.addSongToPlaylist(song);
+                _generator.getNextSong(song);
+            }
+        });
+        dialogBuilder.setNeutralButton("Verwerfen", new DialogInterface.OnClickListener() {
+            @Override
+            public void onClick(DialogInterface dialog, int which) {
+                _generator.getNextSong(null);
+            }
+        });
+        dialogBuilder.setNegativeButton("Abschließen", new DialogInterface.OnClickListener() {
+            @Override
+            public void onClick(DialogInterface dialog, int which) {
+                _this.finishPlaylistClicked();
+            }
+        });
+        dialogBuilder.create().show();
+    }
+
+    @Override
+    public void nextSongError(int errorStatus) {
+        Log.e("nextSongError", String.valueOf(errorStatus));
+    }
+
+    private void finishPlaylistClicked() {
 
     }
 }
