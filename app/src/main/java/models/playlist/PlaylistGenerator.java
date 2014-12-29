@@ -1,4 +1,4 @@
-package models.playlistGenerator;
+package models.playlist;
 
 import models.mediaModels.Playlist;
 import models.metadatawrappers.LastFmListener;
@@ -8,7 +8,7 @@ import models.mediaModels.Song;
 /**
  * Created by TheDaAndy on 27.12.2014.
  */
-public class MainGenerator implements LastFmListener {
+public class PlaylistGenerator implements LastFmListener {
 
     private static final int ERROR_NO_ARTIST_FOUND = 0;
     private static final int ERROR_NO_TRACK_FOUND = 1;
@@ -22,7 +22,7 @@ public class MainGenerator implements LastFmListener {
 
     private LastfmMetadataWrapper lfm;
 
-    public MainGenerator(Listener listener) {
+    public PlaylistGenerator(Listener listener) {
         this.listener = listener;
         lfm = new LastfmMetadataWrapper(this);
         playlist = new Playlist();

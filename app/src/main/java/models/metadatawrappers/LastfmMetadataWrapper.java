@@ -121,15 +121,16 @@ public class LastfmMetadataWrapper extends AbstractMetadataWrapper {
                         getAttribs = {"name"};
                 String[][] artistsArray = convertJSONStringToArray(result, firstAttribs, getAttribs, null);
                 String[] artistsNames = new String[artistsArray.length];
+
                 for (int i = 0; i < artistsArray.length; i++) {
-                    artistsNames[i] = artistsArray[i][0]; //value 0 is name
+                    artistsNames[i] = artistsArray[i][0];//artist name
                 }
                 listener.onSimilarArtistsCallback(artistsNames);
                 break;
             }
             case TOP_TRACKS_CALLBACK:
             {
-                String[] firstAttribs = {"similarartists", "artist"},
+                String[] firstAttribs = {"toptracks", "track"},
                         globalAttribs = {"artist"},
                         getAttribs = {"name"};
                 String[][] fetchedTacksArray = convertJSONStringToArray(result, firstAttribs, getAttribs, globalAttribs);
@@ -159,33 +160,40 @@ public class LastfmMetadataWrapper extends AbstractMetadataWrapper {
      *                         For toptracks it would be ["artist"]. the values will replace the attribKeys directly in the given array.
      * */
     private String[][] convertJSONStringToArray (String jsonString, String[] firstAttribs, String[] arrayValueAttribs, String[] globalAttributes) {
-        Log.d("test", "start");
         String[][] arrayValues = null;
         try {
-            Log.d("test", "beginTry");
             JSONObject containerObject = new JSONObject(jsonString).getJSONObject(firstAttribs[0]);
-            Log.d("test", "getContainerObject: " + containerObject);
-            if (globalAttributes != null) {
-                Log.d("test", "getContainerObject: " + containerObject);
+
+            //get global attributes (e.g. artist)
+            if (globalAttributes != null && globalAttributes.length > 0) {
+                JSONObject globalAttributesContainer = containerObject.getJSONObject("@attr");
                 for (int i = 0; i < globalAttributes.length; i++) {
-                    globalAttributes[i] = containerObject.getString(globalAttributes[i]);
+                    globalAttributes[i] = globalAttributesContainer.getString(globalAttributes[i]);
                 }
             }
+
+            //get JSONArray with interesting elements (artist/track)
             JSONArray elementsJsonArray;
-            if (containerObject.get(firstAttribs[1]) instanceof JSONArray) {
+            Object elementsArray = containerObject.get(firstAttribs[1]);
+            if (elementsArray instanceof JSONArray) {
                 elementsJsonArray = containerObject.getJSONArray(firstAttribs[1]);
-            } else {
+            } else if (elementsArray instanceof JSONObject) {
                 JSONObject element = containerObject.getJSONObject(firstAttribs[1]);
                 elementsJsonArray = new JSONArray().put(element);
+            } else {
+                return new String[0][0];
             }
+
+            //build normal String array from JSONObjects with interesting attributes
             arrayValues = new String[elementsJsonArray.length()][arrayValueAttribs.length];
             for (int elIndex = 0; elIndex < elementsJsonArray.length(); elIndex++) {
+                JSONObject element = elementsJsonArray.getJSONObject(elIndex);
                 for(int attrIndex = 0; attrIndex < arrayValueAttribs.length; attrIndex++) {
-                    arrayValues[elIndex][attrIndex] = arrayValueAttribs[attrIndex];
+                    arrayValues[elIndex][attrIndex] = element.getString(arrayValueAttribs[attrIndex]);
                 }
             }
         } catch (Exception e) {
-            Log.e("ERROR while converting element with attribs " + firstAttribs + " JSONString to JSONObject", e.getMessage());
+            Log.e("ERROR while converting element with attribs JSONString to JSONObject", e.getMessage());
         }
         return arrayValues;
     }

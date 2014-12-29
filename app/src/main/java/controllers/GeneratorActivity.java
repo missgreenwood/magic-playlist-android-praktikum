@@ -13,7 +13,7 @@ package controllers;
         import controllers.generatorFragments.GeneratorSettingsFragment;
         import controllers.generatorFragments.PlaylistFragment;
         import models.mediaModels.Song;
-        import models.playlistGenerator.MainGenerator;
+        import models.playlist.PlaylistGenerator;
         import tests.R;
 
 /**
@@ -22,12 +22,12 @@ package controllers;
 public class GeneratorActivity extends ActionBarActivity implements
         GeneratorSettingsFragment.Listener,
         PlaylistFragment.Listener,
-        MainGenerator.Listener
+        PlaylistGenerator.Listener
 {
 
     private GeneratorSettingsFragment settingsFragment;
     private FragmentManager fragmentManager;
-    private MainGenerator generator;
+    private PlaylistGenerator generator;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -35,7 +35,7 @@ public class GeneratorActivity extends ActionBarActivity implements
         setContentView(R.layout.activity_generator);
 
         fragmentManager = getFragmentManager();
-        generator = new MainGenerator(this);
+        generator = new PlaylistGenerator(this);
         initGeneratorSettingsView();
     }
 
@@ -96,7 +96,7 @@ public class GeneratorActivity extends ActionBarActivity implements
 
     @Override
     public void nextSongFound(final Song song) {
-        final MainGenerator _generator = generator;
+        final PlaylistGenerator _generator = generator;
         final GeneratorActivity _this = this;
         AlertDialog.Builder dialogBuilder = new AlertDialog.Builder(this);
         dialogBuilder.setTitle("Song zu Playliste hinzufügen?")
