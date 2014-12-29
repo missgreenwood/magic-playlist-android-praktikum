@@ -9,6 +9,9 @@ package controllers;
         import android.view.View;
 
         import controllers.generatorFragments.GeneratorSettingsFragment;
+        import controllers.generatorFragments.GenresListFragment;
+        import controllers.generatorFragments.SongsFragment;
+        import controllers.generatorFragments.ArtistsFragment;
         import models.playlistGenerator.MainGenerator;
         import tests.R;
 
@@ -18,6 +21,9 @@ package controllers;
 public class GeneratorActivity extends ActionBarActivity implements GeneratorSettingsFragment.Listener {
 
     private GeneratorSettingsFragment settingsFragment;
+    private GenresListFragment genresListFragment;
+    private ArtistsFragment artistsFragment;
+    private SongsFragment songsFragment;
     private FragmentManager fragmentManager;
 
     @Override
@@ -35,6 +41,33 @@ public class GeneratorActivity extends ActionBarActivity implements GeneratorSet
         settingsFragment.setListener(this);
 //        FragmentTransaction transaction = fragmentManager.beginTransaction();
 //        transaction.add(R.id.generatorMainViewGroup, settingsFragment);
+//        transaction.addToBackStack(null);
+//        transaction.commit();
+    }
+
+    private void initGenreSettingsView() {
+        // genresListFragment = (GenresListFragment) fragmentManager.findFragmentById(R.id.genresListFragment);
+        // genresListFragment.setListener(this);
+//        FragmentTransaction transaction = fragmentManager.beginTransaction();
+//        transaction.add(R.id.generatorMainViewGroup, genresListFragment);
+//        transaction.addToBackStack(null);
+//        transaction.commit();
+    }
+
+    private void initArtistsSettingsView() {
+        // artistsFragment = (ArtistsFragment) fragmentManager.findFragmentById(R.id.artistsFragment);
+        // artistsFragment.setListener(this);
+//        FragmentTransaction transaction = fragmentManager.beginTransaction();
+//        transaction.add(R.id.generatorMainViewGroup, artistsFragment);
+//        transaction.addToBackStack(null);
+//        transaction.commit();
+    }
+
+    private void initSongsSettingsView() {
+        // songsFragment = (SongsFragment) fragmentManager.findFragmentById(R.id.songsFragment);
+        // songsFragment.setListener(this);
+//        FragmentTransaction transaction = fragmentManager.beginTransaction();
+//        transaction.add(R.id.generatorMainViewGroup, songsFragment);
 //        transaction.addToBackStack(null);
 //        transaction.commit();
     }
@@ -64,6 +97,18 @@ public class GeneratorActivity extends ActionBarActivity implements GeneratorSet
         generator.getNextSong();
     }
 
+    public void genresClicked(View view) {
+
+    }
+
+    public void artistsClicked(View view) {
+
+    }
+
+    public void songsClicked(View view) {
+
+    }
+
     @Override
     public void buttonClicked(View view) {
         switch(view.getId()) {
@@ -71,13 +116,13 @@ public class GeneratorActivity extends ActionBarActivity implements GeneratorSet
                 testStartClicked(view);
                 break;
             case R.id.button6:
-                // genresClicked(view);
+                genresClicked(view);
                 break;
             case R.id.button7:
-                // artistsClicked(view);
+                artistsClicked(view);
                 break;
             case R.id.button8:
-                // songsClicked(view);
+                songsClicked(view);
                 break;
         }
     }
