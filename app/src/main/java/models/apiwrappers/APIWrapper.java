@@ -122,17 +122,23 @@ public class APIWrapper extends AsyncTask<String, Void, String> {
             e.printStackTrace();
         }
 
-        httpEntity = httpResponse.getEntity();
-        Log.d("", "length: " + httpEntity.getContentLength());
-        Log.d("", "teeest: " + httpEntity.toString());
-        try {
-            response = EntityUtils.toString(httpEntity);
+        if (httpResponse != null) {
+            httpEntity = httpResponse.getEntity();
+            Log.d("", "length: " + httpEntity.getContentLength());
+            Log.d("", "teeest: " + httpEntity.toString());
 
 
-            Log.d("", "response: " + response);
-        } catch (IOException e) {
-            e.printStackTrace();
+            try {
+                response = EntityUtils.toString(httpEntity);
+
+
+                Log.d("", "response: " + response);
+            } catch (IOException e) {
+                e.printStackTrace();
+            }
+
         }
+
 
 
 

@@ -27,6 +27,7 @@
                 android:layout_width="fill_parent"
                 android:layout_height="wrap_content"
                 android:layout_marginTop="20dp"
+                android:onClick="genresClicked"
                 style="@style/btnStyleOrange" />
             <Button
                 android:id="@+id/button7"
@@ -34,6 +35,7 @@
                 android:layout_width="fill_parent"
                 android:layout_height="wrap_content"
                 android:layout_marginTop="20dp"
+                android:onClick="artistsClicked"
                 style="@style/btnStyleOrange" />
             <Button
                 android:id="@+id/button8"
@@ -41,6 +43,7 @@
                 android:layout_width="fill_parent"
                 android:layout_height="wrap_content"
                 android:layout_marginTop="20dp"
+                android:onClick="songsClicked"
                 style="@style/btnStyleOrange" />
             <Button
                 android:id="@+id/testStart"

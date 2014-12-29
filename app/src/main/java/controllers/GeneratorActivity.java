@@ -61,7 +61,6 @@ public class GeneratorActivity extends ActionBarActivity implements
         }
         return super.onOptionsItemSelected(item);
     }
-    // TODO: implement class
 
     public void testStartClicked(View view)
     {
@@ -74,6 +73,15 @@ public class GeneratorActivity extends ActionBarActivity implements
         switch(view.getId()) {
             case R.id.testStart:
                 testStartClicked(view);
+                break;
+            case R.id.button6:
+                // genresClicked(view);
+                break;
+            case R.id.button7:
+                // artistsClicked(view);
+                break;
+            case R.id.button8:
+                // songsClicked(view);
                 break;
         }
     }
