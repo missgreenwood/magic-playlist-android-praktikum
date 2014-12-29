@@ -112,8 +112,12 @@ public class APIWrapper extends AsyncTask<String, Void, String> {
             httpMessage = new HttpPost(url[0]);
 
         }
+        // http://developer.android.com/training/basics/fragments/index.html
 
-        httpMessage.setHeader("Content-Type", "application/json");
+
+        if (httpMessage != null) {
+            httpMessage.setHeader("Content-Type", "application/json");
+        }
 
 
         try {
