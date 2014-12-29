@@ -31,14 +31,10 @@ public class GeneratorSettingsFragment extends Fragment {
         this.listener = listener;
     }
 
-    private void fireButtonClickedEvent(View view) {
+    public void fireButtonClickedEvent(View view) {
         if (listener != null) {
             listener.buttonClicked(view);
         }
-    }
-
-    public void testStartClicked(View view) {
-        fireButtonClickedEvent(view);
     }
 
     public interface Listener {

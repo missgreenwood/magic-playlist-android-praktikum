@@ -28,6 +28,10 @@ public class PlaylistFragment extends ListFragment {
     public PlaylistFragment() {
     }
 
+    public void addPlaylist(Playlist playlist) {
+        this.playlist = playlist;
+    }
+
     @Override
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
