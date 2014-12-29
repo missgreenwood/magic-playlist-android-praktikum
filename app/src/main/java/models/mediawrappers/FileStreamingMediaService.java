@@ -16,7 +16,7 @@ import java.io.IOException;
  * Created by lotta on 02.12.14.
  */
 public class FileStreamingMediaService extends Service implements MediaPlayer.OnPreparedListener, MediaPlayer.OnCompletionListener,
-        MediaPlayer.OnErrorListener {
+        MediaPlayer.OnErrorListener, MediaPlayer.OnBufferingUpdateListener {
 
     public static final String ACTION_PLAY = "com.example.action.PLAY";
     public static final String ACTION_STOP = "com.example.action.STOP";
@@ -64,6 +64,7 @@ public class FileStreamingMediaService extends Service implements MediaPlayer.On
             mediaPlayer.setOnPreparedListener(this);
             mediaPlayer.setOnCompletionListener(this);
             mediaPlayer.setOnErrorListener(this);
+            mediaPlayer.setOnBufferingUpdateListener(this);
             mediaPlayer.setAudioStreamType(AudioManager.STREAM_MUSIC);
             try {
                 mediaPlayer.setDataSource(playPath);
@@ -179,6 +180,11 @@ public class FileStreamingMediaService extends Service implements MediaPlayer.On
         }
 
         return true;
+    }
+
+    @Override
+    public void onBufferingUpdate(MediaPlayer mp, int percent) {
+        Log.d("", "onBufferingUpdate percent:" + percent);
     }
 
 
