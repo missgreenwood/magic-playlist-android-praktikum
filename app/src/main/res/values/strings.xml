@@ -17,5 +17,6 @@
     <string name="generate_playlist">Generate Playlist</string>
     <string name="test_start">start test</string>
     <string name="hello_blank_fragment">Hello blank fragment</string>
+    <string name="selected_items">Show selected items</string>
 
 </resources>
