@@ -9,13 +9,17 @@ package controllers;
         import android.view.View;
 
         import controllers.generatorFragments.GeneratorSettingsFragment;
+        import controllers.generatorFragments.PlaylistFragment;
         import models.playlistGenerator.MainGenerator;
         import tests.R;
 
 /**
  * Created by judith on 27.12.14.
  */
-public class GeneratorActivity extends ActionBarActivity implements GeneratorSettingsFragment.Listener {
+public class GeneratorActivity extends ActionBarActivity implements
+        GeneratorSettingsFragment.Listener,
+        PlaylistFragment.Listener
+{
 
     private GeneratorSettingsFragment settingsFragment;
     private FragmentManager fragmentManager;
@@ -72,5 +76,9 @@ public class GeneratorActivity extends ActionBarActivity implements GeneratorSet
                 testStartClicked(view);
                 break;
         }
+    }
+
+    public void onTrackClick(int id) {
+
     }
 }
