@@ -45,7 +45,7 @@ public class GeneratorActivity extends ActionBarActivity implements GeneratorSet
 //        transaction.commit();
     }
 
-    private void initGenreSettingsView() {
+    private void initGenreView() {
         // genresListFragment = (GenresListFragment) fragmentManager.findFragmentById(R.id.genresListFragment);
         // genresListFragment.setListener(this);
 //        FragmentTransaction transaction = fragmentManager.beginTransaction();
@@ -54,7 +54,7 @@ public class GeneratorActivity extends ActionBarActivity implements GeneratorSet
 //        transaction.commit();
     }
 
-    private void initArtistsSettingsView() {
+    private void initArtistsView() {
         // artistsFragment = (ArtistsFragment) fragmentManager.findFragmentById(R.id.artistsFragment);
         // artistsFragment.setListener(this);
 //        FragmentTransaction transaction = fragmentManager.beginTransaction();
@@ -63,7 +63,7 @@ public class GeneratorActivity extends ActionBarActivity implements GeneratorSet
 //        transaction.commit();
     }
 
-    private void initSongsSettingsView() {
+    private void initSongsView() {
         // songsFragment = (SongsFragment) fragmentManager.findFragmentById(R.id.songsFragment);
         // songsFragment.setListener(this);
 //        FragmentTransaction transaction = fragmentManager.beginTransaction();
