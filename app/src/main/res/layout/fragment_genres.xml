@@ -17,12 +17,5 @@
             android:layout_weight="1"
             android:drawSelectorOnTop="false">
         </ListView>
-        <Button
-            android:id="@+id/btshow"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:onClick="showSelectedItems"
-            android:text="Show selected items">
-         </Button>
     </LinearLayout>
 </FrameLayout>
