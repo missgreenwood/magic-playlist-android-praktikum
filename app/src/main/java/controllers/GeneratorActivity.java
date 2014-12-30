@@ -29,7 +29,8 @@ public class GeneratorActivity extends ActionBarActivity implements
         PlaylistGenerator.Listener,
         GenresListFragment.Listener,
         ArtistsFragment.Listener,
-        SongsFragment.Listener
+        SongsFragment.Listener,
+        GenresListFragment.OnDataPass
 {
 
     private GeneratorSettingsFragment settingsFragment;
@@ -159,5 +160,11 @@ public class GeneratorActivity extends ActionBarActivity implements
 
     private void finishPlaylistClicked() {
 
+    }
+
+    @Override
+    public void onDataPass(String data) {
+        // Display selectedGenre in Log
+        Log.d("LOG", "Selected Genre: " + data);
     }
 }
