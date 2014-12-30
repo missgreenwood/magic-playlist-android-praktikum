@@ -16,7 +16,7 @@ import tests.R;
 public class GenresListFragment extends ListFragment {
 
     private Listener mListener;
-
+    private OnDataPass dataPasser;
     public GenresListFragment() {
 
     }
@@ -36,7 +36,12 @@ public class GenresListFragment extends ListFragment {
     public void onListItemClick(ListView l, View view, int position, long id) {
         ViewGroup viewg = (ViewGroup) view;
         TextView tv = (TextView) viewg.findViewById(R.id.txtview);
-        Toast.makeText(getActivity(), tv.getText().toString(), Toast.LENGTH_LONG).show();
+        // Toast.makeText(getActivity(), tv.getText().toString(), Toast.LENGTH_LONG).show();
+        String selectedGenre = tv.getText().toString();
+        Toast.makeText(getActivity(), selectedGenre, Toast.LENGTH_LONG).show();
+        mListener.genresClicked(view);
+        // Pass string selectedGenre to GeneratorActivity
+        dataPasser.onDataPass(selectedGenre);
     }
 
     @Override
@@ -44,6 +49,7 @@ public class GenresListFragment extends ListFragment {
         super.onAttach(activity);
         try {
             mListener = (Listener) activity;
+            dataPasser = (OnDataPass) activity;
         } catch (ClassCastException e) {
             throw new ClassCastException(activity.toString()
                     + " must implement OnFragmentInteractionListener");
@@ -54,10 +60,15 @@ public class GenresListFragment extends ListFragment {
     public void onDetach() {
         super.onDetach();
         mListener = null;
+        dataPasser = null;
     }
 
     public interface Listener {
         public void genresClicked(View view);
     }
 
+    // Declare interface to pass string selectedGenre to GeneratorActivity
+    public interface OnDataPass {
+        public void onDataPass(String data);
+    }
 }
