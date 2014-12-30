@@ -9,5 +9,5 @@
         android:layout_height="wrap_content"
         android:textSize="18sp"
         android:paddingLeft="10dp"
-        />
+        android:textStyle="bold"/>
 </LinearLayout>
