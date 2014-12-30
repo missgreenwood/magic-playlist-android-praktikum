@@ -1,7 +1,8 @@
 package controllers.generatorFragments;
 
+import android.app.Activity;
 import android.os.Bundle;
-import android.app.ListFragment;
+import android.support.v4.app.ListFragment;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -14,7 +15,7 @@ import tests.R;
 
 public class GenresListFragment extends ListFragment {
 
-    Listener listener = null;
+    private Listener mListener;
 
     public GenresListFragment() {
 
@@ -32,30 +33,31 @@ public class GenresListFragment extends ListFragment {
         return rootView;
     }
     // Handle Item click event
-    public void onListItemClick(ListView l, View view, int position, long id){
-        ViewGroup viewg=(ViewGroup)view;
-        TextView tv=(TextView)viewg.findViewById(R.id.txtview);
-        Toast.makeText(getActivity(), tv.getText().toString(),Toast.LENGTH_LONG).show();
+    public void onListItemClick(ListView l, View view, int position, long id) {
+        ViewGroup viewg = (ViewGroup) view;
+        TextView tv = (TextView) viewg.findViewById(R.id.txtview);
+        Toast.makeText(getActivity(), tv.getText().toString(), Toast.LENGTH_LONG).show();
     }
 
-    public void setListener(Listener listener) {
-        this.listener = listener;
-    }
-
-    private void fireButtonClickedEvent(View view) {
-        if (listener != null) {
-            listener.buttonClicked(view);
+    @Override
+    public void onAttach(Activity activity) {
+        super.onAttach(activity);
+        try {
+            mListener = (Listener) activity;
+        } catch (ClassCastException e) {
+            throw new ClassCastException(activity.toString()
+                    + " must implement OnFragmentInteractionListener");
         }
     }
 
+    @Override
+    public void onDetach() {
+        super.onDetach();
+        mListener = null;
+    }
+
     public interface Listener {
-        public void buttonClicked(View view);
+        public void genresClicked(View view);
     }
-
-    public static void genresClicked(View view)
-    {
-
-    }
-
 
 }

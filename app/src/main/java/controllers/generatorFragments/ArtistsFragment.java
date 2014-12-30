@@ -1,6 +1,7 @@
 package controllers.generatorFragments;
 
 
+import android.app.Activity;
 import android.os.Bundle;
 import android.app.Fragment;
 import android.view.LayoutInflater;
@@ -14,7 +15,7 @@ import tests.R;
  */
 public class ArtistsFragment extends Fragment {
 
-    Listener listener = null;
+    private Listener mListener;
 
     public ArtistsFragment() {
         // Required empty public constructor
@@ -28,21 +29,24 @@ public class ArtistsFragment extends Fragment {
         return inflater.inflate(R.layout.fragment_artists, container, false);
     }
 
-    public void setListener(Listener listener) {
-        this.listener = listener;
-    }
-
-    private void fireButtonClickedEvent(View view) {
-        if (listener != null) {
-            listener.buttonClicked(view);
+    @Override
+    public void onAttach(Activity activity) {
+        super.onAttach(activity);
+        try {
+            mListener = (Listener) activity;
+        } catch (ClassCastException e) {
+            throw new ClassCastException(activity.toString()
+                    + " must implement OnFragmentInteractionListener");
         }
     }
 
-    public void testStartClicked(View view) {
-        fireButtonClickedEvent(view);
+    @Override
+    public void onDetach() {
+        super.onDetach();
+        mListener = null;
     }
 
     public interface Listener {
-        public void buttonClicked(View view);
+        public void artistsClicked(View view);
     }
 }

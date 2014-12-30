@@ -1,20 +1,24 @@
 package controllers;
 
-        import android.app.AlertDialog;
-        import android.app.FragmentManager;
-        import android.content.DialogInterface;
-        import android.os.Bundle;
-        import android.support.v7.app.ActionBarActivity;
-        import android.util.Log;
-        import android.view.Menu;
-        import android.view.MenuItem;
-        import android.view.View;
+import android.app.AlertDialog;
+import android.app.FragmentManager;
+import android.content.DialogInterface;
+import android.os.Bundle;
+import android.support.v4.app.FragmentTransaction;
+import android.support.v7.app.ActionBarActivity;
+import android.util.Log;
+import android.view.Menu;
+import android.view.MenuItem;
+import android.view.View;
 
-        import controllers.generatorFragments.GeneratorSettingsFragment;
-        import controllers.generatorFragments.PlaylistFragment;
-        import models.mediaModels.Song;
-        import models.playlist.PlaylistGenerator;
-        import tests.R;
+import controllers.generatorFragments.ArtistsFragment;
+import controllers.generatorFragments.GeneratorSettingsFragment;
+import controllers.generatorFragments.GenresListFragment;
+import controllers.generatorFragments.PlaylistFragment;
+import controllers.generatorFragments.SongsFragment;
+import models.mediaModels.Song;
+import models.playlist.PlaylistGenerator;
+import tests.R;
 
 /**
  * Created by judith on 27.12.14.
@@ -22,12 +26,18 @@ package controllers;
 public class GeneratorActivity extends ActionBarActivity implements
         GeneratorSettingsFragment.Listener,
         PlaylistFragment.Listener,
-        PlaylistGenerator.Listener
+        PlaylistGenerator.Listener,
+        GenresListFragment.Listener,
+        ArtistsFragment.Listener,
+        SongsFragment.Listener
 {
 
     private GeneratorSettingsFragment settingsFragment;
     private FragmentManager fragmentManager;
     private PlaylistGenerator generator;
+    private GenresListFragment genresListFragment;
+    private ArtistsFragment artistsFragment;
+    private SongsFragment songsFragment;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -72,6 +82,24 @@ public class GeneratorActivity extends ActionBarActivity implements
         generator.getNextSong(new Song("Johnny Flynn", "lost and found"));
     }
 
+    public void genresClicked(View view) {
+        genresListFragment = (GenresListFragment)getSupportFragmentManager().findFragmentByTag("genresListFragment");
+        if (genresListFragment==null) {
+            genresListFragment = new GenresListFragment();
+            FragmentTransaction transact = getSupportFragmentManager().beginTransaction();
+            transact.add(android.R.id.content,genresListFragment,"genresListFragment");
+            transact.commit();
+        }
+    }
+
+    public void artistsClicked(View view) {
+        // TODO: implement
+    }
+
+    public void songsClicked(View view) {
+        // TODO: implement
+    }
+
     @Override
     public void buttonClicked(View view) {
         switch(view.getId()) {
@@ -79,13 +107,13 @@ public class GeneratorActivity extends ActionBarActivity implements
                 testStartClicked(view);
                 break;
             case R.id.button6:
-                // genresClicked(view);
+                genresClicked(view);
                 break;
             case R.id.button7:
-                // artistsClicked(view);
+                artistsClicked(view);
                 break;
             case R.id.button8:
-                // songsClicked(view);
+                songsClicked(view);
                 break;
         }
     }
