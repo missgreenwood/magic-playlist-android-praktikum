@@ -28,10 +28,7 @@ public class PlaylistDaoImpl implements PlaylistDao {
 
     @Override
     public Iterable<Playlist> findPlaylist(String author) {
-        BasicDBObject dbObject = new BasicDBObject();
-        dbObject.put(Playlist.AUTHOR, author);
-        DBCursor dbCursor = getDBCollection().find(dbObject);
-        return dbCursor.toArray();
+        return getDBCollection().find(DBQuery.is(Playlist.AUTHOR, author)).toArray();
     }
 
     private JacksonDBCollection getDBCollection() {

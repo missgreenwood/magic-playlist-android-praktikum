@@ -8,6 +8,9 @@ import javax.ws.rs.core.MediaType;
 @Path("/playlist")
 public interface PlaylistFacade {
 
+    /**
+     * @return if the server is up and running, this method simply returns the string "alive".
+     */
     @GET
     @Path("/alive")
     public String alive();
