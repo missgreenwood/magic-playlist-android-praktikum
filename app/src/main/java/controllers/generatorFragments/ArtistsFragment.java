@@ -21,7 +21,7 @@ public class ArtistsFragment extends Fragment {
     private Listener mListener;
     private OnArtistPass dataPasser;
     private EditText editArtist;
-    private String editedArtist;
+    private String enteredArtist;
 
     public ArtistsFragment() {
         // Required empty public constructor
@@ -65,10 +65,10 @@ public class ArtistsFragment extends Fragment {
             public boolean onKey(View v, int keyCode, KeyEvent event) {
                 if((event.getAction() == KeyEvent.ACTION_DOWN) && (keyCode == KeyEvent.KEYCODE_ENTER)) {
                     // Display edited artist in toast message
-                    editedArtist = editArtist.getText().toString();
-                    Toast.makeText(getActivity(), editedArtist, Toast.LENGTH_LONG).show();
+                    enteredArtist = editArtist.getText().toString();
+                    Toast.makeText(getActivity(), enteredArtist, Toast.LENGTH_LONG).show();
                     // Pass string editedArtist to GeneratorActivity
-                    dataPasser.onArtistPass(editedArtist);
+                    dataPasser.onArtistPass(enteredArtist);
                     return true;
                 }
                 return false;
