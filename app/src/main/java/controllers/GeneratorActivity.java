@@ -30,7 +30,9 @@ public class GeneratorActivity extends ActionBarActivity implements
         GenresListFragment.Listener,
         ArtistsFragment.Listener,
         SongsFragment.Listener,
-        GenresListFragment.OnDataPass
+        GenresListFragment.OnDataPass,
+        ArtistsFragment.OnDataPass,
+        SongsFragment.OnDataPass
 {
 
     private GeneratorSettingsFragment settingsFragment;
@@ -94,11 +96,23 @@ public class GeneratorActivity extends ActionBarActivity implements
     }
 
     public void artistsClicked(View view) {
-        // TODO: implement
+        artistsFragment = (ArtistsFragment)getSupportFragmentManager().findFragmentByTag("artistsFragment");
+        if (artistsFragment==null) {
+            artistsFragment = new ArtistsFragment();
+            FragmentTransaction transact = getSupportFragmentManager().beginTransaction();
+            transact.add(R.id.generatorMainViewGroup, artistsFragment, "artistsFragment");
+            transact.commit();
+        }
     }
 
     public void songsClicked(View view) {
-        // TODO: implement
+        songsFragment = (SongsFragment)getSupportFragmentManager().findFragmentByTag("songsFragment");
+        if (songsFragment==null) {
+            songsFragment = new SongsFragment();
+            FragmentTransaction transact = getSupportFragmentManager().beginTransaction();
+            transact.add(R.id.generatorMainViewGroup, songsFragment, "songsFragment");
+            transact.commit();
+        }
     }
 
     @Override
