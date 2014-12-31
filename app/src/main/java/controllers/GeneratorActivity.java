@@ -30,9 +30,9 @@ public class GeneratorActivity extends ActionBarActivity implements
         GenresListFragment.Listener,
         ArtistsFragment.Listener,
         SongsFragment.Listener,
-        GenresListFragment.OnDataPass,
-        ArtistsFragment.OnDataPass,
-        SongsFragment.OnDataPass
+        GenresListFragment.OnGenrePass,
+        ArtistsFragment.OnArtistPass,
+        SongsFragment.OnSongPass
 {
 
     private GeneratorSettingsFragment settingsFragment;
@@ -177,8 +177,20 @@ public class GeneratorActivity extends ActionBarActivity implements
     }
 
     @Override
-    public void onDataPass(String data) {
+    public void onGenrePass(String data) {
         // Display selectedGenre in Log
-        Log.d("LOG", "Selected Genre: " + data);
+        Log.d("LOG", "Selected genre: " + data);
+    }
+
+    @Override
+    public void onArtistPass(String data) {
+        // Display enteredArtist in Log
+        Log.d("LOG", "Entered artist: " + data);
+    }
+
+    @Override
+    public void onSongPass(String data) {
+        // Display enteredSong in Log
+        Log.d("LOG", "Entered song: " + data);
     }
 }

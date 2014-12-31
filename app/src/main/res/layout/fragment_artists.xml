@@ -18,5 +18,4 @@
             <requestFocus />
         </EditText>
     </LinearLayout>
-
 </FrameLayout>

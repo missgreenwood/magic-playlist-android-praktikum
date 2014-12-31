@@ -2,11 +2,14 @@ package controllers.generatorFragments;
 
 
 import android.app.Activity;
-import android.support.v4.app.Fragment;
 import android.os.Bundle;
+import android.support.v4.app.Fragment;
+import android.view.KeyEvent;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.EditText;
+import android.widget.Toast;
 
 import tests.R;
 
@@ -16,7 +19,9 @@ import tests.R;
 public class ArtistsFragment extends Fragment {
 
     private Listener mListener;
-    private OnDataPass dataPasser;
+    private OnArtistPass dataPasser;
+    private EditText editArtist;
+    private String editedArtist;
 
     public ArtistsFragment() {
         // Required empty public constructor
@@ -28,23 +33,10 @@ public class ArtistsFragment extends Fragment {
         // Inflate the layout for this fragment
         View view = inflater.inflate(R.layout.fragment_artists, container, false);
         // Get edittext component
-        /* final EditText editArtist = (EditText) view.findViewById(R.id.editArtist);
+        editArtist = (EditText) view.findViewById(R.id.editArtist);
+        addKeyListener();
         // Add key listener to keep track of user input
-        editArtist.setOnKeyListener(new View.OnKeyListener() {
-            @Override
-            public boolean onKey(View v, int keyCode, KeyEvent event) {
-                if((event.getAction() == KeyEvent.ACTION_DOWN) && (keyCode == KeyEvent.KEYCODE_ENTER)) {
-                    // Display edited artist in toast message
-                    Toast.makeText(getActivity(), editArtist.getText(), Toast.LENGTH_LONG).show();
-                    return true;
-                }
-                return false;
-            }
-        });
-        String editedArtist = editArtist.getText().toString();
         mListener.artistsClicked(view);
-        // Pass string editedArtist to GeneratorActivity
-        dataPasser.onDataPass(editedArtist); */
         return view;
     }
 
@@ -53,7 +45,7 @@ public class ArtistsFragment extends Fragment {
         super.onAttach(activity);
         try {
             mListener = (Listener) activity;
-            dataPasser = (OnDataPass) activity;
+            dataPasser = (OnArtistPass) activity;
         } catch (ClassCastException e) {
             throw new ClassCastException(activity.toString()
                     + " must implement OnFragmentInteractionListener");
@@ -67,13 +59,30 @@ public class ArtistsFragment extends Fragment {
         dataPasser = null;
     }
 
+    public void addKeyListener() {
+        editArtist.setOnKeyListener(new View.OnKeyListener() {
+            @Override
+            public boolean onKey(View v, int keyCode, KeyEvent event) {
+                if((event.getAction() == KeyEvent.ACTION_DOWN) && (keyCode == KeyEvent.KEYCODE_ENTER)) {
+                    // Display edited artist in toast message
+                    editedArtist = editArtist.getText().toString();
+                    Toast.makeText(getActivity(), editedArtist, Toast.LENGTH_LONG).show();
+                    // Pass string editedArtist to GeneratorActivity
+                    dataPasser.onArtistPass(editedArtist);
+                    return true;
+                }
+                return false;
+            }
+        });
+    }
+
     public interface Listener {
         public void artistsClicked(View view);
     }
 
     // Declare interface to pass string artist to GeneratorActivity
-    public interface OnDataPass {
-        public void onDataPass(String data);
+    public interface OnArtistPass {
+        public void onArtistPass(String data);
     }
 
 }

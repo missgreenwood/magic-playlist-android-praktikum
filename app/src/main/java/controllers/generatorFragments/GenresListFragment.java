@@ -13,10 +13,13 @@ import android.widget.Toast;
 
 import tests.R;
 
+/**
+ * Created by judith on 27.12.14.
+ */
 public class GenresListFragment extends ListFragment {
 
     private Listener mListener;
-    private OnDataPass dataPasser;
+    private OnGenrePass dataPasser;
     public GenresListFragment() {
 
     }
@@ -36,12 +39,11 @@ public class GenresListFragment extends ListFragment {
     public void onListItemClick(ListView l, View view, int position, long id) {
         ViewGroup viewg = (ViewGroup) view;
         TextView tv = (TextView) viewg.findViewById(R.id.txtview);
-        // Toast.makeText(getActivity(), tv.getText().toString(), Toast.LENGTH_LONG).show();
         String selectedGenre = tv.getText().toString();
         Toast.makeText(getActivity(), selectedGenre, Toast.LENGTH_LONG).show();
         mListener.genresClicked(view);
         // Pass string selectedGenre to GeneratorActivity
-        dataPasser.onDataPass(selectedGenre);
+        dataPasser.onGenrePass(selectedGenre);
     }
 
     @Override
@@ -49,7 +51,7 @@ public class GenresListFragment extends ListFragment {
         super.onAttach(activity);
         try {
             mListener = (Listener) activity;
-            dataPasser = (OnDataPass) activity;
+            dataPasser = (OnGenrePass) activity;
         } catch (ClassCastException e) {
             throw new ClassCastException(activity.toString()
                     + " must implement OnFragmentInteractionListener");
@@ -68,7 +70,7 @@ public class GenresListFragment extends ListFragment {
     }
 
     // Declare interface to pass string selectedGenre to GeneratorActivity
-    public interface OnDataPass {
-        public void onDataPass(String data);
+    public interface OnGenrePass {
+        public void onGenrePass(String data);
     }
 }
