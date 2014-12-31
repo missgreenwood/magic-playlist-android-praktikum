@@ -1,14 +1,21 @@
 <FrameLayout xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:tools="http://schemas.android.com/tools" android:layout_width="match_parent"
     android:layout_height="match_parent"
-    tools:context="controllers.generatorFragments.SongsFragment">
-
-    <fragment xmlns:tools="http://schemas.android.com/tools"
-        android:id="@+id/songsFragment"
-        android:name="controllers.generatorFragments.SongsFragment"
+    tools:context="controllers.generatorFragments.SongsFragment"
+    android:background="@drawable/listening">
+    <!-- @author judith -->
+    <LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+        xmlns:tools="http://schemas.android.com/tools"
+        android:orientation="vertical"
         android:layout_height="fill_parent"
         android:layout_width="fill_parent"
-        xmlns:android="http://schemas.android.com/apk/res/android"
-        tools:layout="@layout/fragment_songs" />
-
+        tools:context=".GeneratorActivity"
+        android:background="#B3B3B3B3">
+        <EditText
+            android:id="@+id/editSong"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content">
+            <requestFocus />
+        </EditText>
+    </LinearLayout>
 </FrameLayout>

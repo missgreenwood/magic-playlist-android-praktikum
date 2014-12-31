@@ -1,14 +1,22 @@
 <FrameLayout xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:tools="http://schemas.android.com/tools" android:layout_width="match_parent"
     android:layout_height="match_parent"
-    tools:context="controllers.generatorFragments.ArtistsFragment">
-
-    <fragment xmlns:tools="http://schemas.android.com/tools"
-        android:id="@+id/artistsFragment"
-        android:name="controllers.generatorFragments.ArtistsFragment"
+    tools:context="controllers.generatorFragments.ArtistsFragment"
+    android:background="@drawable/listening">
+    <!-- @author judith -->
+    <LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+        xmlns:tools="http://schemas.android.com/tools"
+        android:orientation="vertical"
         android:layout_height="fill_parent"
         android:layout_width="fill_parent"
-        xmlns:android="http://schemas.android.com/apk/res/android"
-        tools:layout="@layout/fragment_artists" />
+        tools:context=".GeneratorActivity"
+        android:background="#B3B3B3B3">
+        <EditText
+            android:id="@+id/editArtist"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content">
+            <requestFocus />
+        </EditText>
+    </LinearLayout>
 
 </FrameLayout>
