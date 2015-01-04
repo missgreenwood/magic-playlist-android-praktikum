@@ -9,6 +9,7 @@ import android.util.Log;
 import models.mediaModels.Song;
 
 import java.util.ArrayList;
+import java.util.ListIterator;
 import java.util.Random;
 
 /**
@@ -16,18 +17,26 @@ import java.util.Random;
  */
 public class PlayQueue {
 
+
+    public static final String TAG = "main.java.models.mediawrappers.PlayQueue";
+
     //TODO: muss in FileStreamingMediaService
-    public static String SONG_AVAILABLE = "com.example.song_available";
-    public static String SONG_NOT_AVAILABLE = "com.example.song_not_available";
+    public static final String SONG_AVAILABLE = "com.example.song_available";
+    public static final String SONG_NOT_AVAILABLE = "com.example.song_not_available";
+    private final static Object lockObject = new Object();
+    private static final int STATE_WAITING = 0;
+    private static final int STATE_ALREADY_PlAYING = 1;
+    private static final int IDLE = 2;
+    public static String SONG_ID = "com.example.song_id";
     //TODO: das ist nur vorläufig:
     private ArrayList<String> mediaWrappersOrdered;
-    private AbstractMediaWrapper mediaWrapper;
     private Song currentSong;
     private Context context;
     private int counter;
     private ArrayList<Song> songs;
-
-
+    private int state = 2;
+    //TODO: should be read from a preferences file or something
+    private ArrayList<String> mediaWrappers;
     /**
      * This class should be used to create a playlist/queue with a list of songs.
      * The mediawrapper type that should be used has to be specified for every song (see Song class).
@@ -37,12 +46,65 @@ public class PlayQueue {
      */
     public PlayQueue(Context context, ArrayList<Song> songs) {
 
+        mediaWrappers = new ArrayList<String>();
+        mediaWrappers.add(Song.MEDIA_WRAPPER_LOCAL_FILE);
+        mediaWrappers.add(Song.MEDIA_WRAPPER_REMOTE_SOUNDCLOUD);
+        mediaWrappers.add(Song.MEDIA_WRAPPER_SPOTIFY);
+
+
         //TODO: this should be done somewhere else!
 
 
         this.context = context;
         this.songs = songs;
 
+        setState(IDLE);
+
+
+    }
+
+    public int getState() {
+        return state;
+    }
+
+    public void setState(int state) {
+        Log.d(TAG, "set state " + getState() + " to " + state);
+
+        this.state = state;
+    }
+
+    public void unsetAllWrappers() {
+        for (Song song : songs) {
+
+            song.setMediaWrapper(null);
+        }
+
+    }
+
+
+    public Song getSongForID(int songID) {
+
+        for (Song song : songs) {
+
+            if (song.getSongID() == songID)
+                return song;
+        }
+
+        return null;
+    }
+
+    //TODO: should rather be in class Song?
+    public String getNextType(Song song) {
+
+        ListIterator<String> it = mediaWrappers.listIterator();
+
+        while (it.hasNext()) {
+
+            String mediaWrapperType = it.next();
+            if (mediaWrapperType.equals(song.getMediaWrapperType())) return it.next();
+        }
+
+        return null;
 
     }
 
@@ -70,41 +132,87 @@ public class PlayQueue {
      */
     public void playSongs() {
 
+
+        Log.d(TAG, "play songs called");
+        initializePlaylist();
+        playCurrentSong();
+
+
+    }
+
+    private void playCurrentSong() {
+
+        Log.d(TAG, "play current song, counter is " + counter);
+
         if (counter < songs.size() && counter >= 0) {
 
             setCurrentSong(songs.get(counter));
-            String mediaWrapperType = currentSong.getMediaWrapperType();
 
+            if (currentSong.getMediaWrapper() != null) {
+                String playpath = currentSong.getMediaWrapper().getPlayPath();
+                Log.d(TAG, "playpath: " + playpath);
+                if ((playpath != null) && (!playpath.equals(""))) {
 
-            ArrayList<Song> songsTemp = new ArrayList<Song>();
-            songsTemp.add(getCurrentSong());
-
-
-            if (getCurrentSong().getMediaWrapper() == null) {
-
-
-                AbstractMediaWrapper abstractMediaWrapper = null;
-
-                //TODO: in Methode
-                if (mediaWrapperType.equals(Song.MEDIA_WRAPPER_LOCAL_FILE)) {
-                    abstractMediaWrapper = new LocalFileStreamingMediaWrapper(context, songsTemp);
-
-                } else if (mediaWrapperType.equals(Song.MEDIA_WRAPPER_REMOTE_SOUNDCLOUD)) {
-                    abstractMediaWrapper = new SoundCloudStreamingMediaWrapper(context, songsTemp);
-
-                } else if (mediaWrapperType.equals(Song.MEDIA_WRAPPER_SPOTIFY)) {
-
-                    abstractMediaWrapper = new SpotifyMediaWrapper(context, songsTemp);
+                    Log.d(TAG, "now we can play the current song");
+                    setState(STATE_ALREADY_PlAYING);
+                    currentSong.getMediaWrapper().play();
                 }
-
-
-                getCurrentSong().setMediaWrapper(abstractMediaWrapper);
-
-            }
-            mediaWrapper = currentSong.getMediaWrapper();
-            mediaWrapper.lookForSong();
+            } else setState(STATE_WAITING);
 
         }
+    }
+
+    public void initializeSong(Song song) {
+
+
+        //  ArrayList<Song> songsTemp = new ArrayList<Song>();
+        //    songsTemp.add(getCurrentSong());
+
+        //  if (song.getMediaWrapper() == null) {
+
+
+        AbstractMediaWrapper abstractMediaWrapper = null;
+
+        if (!mediaWrappers.contains(song.getMediaWrapperType()))
+            song.setMediaWrapperType(mediaWrappers.get(0));
+
+        String mediaWrapperType = song.getMediaWrapperType();
+
+
+        //TODO: in Methode
+        if (mediaWrapperType.equals(Song.MEDIA_WRAPPER_LOCAL_FILE)) {
+            abstractMediaWrapper = new LocalFileStreamingMediaWrapper(context, song);
+
+        } else if (mediaWrapperType.equals(Song.MEDIA_WRAPPER_REMOTE_SOUNDCLOUD)) {
+            abstractMediaWrapper = new SoundCloudStreamingMediaWrapper(context, song);
+
+        } else if (mediaWrapperType.equals(Song.MEDIA_WRAPPER_SPOTIFY)) {
+
+            abstractMediaWrapper = new SpotifyMediaWrapper(context, song);
+            }
+
+
+        song.setMediaWrapper(abstractMediaWrapper);
+
+        //  }
+
+        if (song.getMediaWrapper() != null)
+            song.getMediaWrapper().lookForSong();
+
+
+    }
+
+    public void initializePlaylist() {
+
+
+        for (Song song : songs) {
+
+            Log.d(TAG, "initialize song: " + song.toString());
+            initializeSong(song);
+
+        }
+
+
     }
 
 
@@ -125,9 +233,12 @@ public class PlayQueue {
      *
      */
     public void beforeTrack() {
-        counter--;
-        if (counter < 0)
-            counter = songs.size() - 1;
+
+        synchronized (lockObject) {
+            counter--;
+            if (counter < 0)
+                counter = songs.size() - 1;
+        }
         jumpToTrack(counter);
 
     }
@@ -153,12 +264,15 @@ public class PlayQueue {
      */
     public void jumpToTrack(int index) {
 
-        Log.d("", "is jumping to " + index);
+        Log.d(TAG, "is jumping to " + index);
 
-        mediaWrapper.stopPlayer();
+        getCurrentSong().getMediaWrapper().stopPlayer();
 
         counter = index;
-        playSongs();
+
+        setState(IDLE);
+        //playSongs();
+        playCurrentSong();
 
 
     }
@@ -168,7 +282,7 @@ public class PlayQueue {
      */
     public void pausePlayer() {
 
-        mediaWrapper.pausePlayer();
+        getCurrentSong().getMediaWrapper().pausePlayer();
     }
 
     /**
@@ -176,7 +290,10 @@ public class PlayQueue {
      */
     public void resumePlayer() {
 
-        mediaWrapper.resumePlayer();
+        if (getState() == STATE_ALREADY_PlAYING)
+            getCurrentSong().getMediaWrapper().resumePlayer();
+
+        else playCurrentSong();
     }
 
     /**
@@ -185,10 +302,22 @@ public class PlayQueue {
      *
      * @return
      */
-    private boolean trySettingNextWrapper() {
+    private boolean trySettingNextWrapper(Song song) {
 
 
-        return false;
+        String type = getNextType(song);
+
+
+        if (type == null)
+            return false;
+
+
+        song.setMediaWrapper(null);
+        song.setMediaWrapperType(type);
+
+        Log.d(TAG, "new mediawrapper type: " + type);
+
+        return true;
 
     }
 
@@ -198,15 +327,32 @@ public class PlayQueue {
             nextTrack();
     }
 
-    public void onSongAvailable() {
+    public void onSongAvailable(int songID) {
 
-        Log.d("", "intent received, playing next song with index: " + counter);
-        getCurrentSong().getMediaWrapper().play();
+        Log.d(TAG, "intent received, playpath available for song " + getSongForID(songID));
+
+        Song song = getSongForID(songID);
+
+        if (getState() == STATE_WAITING && song == getCurrentSong()) {
+            Log.d(TAG, "state is waiting and song is current song...");
+            playCurrentSong();
+
+        }
+        // getCurrentSong().getMediaWrapper().play();
     }
 
-    public void onSongNotAvailable() {
+    public void onSongNotAvailable(int intExtra) {
 
-        Log.d("", "intent received, try setting next wrapper");
-        trySettingNextWrapper();
+        Log.d(TAG, "intent received, try setting next wrapper for song with id " + intExtra);
+
+        Song song = getSongForID(intExtra);
+        if (trySettingNextWrapper(song)) {
+            initializeSong(song);
+
+        }
+
+
     }
+
+    //test for git
 }
