@@ -105,10 +105,10 @@ public class TestActivity extends ActionBarActivity implements View.OnClickListe
         Song strokes = new Song("The Strokes", "Reptilia");
         strokes.setMediaWrapperType(Song.MEDIA_WRAPPER_LOCAL_FILE);
 
-        Song random = new Song("test", "Codex");
+        Song random = new Song("Caribou", "Melody Day");
         random.setMediaWrapperType(Song.MEDIA_WRAPPER_REMOTE_SOUNDCLOUD);
 
-        Song random2 = new Song("test", "Lotus Flower");
+        Song random2 = new Song("Massive Attack", "Mezzanine");
         random2.setMediaWrapperType(Song.MEDIA_WRAPPER_REMOTE_SOUNDCLOUD);
 
         Log.d("", "call play queue next track");
