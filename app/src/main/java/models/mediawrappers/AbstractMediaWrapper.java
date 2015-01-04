@@ -14,7 +14,7 @@ import java.util.List;
 public abstract class AbstractMediaWrapper {
 
     Context context;
-    private List<Song> songs;
+    private Song song;
     private String playPath;
     private int counter;
 
@@ -32,12 +32,12 @@ public abstract class AbstractMediaWrapper {
     public abstract void computePlayPath(Song song) throws JSONException;
 
 
-    public Song getSong(int index) {
-        return songs.get(index);
+    public Song getSong() {
+        return song;
     }
 
-    public void setSong(List<Song> songs) {
-        this.songs = songs;
+    public void setSong(Song song) {
+        this.song = song;
     }
 
     public String getPlayPath() {

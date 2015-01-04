@@ -5,8 +5,6 @@ import android.content.Context;
 import models.apiwrappers.CallbackInterface;
 import models.mediaModels.Song;
 
-import java.util.List;
-
 /**
  * Created by charlotte on 06.12.14.
  */
@@ -19,8 +17,8 @@ public abstract class RemoteFileStreamingMediaWrapper extends FileStreamingMedia
         super(context, playPath);
     }
 
-    public RemoteFileStreamingMediaWrapper(Context context, List<Song> songs) {
-        super(context, songs);
+    public RemoteFileStreamingMediaWrapper(Context context, Song song) {
+        super(context, song);
     }
 
 
