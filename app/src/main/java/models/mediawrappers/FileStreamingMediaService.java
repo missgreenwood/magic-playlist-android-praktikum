@@ -18,6 +18,9 @@ import java.io.IOException;
 public class FileStreamingMediaService extends Service implements MediaPlayer.OnPreparedListener, MediaPlayer.OnCompletionListener,
         MediaPlayer.OnErrorListener, MediaPlayer.OnBufferingUpdateListener {
 
+
+    public static final String TAG = "main.java.models.mediawrappers.FileStreamingMediaService";
+
     public static final String ACTION_PLAY = "com.example.action.PLAY";
     public static final String ACTION_STOP = "com.example.action.STOP";
     public static final String ACTION_PAUSE = "com.example.action.PAUSE";
@@ -25,7 +28,7 @@ public class FileStreamingMediaService extends Service implements MediaPlayer.On
     public static final String INFO_PlAYPATH = "com.example.info.playpath";
     public static final String INFO_SONGNAME = "com.example.info.songname";
     public static final int NOTIFICATION_ID = 555; //TODO: was für Nummer?
-    public static String TRACK_FINISHED = "track finished";
+    public static final String TRACK_FINISHED = "track finished";
     AudioState state;
     private String playPath;
     private MediaPlayer mediaPlayer = null;
@@ -34,7 +37,7 @@ public class FileStreamingMediaService extends Service implements MediaPlayer.On
     @Override
     public int onStartCommand(Intent intent, int flags, int startId) {
 
-        Log.d("", "intent started");
+        Log.d(TAG, "intent started");
 
         if (intent.getAction().equals(ACTION_PLAY)) {
 
@@ -58,7 +61,7 @@ public class FileStreamingMediaService extends Service implements MediaPlayer.On
                     "Playing " + songname, null);
 
             startForeground(NOTIFICATION_ID, notification);
-            Log.d("", "start play");
+            Log.d(TAG, "start play");
 
             mediaPlayer = new MediaPlayer();  // initialize it here
             mediaPlayer.setOnPreparedListener(this);
@@ -74,15 +77,15 @@ public class FileStreamingMediaService extends Service implements MediaPlayer.On
             mediaPlayer.prepareAsync(); // prepare async to not block main thread
         } else if (intent.getAction().equals(ACTION_PAUSE)) {
 
-            Log.d("", "has received intent with action pause, state is " + state + " is playing: " + isPlaying);
-//            Log.d("", "media player is playing: "+mediaPlayer.isPlaying());
+            Log.d(TAG, "has received intent with action pause, state is " + state + " is playing: " + isPlaying);
+//            Log.d(TAG, "media player is playing: "+mediaPlayer.isPlaying());
 
             if (state == AudioState.Playing && mediaPlayer.isPlaying()) {
-                Log.d("", "set state to paused");
+                Log.d(TAG, "set state to paused");
 
                 try {
 
-                mediaPlayer.pause();
+                    mediaPlayer.pause();
                     state = AudioState.Paused;
                 } catch (IllegalStateException e) {
 
@@ -115,7 +118,7 @@ public class FileStreamingMediaService extends Service implements MediaPlayer.On
 
     @Override
     public void onPrepared(MediaPlayer mp) {
-        Log.d("", "on prepared called, set state to playing");
+        Log.d(TAG, "on prepared called, set state to playing");
 
         try {
             mediaPlayer.start();
@@ -130,9 +133,9 @@ public class FileStreamingMediaService extends Service implements MediaPlayer.On
     public void onCompletion(MediaPlayer mp) {
         //TODO: send some stats as broadcast???
         try {
-        mediaPlayer.release();
+            mediaPlayer.release();
             state = AudioState.Stopped;
-        Log.d("", "on completion");
+            Log.d(TAG, "on completion");
         } catch (IllegalStateException e) {
 
             e.printStackTrace();
@@ -145,7 +148,6 @@ public class FileStreamingMediaService extends Service implements MediaPlayer.On
         sendBroadcast(broadcastIntent);
 
 
-
         //Intent broadcastIntent = new Intent("")
 
         //TODO: macht das irgendwie Sinn?
@@ -156,7 +158,7 @@ public class FileStreamingMediaService extends Service implements MediaPlayer.On
 
     public void onDestroy() {
 
-        Log.d("", "on destroy?");
+        Log.d(TAG, "on destroy?");
 
 
         //  if (mediaPlayer.isPlaying()) {
@@ -173,7 +175,7 @@ public class FileStreamingMediaService extends Service implements MediaPlayer.On
     public boolean onError(MediaPlayer mediaPlayer, int i, int i2) {
         {
 
-            Log.d("", "on error");
+            Log.d(TAG, "on error");
 
             mediaPlayer.reset();
             // mediaPlayer = null;
@@ -184,7 +186,7 @@ public class FileStreamingMediaService extends Service implements MediaPlayer.On
 
     @Override
     public void onBufferingUpdate(MediaPlayer mp, int percent) {
-        Log.d("", "onBufferingUpdate percent:" + percent);
+        //  Log.d(TAG, "onBufferingUpdate percent:" + percent);
     }
 
 

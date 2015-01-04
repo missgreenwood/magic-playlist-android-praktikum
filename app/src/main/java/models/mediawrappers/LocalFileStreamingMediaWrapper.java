@@ -8,24 +8,25 @@ import android.util.Log;
 
 import models.mediaModels.Song;
 
-import java.util.List;
-
 /**
  * Created by lotta on 02.12.14.
  */
 public class LocalFileStreamingMediaWrapper extends FileStreamingMediaWrapper {
+
+    public static final String TAG = "main.java.models.mediawrappers.LocalFileStreamingMediaWrapper";
+
     public LocalFileStreamingMediaWrapper(Context context, String playPath) {
         super(context, playPath);
     }
 
-    public LocalFileStreamingMediaWrapper(Context context, List<Song> songs) {
-        super(context, songs);
-       //computePlayPath(song);
+    public LocalFileStreamingMediaWrapper(Context context, Song song) {
+        super(context, song);
+        //computePlayPath(song);
     }
 
     @Override
     public void computePlayPath(Song song) {
-        Log.d("", "start playpath computation");
+        Log.d("", "start playpath computation for song: " + song.toString());
         String path = "";
         String[] projection = {
                 MediaStore.Audio.Media.DATA};
@@ -39,7 +40,7 @@ public class LocalFileStreamingMediaWrapper extends FileStreamingMediaWrapper {
         try {
             while (q.moveToNext()) {
                 path = q.getString(0);
-                Log.d("", "compute playpath path: "+q.getString(0) + "\n");
+                Log.d("", "compute playpath path: " + q.getString(0) + "\n");
             }
         } finally {
             q.close();
@@ -51,19 +52,27 @@ public class LocalFileStreamingMediaWrapper extends FileStreamingMediaWrapper {
 
     @Override
     public boolean lookForSong() {
-        computePlayPath(getSong(counter));
+
+        Log.d(TAG, "look for song: " + getSong().toString());
+
+        computePlayPath(getSong());
 
         //TODO: in Methode
 
         Intent intent = new Intent();
 
+        Log.d(TAG, "local playpath: " + getPlayPath());
+
         if (getPlayPath() == null || getPlayPath().equals("")) {
             intent.setAction(PlayQueue.SONG_NOT_AVAILABLE);
+            Log.d(TAG, "send song not available");
         } else {
             intent.setAction(PlayQueue.SONG_AVAILABLE);
+            Log.d(TAG, "send song available");
 
         }
 
+        intent.putExtra(PlayQueue.SONG_ID, getSong().getSongID());
         context.sendBroadcast(intent);
 
 

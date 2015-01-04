@@ -28,6 +28,7 @@ public class APIWrapper extends AsyncTask<String, Void, String> {
 
     public static final String GET_METHOD = "get_method";
     public static final String POST_METHOD = "post_method";
+    private static final String TAG = "main.java.models.apiwrappers.APIWrapper";
     private CallbackInterface parent;
     private String callback;
     private String method;
@@ -64,8 +65,8 @@ public class APIWrapper extends AsyncTask<String, Void, String> {
 
     @Override
     protected void onPostExecute(String response) {
-        Log.d("", "onpostexecute");
-        Log.d("", "json array string: " + response);
+        Log.d(TAG, "onpostexecute");
+        Log.d(TAG, "json array string: " + response);
 
         //   parent.processWebCallResult(response, true);
 
@@ -128,15 +129,15 @@ public class APIWrapper extends AsyncTask<String, Void, String> {
 
         if (httpResponse != null) {
             httpEntity = httpResponse.getEntity();
-            Log.d("", "length: " + httpEntity.getContentLength());
-            Log.d("", "teeest: " + httpEntity.toString());
+            Log.d(TAG, "length: " + httpEntity.getContentLength());
+            Log.d(TAG, "teeest: " + httpEntity.toString());
 
 
             try {
                 response = EntityUtils.toString(httpEntity);
 
 
-                Log.d("", "response: " + response);
+                Log.d(TAG, "response: " + response);
             } catch (IOException e) {
                 e.printStackTrace();
             }
