@@ -1,5 +1,7 @@
 package models.mediaModels;
 
+import android.util.Log;
+
 import models.mediawrappers.AbstractMediaWrapper;
 
 /**
@@ -8,18 +10,18 @@ import models.mediawrappers.AbstractMediaWrapper;
 
 
 public class Song {
-
-
+    private static final Object countLock = new Object();
     //TODO: anderes Package
-
     public static String MEDIA_WRAPPER_LOCAL_FILE = "local file";
     public static String MEDIA_WRAPPER_REMOTE_SOUNDCLOUD = "remote file soundcloud";
     public static String MEDIA_WRAPPER_SPOTIFY = "media warpper spotify";
+    private static int currentSongID = 0;
     //TODO: ändert das so, wie ihrs braucht, also etwas separate Artist-Klasse. Ich werde nur aus dem Song mittels getArtist() den Artist auslesen
     private String artist;
     private String songname;
     private AbstractMediaWrapper mediaWrapper;
     private String wrapperType;
+    private int songID;
 
     /**
      * Constructor for Song with songname and artist.
@@ -30,6 +32,12 @@ public class Song {
     public Song(String artist, String songname) {
         this.artist = artist;
         this.songname = songname;
+        synchronized (countLock) {
+            currentSongID++;
+        }
+        this.songID = currentSongID;
+
+        Log.d("", "created song object with " + artist + songname + " with id: " + currentSongID);
     }
 
     /**
@@ -43,6 +51,24 @@ public class Song {
         this.artist = artist;
         this.songname = songname;
         this.wrapperType = wrapperType;
+    }
+
+    @Override
+    public String toString() {
+        return "Song{" +
+                "artist='" + artist + '\'' +
+                ", songname='" + songname + '\'' +
+                ", songID=" + songID +
+                ", wrapperType='" + wrapperType + '\'' +
+                '}';
+    }
+
+    public int getSongID() {
+        return songID;
+    }
+
+    public void setSongID(int songID) {
+        this.songID = songID;
     }
 
     public AbstractMediaWrapper getMediaWrapper() {
