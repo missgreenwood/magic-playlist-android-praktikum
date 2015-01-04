@@ -6,17 +6,19 @@ import models.mediawrappers.AbstractMediaWrapper;
 
 /**
  * Created by lotta on 02.12.14.
+ *
+ * @author charlotte
+ *         <p/>
+ *         Represents a song.
  */
 
 
 public class Song {
     private static final Object countLock = new Object();
-    //TODO: anderes Package
     public static String MEDIA_WRAPPER_LOCAL_FILE = "local file";
     public static String MEDIA_WRAPPER_REMOTE_SOUNDCLOUD = "remote file soundcloud";
     public static String MEDIA_WRAPPER_SPOTIFY = "media warpper spotify";
     private static int currentSongID = 0;
-    //TODO: ändert das so, wie ihrs braucht, also etwas separate Artist-Klasse. Ich werde nur aus dem Song mittels getArtist() den Artist auslesen
     private String artist;
     private String songname;
     private AbstractMediaWrapper mediaWrapper;
@@ -99,8 +101,6 @@ public class Song {
         this.wrapperType = type;
     }
 
-
-//TODO: weitere Metadaten
 
     public String getArtist() {
         return artist;

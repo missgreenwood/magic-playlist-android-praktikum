@@ -2,6 +2,8 @@ package models.apiwrappers;
 
 /**
  * Created by charlotte on 19.12.14.
+ *
+ * @author charlotte
  */
 public interface CallbackInterface {
 

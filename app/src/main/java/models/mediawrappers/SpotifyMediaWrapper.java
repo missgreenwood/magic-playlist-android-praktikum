@@ -24,6 +24,8 @@ import java.util.ArrayList;
 
 /**
  * Created by lotta on 02.12.14.
+ * @author charlotte
+ * MediaWrapper for Spotify; uses Spotify SDK
  */
 public class SpotifyMediaWrapper extends RemoteFileStreamingMediaWrapper implements PlayerNotificationCallback, ConnectionStateCallback {
 
@@ -36,7 +38,7 @@ public class SpotifyMediaWrapper extends RemoteFileStreamingMediaWrapper impleme
     public static String TYPE_TRACK = "track";
     public static String SPOTIFY_QUERY_STRING = "q";
     // private List<Song> songs;
-    private String playPath;
+    // private String playPath;
     // private  Context context;
     private Spotify spotify;
     private Player mPlayer;
@@ -223,18 +225,24 @@ public class SpotifyMediaWrapper extends RemoteFileStreamingMediaWrapper impleme
 
 
         Log.d(TAG, "result: " + result);
+        // Intent intent = new Intent();
 
-        //TODO: song_not_available intent
+
         if ((uri != null) && !(uri.equals(""))) {
 
             setPlayPath(uri);
-            Intent intent = new Intent();
-            intent.setAction(PlayQueue.SONG_AVAILABLE);
-            intent.putExtra(PlayQueue.SONG_ID, getSong().getSongID());
-            getContext().sendBroadcast(intent);
+            sendSongAvailableIntent(true);
+            // intent.setAction(PlayQueue.SONG_AVAILABLE);
+            // intent.putExtra(PlayQueue.SONG_ID, getSong().getSongID());
 
+        } else {
+
+            sendSongAvailableIntent(false);
+            // intent.setAction(PlayQueue.SONG_NOT_AVAILABLE);
 
         }
+
+        // getContext().sendBroadcast(intent);
 
 
         //    Intent intent=new Intent();

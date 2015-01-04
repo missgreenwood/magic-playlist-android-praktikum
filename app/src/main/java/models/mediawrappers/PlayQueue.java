@@ -14,6 +14,10 @@ import java.util.Random;
 
 /**
  * Created by charlotte on 06.12.14.
+ * @author charlotte
+ *
+ * Represents the play queue comprised of a collection of songs that can be played one after another,
+ * randomly or chosen individually.
  */
 public class PlayQueue {
 
@@ -29,7 +33,6 @@ public class PlayQueue {
     private static final int IDLE = 2;
     public static String SONG_ID = "com.example.song_id";
     //TODO: das ist nur vorläufig:
-    private ArrayList<String> mediaWrappersOrdered;
     private Song currentSong;
     private Context context;
     private int counter;
@@ -101,7 +104,8 @@ public class PlayQueue {
         while (it.hasNext()) {
 
             String mediaWrapperType = it.next();
-            if (mediaWrapperType.equals(song.getMediaWrapperType())) return it.next();
+            if (mediaWrapperType.equals(song.getMediaWrapperType()) && it.hasNext())
+                return it.next();
         }
 
         return null;
@@ -116,13 +120,7 @@ public class PlayQueue {
         this.currentSong = currentSong;
     }
 
-    public int getCounter() {
-        return counter;
-    }
 
-    public void setCounter(int counter) {
-        this.counter = counter;
-    }
 
 
     /**
@@ -300,7 +298,7 @@ public class PlayQueue {
      * Tries setting another wrapper if the current wrapper cannot play
      * the song. Not yet implemented.
      *
-     * @return
+     * @return song
      */
     private boolean trySettingNextWrapper(Song song) {
 

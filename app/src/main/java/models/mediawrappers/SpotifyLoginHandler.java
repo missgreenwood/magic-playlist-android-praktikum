@@ -24,6 +24,8 @@ import models.apiwrappers.CallbackInterface;
 
 /**
  * Created by charlotte on 20.12.14.
+ *
+ * @author charlotte
  */
 public class SpotifyLoginHandler implements CallbackInterface {
 

@@ -96,8 +96,6 @@ public class TestActivity extends ActionBarActivity implements View.OnClickListe
         //  sw.lookForSong();
 
 
-
-
         String songpath = Environment.getExternalStorageDirectory().getPath() + "/Download/song.mp3";
 
 
@@ -148,8 +146,7 @@ public class TestActivity extends ActionBarActivity implements View.OnClickListe
         }
     }
 
-    public void openPlaylistGenerator()
-    {
+    public void openPlaylistGenerator() {
         Intent intent = new Intent(this, GeneratorActivity.class);
         startActivity(intent);
     }
@@ -170,12 +167,16 @@ public class TestActivity extends ActionBarActivity implements View.OnClickListe
         Song strokes = new Song("The Strokes", "Last Nite");
         Song random = new Song("Caribou", "Melody Day");
         Song random2 = new Song("The Strokes", "Reptilia");
+        Song newSong = new Song("Tocotronic", "Let there be rock");
+        Song fifthSong = new Song("Muse", "Hysteria");
 
 
         Playlist testListe = new Playlist();
         testListe.addSong(strokes);
         testListe.addSong(random);
         testListe.addSong(random2);
+        testListe.addSong(newSong);
+        testListe.addSong(fifthSong);
 
 
         playQueue = new PlayQueue(this, testListe.getSongsList());
@@ -197,7 +198,6 @@ public class TestActivity extends ActionBarActivity implements View.OnClickListe
 
 
     }
-
 
 
     //TODO: muss das wirklich hier rein?

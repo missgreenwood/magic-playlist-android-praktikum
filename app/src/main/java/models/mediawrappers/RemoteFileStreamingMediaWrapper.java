@@ -7,6 +7,9 @@ import models.mediaModels.Song;
 
 /**
  * Created by charlotte on 06.12.14.
+ *
+ * @author charlotte
+ *         We have a callback function for remote streaming.
  */
 public abstract class RemoteFileStreamingMediaWrapper extends FileStreamingMediaWrapper implements CallbackInterface {
 

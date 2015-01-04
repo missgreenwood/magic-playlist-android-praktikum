@@ -15,10 +15,9 @@ import java.util.ArrayList;
 
 /**
  * Created by charlotte on 19.12.14.
+ *
+ * @author TheDaAndy, charlotte
  */
-
-//TODO: sollte das serverseitig passieren???
-//NEIN, erstmal nicht... damit sparen wir uns ressourcen ;) höchstens dann, wenn wir auf unsere eigenen playlists zugreifen anstatt/parallel zu lastfm zugreifen (andy)
 
 
 public class LastfmMetadataWrapper extends AbstractMetadataWrapper {
@@ -106,7 +105,6 @@ public class LastfmMetadataWrapper extends AbstractMetadataWrapper {
 
         url = APIWrapper.encodeURL(url, params);
 
-        //TODO: String in Variable
         APIWrapper asyncHTTP = new APIWrapper(this, TOP_TRACKS_CALLBACK, APIWrapper.POST_METHOD);
         asyncHTTP.execute(url);
     }
@@ -143,9 +141,7 @@ public class LastfmMetadataWrapper extends AbstractMetadataWrapper {
             }
         }
 
-        //TODO: je nach Callback die passende Methode aufrufen
-        //JSON String verarbeiten
-        //irgendwelche Methoden aufrufen usw....
+
     }
 
     /**

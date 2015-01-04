@@ -1,7 +1,6 @@
 package models.mediawrappers;
 
 import android.content.Context;
-import android.content.Intent;
 import android.util.Log;
 
 import models.apiwrappers.APIWrapper;
@@ -18,6 +17,8 @@ import java.util.List;
 
 /**
  * Created by charlotte on 05.12.14.
+ * @author charlotte
+ * MediaWrapper for Soundcloud.
  */
 public class SoundCloudStreamingMediaWrapper extends RemoteFileStreamingMediaWrapper {
 
@@ -26,10 +27,10 @@ public class SoundCloudStreamingMediaWrapper extends RemoteFileStreamingMediaWra
     public static final String SOUNDCLOUD_CLIENT_ID = "9998e443138603b1b6be051350158448";
     public static final String SOUNDCLOUD_CLIENT_ID_STRING = "client_id";
     public static final String SOUNDCLOUD_QUERY_STRING = "q";
-    public static final String GET_METHOD = "GET";
+    // public static final String GET_METHOD = "GET";
     public static final String SOUNDCLOUD_TRACKS_BASE_URL = "https://api.soundcloud.com/tracks/";
     public static final String SOUNDCLOUD_STREAM_STRING = "stream";
-    private boolean playState = false;
+    // private boolean playState = false;
 
 
     public SoundCloudStreamingMediaWrapper(Context context, String playPath) {
@@ -80,24 +81,26 @@ public class SoundCloudStreamingMediaWrapper extends RemoteFileStreamingMediaWra
             }
             // play();
 
-            //TODO: send broadcast
 
-            Intent intent = new Intent();
+            // Intent intent = new Intent();
 
             if (newURL.equals("")) {
-                intent.setAction(PlayQueue.SONG_NOT_AVAILABLE);
+                // intent.setAction(PlayQueue.SONG_NOT_AVAILABLE);
+                sendSongAvailableIntent(false);
             } else {
-                intent.setAction(PlayQueue.SONG_AVAILABLE);
+                // intent.setAction(PlayQueue.SONG_AVAILABLE);
+                sendSongAvailableIntent(true);
 
             }
 
-            intent.putExtra(PlayQueue.SONG_ID, getSong().getSongID());
-            context.sendBroadcast(intent);
+            //  intent.putExtra(PlayQueue.SONG_ID, getSong().getSongID());
+            //  context.sendBroadcast(intent);
 
-            playState = false;
+            // playState = false;
         } catch (JSONException e) {
 
 
+            e.printStackTrace();
         }
 
 
@@ -105,7 +108,7 @@ public class SoundCloudStreamingMediaWrapper extends RemoteFileStreamingMediaWra
 
     @Override
     public void computePlayPath(Song song) {
-        String playpath = null;
+        // String playpath = null;
 
 
         //https://api.soundcloud.com/tracks/41772991/stream?client_id=9998e443138603b1b6be051350158448
@@ -129,7 +132,6 @@ public class SoundCloudStreamingMediaWrapper extends RemoteFileStreamingMediaWra
         //APIWrapper apiWrapper=new APIWrapper();
         //String jsonArrayString = apiWrapper.getJSONCall(url, APIWrapper.GET);
 
-        //TODO: String in Variable
         APIWrapper asyncHTTP = new APIWrapper(this, DEFAULT_CALLBACK, APIWrapper.GET_METHOD);
         asyncHTTP.execute(url);
 

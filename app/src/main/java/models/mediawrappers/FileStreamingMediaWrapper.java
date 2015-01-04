@@ -6,11 +6,9 @@ import android.util.Log;
 
 import models.mediaModels.Song;
 
-/**
- * Created by lotta on 02.12.14.
- */
 
 /**
+ * @author charlotte
  * For local AND remote files (http)!
  */
 public abstract class FileStreamingMediaWrapper extends AbstractMediaWrapper {
@@ -22,7 +20,6 @@ public abstract class FileStreamingMediaWrapper extends AbstractMediaWrapper {
 
     public FileStreamingMediaWrapper(Context context, String playPath) {
         this.context = context;
-        //TODO: sauberere Lösung?
         setPlayPath(playPath);
 
     }
@@ -51,7 +48,6 @@ public abstract class FileStreamingMediaWrapper extends AbstractMediaWrapper {
 
         if (getPlayPath() == null || getPlayPath().equals(""))
             return false;
-        //TODO: mit Exceptions
 
         Log.d(TAG, "play song " + getSong().getSongname());
         //this.setO

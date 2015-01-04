@@ -20,6 +20,9 @@ import java.util.List;
 
 /**
  * Created by charlotte on 05.12.14.
+ * @author charlotte
+ *
+ * This class can be used to make asynchronous web (API) calls over HTTP GET and HTTP POST
  */
 
 
@@ -113,7 +116,6 @@ public class APIWrapper extends AsyncTask<String, Void, String> {
             httpMessage = new HttpPost(url[0]);
 
         }
-        // http://developer.android.com/training/basics/fragments/index.html
 
 
         if (httpMessage != null) {

@@ -14,6 +14,9 @@ import java.io.IOException;
 
 /**
  * Created by lotta on 02.12.14.
+ * @author charlotte
+ *
+ * Foreground service for playing songs from local and remote http streaming sources.
  */
 public class FileStreamingMediaService extends Service implements MediaPlayer.OnPreparedListener, MediaPlayer.OnCompletionListener,
         MediaPlayer.OnErrorListener, MediaPlayer.OnBufferingUpdateListener {
@@ -27,7 +30,7 @@ public class FileStreamingMediaService extends Service implements MediaPlayer.On
     public static final String ACTION_RESUME = "com.example.action.RESUME";
     public static final String INFO_PlAYPATH = "com.example.info.playpath";
     public static final String INFO_SONGNAME = "com.example.info.songname";
-    public static final int NOTIFICATION_ID = 555; //TODO: was für Nummer?
+    public static final int NOTIFICATION_ID = 555;
     public static final String TRACK_FINISHED = "track finished";
     AudioState state;
     private String playPath;
@@ -131,7 +134,6 @@ public class FileStreamingMediaService extends Service implements MediaPlayer.On
 
     @Override
     public void onCompletion(MediaPlayer mp) {
-        //TODO: send some stats as broadcast???
         try {
             mediaPlayer.release();
             state = AudioState.Stopped;
@@ -141,7 +143,6 @@ public class FileStreamingMediaService extends Service implements MediaPlayer.On
             e.printStackTrace();
         }
 
-        //TODO: finally?
         //Was tun, wenn die Exception auftritt?
         Intent broadcastIntent = new Intent();
         broadcastIntent.setAction(TRACK_FINISHED);
@@ -150,7 +151,6 @@ public class FileStreamingMediaService extends Service implements MediaPlayer.On
 
         //Intent broadcastIntent = new Intent("")
 
-        //TODO: macht das irgendwie Sinn?
         //this.stopSelf();
 
         this.stopSelf();
@@ -178,6 +178,8 @@ public class FileStreamingMediaService extends Service implements MediaPlayer.On
             Log.d(TAG, "on error");
 
             mediaPlayer.reset();
+
+            //TODO: should I send a song completed or a song not available intent??
             // mediaPlayer = null;
         }
 
@@ -187,6 +189,9 @@ public class FileStreamingMediaService extends Service implements MediaPlayer.On
     @Override
     public void onBufferingUpdate(MediaPlayer mp, int percent) {
         //  Log.d(TAG, "onBufferingUpdate percent:" + percent);
+
+        /*I had to implement this listener because otherwise Android complained...
+        but we don't need it now*/
     }
 
 
