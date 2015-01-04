@@ -67,22 +67,24 @@ public class SoundCloudStreamingMediaWrapper extends RemoteFileStreamingMediaWra
 
             Log.d("", "trackid: "+trackID);
 
-            String newURL=SOUNDCLOUD_TRACKS_BASE_URL+trackID+"/"+SOUNDCLOUD_STREAM_STRING;
-            ArrayList<NameValuePair> params = new ArrayList<NameValuePair>();
-            params.add(clientIDPair);
-            newURL=APIWrapper.encodeURL(newURL, params);
+            String newURL = "";
+            if (trackID != 0) {
+                newURL = SOUNDCLOUD_TRACKS_BASE_URL + trackID + "/" + SOUNDCLOUD_STREAM_STRING;
+                ArrayList<NameValuePair> params = new ArrayList<NameValuePair>();
+                params.add(clientIDPair);
+                newURL = APIWrapper.encodeURL(newURL, params);
 
-            Log.d("","track_url :"+newURL);
-            setPlayPath(newURL);
+                Log.d("", "track_url :" + newURL);
+                setPlayPath(newURL);
 
-
+            }
             // play();
 
             //TODO: send broadcast
 
             Intent intent = new Intent();
 
-            if (newURL == null || newURL.equals("")) {
+            if (newURL.equals("")) {
                 intent.setAction(PlayQueue.SONG_NOT_AVAILABLE);
             } else {
                 intent.setAction(PlayQueue.SONG_AVAILABLE);
@@ -110,7 +112,7 @@ public class SoundCloudStreamingMediaWrapper extends RemoteFileStreamingMediaWra
         String url=SOUNDCLOUD_TRACKS_BASE_URL;
 
 
-        BasicNameValuePair queryStringPair = new BasicNameValuePair(SOUNDCLOUD_QUERY_STRING,   song.getSongname());
+        BasicNameValuePair queryStringPair = new BasicNameValuePair(SOUNDCLOUD_QUERY_STRING, song.getArtist() + " " + song.getSongname());
         BasicNameValuePair clientIDPair = new BasicNameValuePair(SOUNDCLOUD_CLIENT_ID_STRING, SOUNDCLOUD_CLIENT_ID);
 
 
@@ -120,6 +122,8 @@ public class SoundCloudStreamingMediaWrapper extends RemoteFileStreamingMediaWra
 
 
         url=APIWrapper.encodeURL(url,params);
+
+        Log.d("", url);
 
         //APIWrapper apiWrapper=new APIWrapper();
         //String jsonArrayString = apiWrapper.getJSONCall(url, APIWrapper.GET);
