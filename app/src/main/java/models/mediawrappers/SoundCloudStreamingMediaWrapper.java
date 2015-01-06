@@ -1,7 +1,6 @@
 package models.mediawrappers;
 
 import android.content.Context;
-import android.content.Intent;
 import android.util.Log;
 
 import models.apiwrappers.APIWrapper;
@@ -18,23 +17,27 @@ import java.util.List;
 
 /**
  * Created by charlotte on 05.12.14.
+ * @author charlotte
+ * MediaWrapper for Soundcloud.
  */
-public class SoundCloudStreamingMediaWrapper extends RemoteFileStreamingMediaWrapper{
+public class SoundCloudStreamingMediaWrapper extends RemoteFileStreamingMediaWrapper {
 
-    public static final String SOUNDCLOUD_CLIENT_ID="9998e443138603b1b6be051350158448";
-    public static final String SOUNDCLOUD_CLIENT_ID_STRING="client_id";
-    public static final String SOUNDCLOUD_QUERY_STRING="q";
-    public static final String GET_METHOD="GET";
-    public static final String SOUNDCLOUD_TRACKS_BASE_URL="https://api.soundcloud.com/tracks/";
-    public static final String SOUNDCLOUD_STREAM_STRING="stream";
-    private boolean playState = false;
+    public static final String TAG = "main.java.mediawrappers.SoundCloudStreamingMediaWrapper";
+
+    public static final String SOUNDCLOUD_CLIENT_ID = "9998e443138603b1b6be051350158448";
+    public static final String SOUNDCLOUD_CLIENT_ID_STRING = "client_id";
+    public static final String SOUNDCLOUD_QUERY_STRING = "q";
+    // public static final String GET_METHOD = "GET";
+    public static final String SOUNDCLOUD_TRACKS_BASE_URL = "https://api.soundcloud.com/tracks/";
+    public static final String SOUNDCLOUD_STREAM_STRING = "stream";
+    // private boolean playState = false;
 
 
     public SoundCloudStreamingMediaWrapper(Context context, String playPath) {
         super(context, playPath);
     }
 
-    public SoundCloudStreamingMediaWrapper(Context context, List<Song> songs) {
+    public SoundCloudStreamingMediaWrapper(Context context, Song songs) {
         super(context, songs);
     }
 
@@ -44,18 +47,16 @@ public class SoundCloudStreamingMediaWrapper extends RemoteFileStreamingMediaWra
 
         BasicNameValuePair clientIDPair = new BasicNameValuePair(SOUNDCLOUD_CLIENT_ID_STRING, SOUNDCLOUD_CLIENT_ID);
 
-        Log.d("", "call process Web Call Result");
+        Log.d(TAG, "call process Web Call Result");
         try {
             JSONArray jsonArray = new JSONArray(result);
 
-            int trackID=0;
+            int trackID = 0;
 
-            for (int i=0; i <jsonArray.length(); i++)
-            {
+            for (int i = 0; i < jsonArray.length(); i++) {
                 JSONObject row = jsonArray.getJSONObject(i);
-                if (row.getBoolean("streamable"))
-                {
-                    trackID=row.getInt("id");
+                if (row.getBoolean("streamable")) {
+                    trackID = row.getInt("id");
                     break;
                 }
 
@@ -63,38 +64,43 @@ public class SoundCloudStreamingMediaWrapper extends RemoteFileStreamingMediaWra
 
 
             //JSONObject first = (JSONObject) jsonArray.get(0);
-          //  = first.getInt("id");
+            //  = first.getInt("id");
 
-            Log.d("", "trackid: "+trackID);
+            Log.d(TAG, "trackid: " + trackID);
 
-            String newURL=SOUNDCLOUD_TRACKS_BASE_URL+trackID+"/"+SOUNDCLOUD_STREAM_STRING;
-            ArrayList<NameValuePair> params = new ArrayList<NameValuePair>();
-            params.add(clientIDPair);
-            newURL=APIWrapper.encodeURL(newURL, params);
+            String newURL = "";
+            if (trackID != 0) {
+                newURL = SOUNDCLOUD_TRACKS_BASE_URL + trackID + "/" + SOUNDCLOUD_STREAM_STRING;
+                ArrayList<NameValuePair> params = new ArrayList<NameValuePair>();
+                params.add(clientIDPair);
+                newURL = APIWrapper.encodeURL(newURL, params);
 
-            Log.d("","track_url :"+newURL);
-            setPlayPath(newURL);
+                Log.d(TAG, "track_url :" + newURL);
+                setPlayPath(newURL);
 
-
+            }
             // play();
 
-            //TODO: send broadcast
 
-            Intent intent = new Intent();
+            // Intent intent = new Intent();
 
-            if (newURL == null || newURL.equals("")) {
-                intent.setAction(PlayQueue.SONG_NOT_AVAILABLE);
+            if (newURL.equals("")) {
+                // intent.setAction(PlayQueue.SONG_NOT_AVAILABLE);
+                sendSongAvailableIntent(false);
             } else {
-                intent.setAction(PlayQueue.SONG_AVAILABLE);
+                // intent.setAction(PlayQueue.SONG_AVAILABLE);
+                sendSongAvailableIntent(true);
 
             }
 
-            context.sendBroadcast(intent);
+            //  intent.putExtra(PlayQueue.SONG_ID, getSong().getSongID());
+            //  context.sendBroadcast(intent);
 
-            playState = false;
+            // playState = false;
         } catch (JSONException e) {
 
 
+            e.printStackTrace();
         }
 
 
@@ -102,15 +108,15 @@ public class SoundCloudStreamingMediaWrapper extends RemoteFileStreamingMediaWra
 
     @Override
     public void computePlayPath(Song song) {
-        String playpath = null;
+        // String playpath = null;
 
 
         //https://api.soundcloud.com/tracks/41772991/stream?client_id=9998e443138603b1b6be051350158448
 
-        String url=SOUNDCLOUD_TRACKS_BASE_URL;
+        String url = SOUNDCLOUD_TRACKS_BASE_URL;
 
 
-        BasicNameValuePair queryStringPair = new BasicNameValuePair(SOUNDCLOUD_QUERY_STRING,   song.getSongname());
+        BasicNameValuePair queryStringPair = new BasicNameValuePair(SOUNDCLOUD_QUERY_STRING, song.getArtist() + " " + song.getSongname());
         BasicNameValuePair clientIDPair = new BasicNameValuePair(SOUNDCLOUD_CLIENT_ID_STRING, SOUNDCLOUD_CLIENT_ID);
 
 
@@ -119,12 +125,13 @@ public class SoundCloudStreamingMediaWrapper extends RemoteFileStreamingMediaWra
         params.add(queryStringPair);
 
 
-        url=APIWrapper.encodeURL(url,params);
+        url = APIWrapper.encodeURL(url, params);
+
+        Log.d(TAG, url);
 
         //APIWrapper apiWrapper=new APIWrapper();
         //String jsonArrayString = apiWrapper.getJSONCall(url, APIWrapper.GET);
 
-        //TODO: String in Variable
         APIWrapper asyncHTTP = new APIWrapper(this, DEFAULT_CALLBACK, APIWrapper.GET_METHOD);
         asyncHTTP.execute(url);
 
@@ -137,11 +144,10 @@ public class SoundCloudStreamingMediaWrapper extends RemoteFileStreamingMediaWra
 
 
         //TODO: diese Methoden ist eigentlich nicht notwendig, weil sie nur computePlayPath aufruft
-        computePlayPath(getSong(counter));
+        computePlayPath(getSong());
         return true;
 
     }
-
 
 
 }

@@ -91,6 +91,7 @@ public class GeneratorActivity extends ActionBarActivity implements
             genresListFragment = new GenresListFragment();
             FragmentTransaction transact = getSupportFragmentManager().beginTransaction();
             transact.add(android.R.id.content,genresListFragment,"genresListFragment");
+            transact.addToBackStack(null);
             transact.commit();
         }
     }
@@ -101,6 +102,7 @@ public class GeneratorActivity extends ActionBarActivity implements
             artistsFragment = new ArtistsFragment();
             FragmentTransaction transact = getSupportFragmentManager().beginTransaction();
             transact.add(R.id.generatorMainViewGroup, artistsFragment, "artistsFragment");
+            transact.addToBackStack(null);
             transact.commit();
         }
     }
@@ -111,6 +113,7 @@ public class GeneratorActivity extends ActionBarActivity implements
             songsFragment = new SongsFragment();
             FragmentTransaction transact = getSupportFragmentManager().beginTransaction();
             transact.add(R.id.generatorMainViewGroup, songsFragment, "songsFragment");
+            transact.addToBackStack(null);
             transact.commit();
         }
     }

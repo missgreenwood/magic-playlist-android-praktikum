@@ -1,25 +1,29 @@
 package models.mediaModels;
 
+import android.util.Log;
+
 import models.mediawrappers.AbstractMediaWrapper;
 
 /**
  * Created by lotta on 02.12.14.
+ *
+ * @author charlotte
+ *         <p/>
+ *         Represents a song.
  */
 
 
 public class Song {
-
-
-    //TODO: anderes Package
-
+    private static final Object countLock = new Object();
     public static String MEDIA_WRAPPER_LOCAL_FILE = "local file";
     public static String MEDIA_WRAPPER_REMOTE_SOUNDCLOUD = "remote file soundcloud";
     public static String MEDIA_WRAPPER_SPOTIFY = "media warpper spotify";
-    //TODO: ändert das so, wie ihrs braucht, also etwas separate Artist-Klasse. Ich werde nur aus dem Song mittels getArtist() den Artist auslesen
+    private static int currentSongID = 0;
     private String artist;
     private String songname;
     private AbstractMediaWrapper mediaWrapper;
     private String wrapperType;
+    private int songID;
 
     /**
      * Constructor for Song with songname and artist.
@@ -30,6 +34,12 @@ public class Song {
     public Song(String artist, String songname) {
         this.artist = artist;
         this.songname = songname;
+        synchronized (countLock) {
+            currentSongID++;
+        }
+        this.songID = currentSongID;
+
+        Log.d("", "created song object with " + artist + songname + " with id: " + currentSongID);
     }
 
     /**
@@ -43,6 +53,24 @@ public class Song {
         this.artist = artist;
         this.songname = songname;
         this.wrapperType = wrapperType;
+    }
+
+    @Override
+    public String toString() {
+        return "Song{" +
+                "artist='" + artist + '\'' +
+                ", songname='" + songname + '\'' +
+                ", songID=" + songID +
+                ", wrapperType='" + wrapperType + '\'' +
+                '}';
+    }
+
+    public int getSongID() {
+        return songID;
+    }
+
+    public void setSongID(int songID) {
+        this.songID = songID;
     }
 
     public AbstractMediaWrapper getMediaWrapper() {
@@ -73,8 +101,6 @@ public class Song {
         this.wrapperType = type;
     }
 
-
-//TODO: weitere Metadaten
 
     public String getArtist() {
         return artist;

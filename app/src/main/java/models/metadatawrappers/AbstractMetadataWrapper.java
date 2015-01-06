@@ -4,6 +4,9 @@ import models.apiwrappers.CallbackInterface;
 
 /**
  * Created by charlotte on 19.12.14.
+ *
+ * @author charlotte
+ *         Can be used to get metadata e.g. from lastfm.
  */
 public abstract class AbstractMetadataWrapper implements CallbackInterface {
 

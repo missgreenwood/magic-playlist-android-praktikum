@@ -1,6 +1,7 @@
 package models.mediawrappers;
 
 import android.content.Context;
+import android.content.Intent;
 
 import models.mediaModels.Song;
 
@@ -10,11 +11,13 @@ import java.util.List;
 
 /**
  * Created by lotta on 02.12.14.
+ * @author charlotte
+ *
  */
 public abstract class AbstractMediaWrapper {
 
     Context context;
-    private List<Song> songs;
+    private Song song;
     private String playPath;
     private int counter;
 
@@ -22,22 +25,22 @@ public abstract class AbstractMediaWrapper {
 
     public abstract boolean lookForSong();
 
-    //TODO: abstract method
     public abstract void stopPlayer();
 
     public abstract void pausePlayer();
 
+    /* Called when play button is pressed: either resume player or start new song*/
     public abstract void resumePlayer();
 
     public abstract void computePlayPath(Song song) throws JSONException;
 
 
-    public Song getSong(int index) {
-        return songs.get(index);
+    public Song getSong() {
+        return song;
     }
 
-    public void setSong(List<Song> songs) {
-        this.songs = songs;
+    public void setSong(Song song) {
+        this.song = song;
     }
 
     public String getPlayPath() {
@@ -56,4 +59,18 @@ public abstract class AbstractMediaWrapper {
         this.counter = counter;
     }
 
+
+    public void sendSongAvailableIntent(boolean available) {
+
+        Intent intent = new Intent();
+        intent.putExtra(PlayQueue.SONG_ID, getSong().getSongID());
+
+        if (available) {
+            intent.setAction(PlayQueue.SONG_AVAILABLE);
+        } else {
+            intent.setAction(PlayQueue.SONG_NOT_AVAILABLE);
+        }
+
+        context.sendBroadcast(intent);
+    }
 }

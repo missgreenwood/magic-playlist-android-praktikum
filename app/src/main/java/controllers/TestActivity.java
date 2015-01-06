@@ -13,6 +13,7 @@ import android.view.MenuItem;
 import android.view.View;
 import android.widget.Button;
 
+import models.mediaModels.Playlist;
 import models.mediaModels.Song;
 import models.mediawrappers.FileStreamingMediaService;
 import models.mediawrappers.PlayQueue;
@@ -95,38 +96,6 @@ public class TestActivity extends ActionBarActivity implements View.OnClickListe
         //  sw.lookForSong();
 
 
-        songs = new ArrayList<Song>();
-
-        //  Song spotify_test=new Song("Radiohead","Paranoid");
-        //    spotify_test.setMediaWrapperType(Song.MEDIA_WRAPPER_SPOTIFY);
-
-        Song radiohead = new Song("blub", "Videotape");
-        radiohead.setMediaWrapperType(Song.MEDIA_WRAPPER_LOCAL_FILE);
-        Song strokes = new Song("The Strokes", "Reptilia");
-        strokes.setMediaWrapperType(Song.MEDIA_WRAPPER_LOCAL_FILE);
-
-        Song random = new Song("test", "Codex");
-        random.setMediaWrapperType(Song.MEDIA_WRAPPER_REMOTE_SOUNDCLOUD);
-
-        Song random2 = new Song("test", "Lotus Flower");
-        random2.setMediaWrapperType(Song.MEDIA_WRAPPER_REMOTE_SOUNDCLOUD);
-
-        Log.d("", "call play queue next track");
-
-        //    songs.add(spotify_test);
-        songs.add(random);
-        songs.add(random2);
-        songs.add(strokes);
-//
-        songs.add(radiohead);
-        //   songs.add(radiohead);
-        //   songs.add(radiohead);
-
-
-        playQueue = new PlayQueue(this, songs);
-        playQueue.playSongs();
-
-
         String songpath = Environment.getExternalStorageDirectory().getPath() + "/Download/song.mp3";
 
 
@@ -177,8 +146,7 @@ public class TestActivity extends ActionBarActivity implements View.OnClickListe
         }
     }
 
-    public void openPlaylistGenerator()
-    {
+    public void openPlaylistGenerator() {
         Intent intent = new Intent(this, GeneratorActivity.class);
         startActivity(intent);
     }
@@ -196,6 +164,25 @@ public class TestActivity extends ActionBarActivity implements View.OnClickListe
         this.registerReceiver(broadcastReceiver, intentFilter);
 
 
+        Song strokes = new Song("The Strokes", "Last Nite");
+        Song random = new Song("Caribou", "Melody Day");
+        Song random2 = new Song("The Strokes", "Reptilia");
+        Song newSong = new Song("Tocotronic", "Let there be rock");
+        Song fifthSong = new Song("Muse", "Hysteria");
+
+
+        Playlist testListe = new Playlist();
+        testListe.addSong(strokes);
+        testListe.addSong(random);
+        testListe.addSong(random2);
+        testListe.addSong(newSong);
+        testListe.addSong(fifthSong);
+
+
+        playQueue = new PlayQueue(this, testListe.getSongsList());
+        playQueue.playSongs();
+
+
         super.onStart();
 
 
@@ -211,7 +198,6 @@ public class TestActivity extends ActionBarActivity implements View.OnClickListe
 
 
     }
-
 
 
     //TODO: muss das wirklich hier rein?

@@ -6,6 +6,7 @@ import android.util.Log;
 
 import models.apiwrappers.APIWrapper;
 import models.mediaModels.Song;
+
 import com.spotify.sdk.android.Spotify;
 import com.spotify.sdk.android.playback.Config;
 import com.spotify.sdk.android.playback.ConnectionStateCallback;
@@ -23,9 +24,13 @@ import java.util.ArrayList;
 
 /**
  * Created by lotta on 02.12.14.
+ * @author charlotte
+ * MediaWrapper for Spotify; uses Spotify SDK
  */
 public class SpotifyMediaWrapper extends RemoteFileStreamingMediaWrapper implements PlayerNotificationCallback, ConnectionStateCallback {
 
+
+    public static final String TAG = "main.java.models.mediawrappers.SpotifyMediaWrapper";
 
     public static String SPOTIFY_SEARCH_URL = "https://api.spotify.com/v1/search";
     public static String TYPE_TRACK_STRING = "type";
@@ -33,13 +38,13 @@ public class SpotifyMediaWrapper extends RemoteFileStreamingMediaWrapper impleme
     public static String TYPE_TRACK = "track";
     public static String SPOTIFY_QUERY_STRING = "q";
     // private List<Song> songs;
-    private String playPath;
+    // private String playPath;
     // private  Context context;
     private Spotify spotify;
     private Player mPlayer;
 
 
-    public SpotifyMediaWrapper(Context context, ArrayList<Song> songsTemp) {
+    public SpotifyMediaWrapper(Context context, Song songsTemp) {
         super(context, songsTemp);
         // this.context=context;
         //  setSong(songsTemp);
@@ -62,15 +67,15 @@ public class SpotifyMediaWrapper extends RemoteFileStreamingMediaWrapper impleme
         Config spotifyConfig = new Config(context, accessToken, SpotifyLoginHandler.CLIENT_ID);
 
 
-        Log.d("", "spotify play, config: " + (spotifyConfig == null));
+        Log.d(TAG, "spotify play, config: " + (spotifyConfig == null));
 
         if (spotifyConfig != null) {
-            Log.d("", "config: " + spotifyConfig.cachePath + spotifyConfig.oauthToken);
+            Log.d(TAG, "config: " + spotifyConfig.cachePath + spotifyConfig.oauthToken);
             mPlayer = spotify.getPlayer(spotifyConfig, this, new Player.InitializationObserver() {
                 @Override
                 public void onInitialized() {
 
-                    Log.d("", "player is initialised");
+                    Log.d(TAG, "player is initialised");
                     mPlayer.addConnectionStateCallback(SpotifyMediaWrapper.this);
                     mPlayer.addPlayerNotificationCallback(SpotifyMediaWrapper.this);
                     // mPlayer.play("spotify:track:0LTZD4vTsp0EN1wXatc9IR");
@@ -91,7 +96,7 @@ public class SpotifyMediaWrapper extends RemoteFileStreamingMediaWrapper impleme
 
 
         //TODO: Methode ernsthaft!
-        computePlayPath(getSong(getCounter()));
+        computePlayPath(getSong());
 
 
         return true;
@@ -120,7 +125,7 @@ public class SpotifyMediaWrapper extends RemoteFileStreamingMediaWrapper impleme
 
         url = APIWrapper.encodeURL(url, params);
 
-        Log.d("", "spotify url: " + url);
+        Log.d(TAG, "spotify url: " + url);
 
         //APIWrapper apiWrapper=new APIWrapper();
         //String jsonArrayString = apiWrapper.getJSONCall(url, APIWrapper.GET);
@@ -206,12 +211,12 @@ public class SpotifyMediaWrapper extends RemoteFileStreamingMediaWrapper impleme
             JSONArray trackListItems = trackListObject.getJSONArray("items");
             JSONObject first = trackListItems.getJSONObject(0);
 
-            Log.d("", "trackListObject: " + trackListObject);
+            Log.d(TAG, "trackListObject: " + trackListObject);
 
             uri = first.getString("uri");
 
 
-            Log.d("", "track uri: " + uri);
+            Log.d(TAG, "track uri: " + uri);
 
 
         } catch (JSONException e) {
@@ -219,18 +224,25 @@ public class SpotifyMediaWrapper extends RemoteFileStreamingMediaWrapper impleme
         }
 
 
-        Log.d("", "result: " + result);
+        Log.d(TAG, "result: " + result);
+        // Intent intent = new Intent();
 
-        //TODO: in Funktion
+
         if ((uri != null) && !(uri.equals(""))) {
 
             setPlayPath(uri);
-            Intent intent = new Intent();
-            intent.setAction(PlayQueue.SONG_AVAILABLE);
-            getContext().sendBroadcast(intent);
+            sendSongAvailableIntent(true);
+            // intent.setAction(PlayQueue.SONG_AVAILABLE);
+            // intent.putExtra(PlayQueue.SONG_ID, getSong().getSongID());
 
+        } else {
+
+            sendSongAvailableIntent(false);
+            // intent.setAction(PlayQueue.SONG_NOT_AVAILABLE);
 
         }
+
+        // getContext().sendBroadcast(intent);
 
 
         //    Intent intent=new Intent();

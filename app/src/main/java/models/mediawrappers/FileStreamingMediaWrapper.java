@@ -6,31 +6,28 @@ import android.util.Log;
 
 import models.mediaModels.Song;
 
-import java.util.List;
 
 /**
- * Created by lotta on 02.12.14.
- */
-
-/**
+ * @author charlotte
  * For local AND remote files (http)!
  */
 public abstract class FileStreamingMediaWrapper extends AbstractMediaWrapper {
 
 
+    public static final String TAG = "main.java.models.mediawrappers.FileStreamingMediaWrapper";
+
     public int counter;
 
     public FileStreamingMediaWrapper(Context context, String playPath) {
         this.context = context;
-        //TODO: sauberere Lösung?
         setPlayPath(playPath);
 
     }
 
 
-    public FileStreamingMediaWrapper(Context context, List<Song> songs) {
+    public FileStreamingMediaWrapper(Context context, Song song) {
         this.context = context;
-        setSong(songs);
+        setSong(song);
 
 
     }
@@ -40,11 +37,10 @@ public abstract class FileStreamingMediaWrapper extends AbstractMediaWrapper {
     public Context getContext() {
         return context;
     }
+
     public void setContext(Context context) {
         this.context = context;
     }
-
-
 
 
     @Override
@@ -52,13 +48,12 @@ public abstract class FileStreamingMediaWrapper extends AbstractMediaWrapper {
 
         if (getPlayPath() == null || getPlayPath().equals(""))
             return false;
-        //TODO: mit Exceptions
 
-        Log.d("", "play song " + getSong(counter).getSongname());
+        Log.d(TAG, "play song " + getSong().getSongname());
         //this.setO
         Intent playIntent = new Intent(context, FileStreamingMediaService.class);
         playIntent.putExtra(FileStreamingMediaService.INFO_PlAYPATH, getPlayPath());
-        playIntent.putExtra(FileStreamingMediaService.INFO_SONGNAME, getSong(counter).getSongname());
+        playIntent.putExtra(FileStreamingMediaService.INFO_SONGNAME, getSong().getSongname());
         playIntent.setAction(FileStreamingMediaService.ACTION_PLAY);
         context.startService(playIntent);
         return true;
@@ -75,7 +70,7 @@ public abstract class FileStreamingMediaWrapper extends AbstractMediaWrapper {
     @Override
     public void pausePlayer() {
 
-        Log.d("", "pause player in file streaming media wrapper");
+        Log.d(TAG, "pause player in file streaming media wrapper");
         Intent pauseIntent = new Intent(context, FileStreamingMediaService.class);
         pauseIntent.setAction(FileStreamingMediaService.ACTION_PAUSE);
         context.startService(pauseIntent);
@@ -85,7 +80,7 @@ public abstract class FileStreamingMediaWrapper extends AbstractMediaWrapper {
 
     @Override
     public void resumePlayer() {
-        Log.d("", "resume player in file streaming media wrapper");
+        Log.d(TAG, "resume player in file streaming media wrapper");
         Intent resumeIntent = new Intent(context, FileStreamingMediaService.class);
         resumeIntent.setAction(FileStreamingMediaService.ACTION_RESUME);
         context.startService(resumeIntent);

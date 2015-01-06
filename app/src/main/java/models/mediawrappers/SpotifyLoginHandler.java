@@ -24,8 +24,13 @@ import models.apiwrappers.CallbackInterface;
 
 /**
  * Created by charlotte on 20.12.14.
+ *
+ * @author charlotte
  */
 public class SpotifyLoginHandler implements CallbackInterface {
+
+
+    public static final String TAG = "main.java.models.mediawrappers.SpotifyLoginHandler";
 
     public static final String CLIENT_ID = "605ac27c70444b499869422e93a492f8";
     public static final String CLIENT_ID_STRING = "client_id";
@@ -93,7 +98,7 @@ public class SpotifyLoginHandler implements CallbackInterface {
 
         url = APIWrapper.encodeURL(url, params);
 
-        Log.d("", "spotify url: " + url);
+        Log.d(TAG, "spotify url: " + url);
 
         //APIWrapper apiWrapper=new APIWrapper();
         //String jsonArrayString = apiWrapper.getJSONCall(url, APIWrapper.GET);

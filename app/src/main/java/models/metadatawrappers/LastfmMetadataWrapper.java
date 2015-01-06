@@ -15,13 +15,14 @@ import java.util.ArrayList;
 
 /**
  * Created by charlotte on 19.12.14.
+ *
+ * @author TheDaAndy, charlotte
  */
-
-//TODO: sollte das serverseitig passieren???
-    //NEIN, erstmal nicht... damit sparen wir uns ressourcen ;) höchstens dann, wenn wir auf unsere eigenen playlists zugreifen anstatt/parallel zu lastfm zugreifen (andy)
 
 
 public class LastfmMetadataWrapper extends AbstractMetadataWrapper {
+
+    public static final String TAG = "main.java.models.metadatawrappers.LastfmMetadataWrapper";
 
     public static final String SIMILAR_ARTISTS_CALLBACK = "similar artists callback";
     public static final String TOP_TRACKS_CALLBACK = "top tracks callback";
@@ -46,7 +47,7 @@ public class LastfmMetadataWrapper extends AbstractMetadataWrapper {
 //        test.findSimilarArtists("Radiohead", 5);
 //    }
 
-    public LastfmMetadataWrapper (LastFmListener listener) {
+    public LastfmMetadataWrapper(LastFmListener listener) {
         this.listener = listener;
     }
 
@@ -75,7 +76,7 @@ public class LastfmMetadataWrapper extends AbstractMetadataWrapper {
         //APIWrapper apiWrapper=new APIWrapper();
         //String jsonArrayString = apiWrapper.getJSONCall(url, APIWrapper.GET);
 
-        Log.d("", "URL: " + url);
+        Log.d(TAG, "URL: " + url);
 
         //TODO: String in Variable
         APIWrapper asyncHTTP = new APIWrapper(this, SIMILAR_ARTISTS_CALLBACK, APIWrapper.GET_METHOD);
@@ -104,7 +105,6 @@ public class LastfmMetadataWrapper extends AbstractMetadataWrapper {
 
         url = APIWrapper.encodeURL(url, params);
 
-        //TODO: String in Variable
         APIWrapper asyncHTTP = new APIWrapper(this, TOP_TRACKS_CALLBACK, APIWrapper.POST_METHOD);
         asyncHTTP.execute(url);
     }
@@ -114,9 +114,8 @@ public class LastfmMetadataWrapper extends AbstractMetadataWrapper {
         if (listener == null) {
             return;
         }
-        switch(callback) {
-            case SIMILAR_ARTISTS_CALLBACK:
-            {
+        switch (callback) {
+            case SIMILAR_ARTISTS_CALLBACK: {
                 String[] firstAttribs = {"similarartists", "artist"},
                         getAttribs = {"name"};
                 String[][] artistsArray = convertJSONStringToArray(result, firstAttribs, getAttribs, null);
@@ -128,8 +127,7 @@ public class LastfmMetadataWrapper extends AbstractMetadataWrapper {
                 listener.onSimilarArtistsCallback(artistsNames);
                 break;
             }
-            case TOP_TRACKS_CALLBACK:
-            {
+            case TOP_TRACKS_CALLBACK: {
                 String[] firstAttribs = {"toptracks", "track"},
                         globalAttribs = {"artist"},
                         getAttribs = {"name"};
@@ -143,9 +141,7 @@ public class LastfmMetadataWrapper extends AbstractMetadataWrapper {
             }
         }
 
-        //TODO: je nach Callback die passende Methode aufrufen
-        //JSON String verarbeiten
-        //irgendwelche Methoden aufrufen usw....
+
     }
 
     /**
@@ -153,13 +149,14 @@ public class LastfmMetadataWrapper extends AbstractMetadataWrapper {
      * to get the relevant infos you have to get through some first attribs like "similarartists->artist"
      * this object then has an array of all artists found.
      * This function returns an global attribute found in the "similarartists" object and for each element in the array the in arrayValueAttribs defined attributeValues.
-     * @param jsonString the jsonString returned by lastfm call
-     * @param firstAttribs the attrib steps that have to be made to get to relevant infos (like: [similarartists, artist])
+     *
+     * @param jsonString        the jsonString returned by lastfm call
+     * @param firstAttribs      the attrib steps that have to be made to get to relevant infos (like: [similarartists, artist])
      * @param arrayValueAttribs the fetched attributeValues of each element in array
-     * @param globalAttributes (optional) the attributeKeys saved in first Step Object (in this case "similarartists").
-     *                         For toptracks it would be ["artist"]. the values will replace the attribKeys directly in the given array.
-     * */
-    private String[][] convertJSONStringToArray (String jsonString, String[] firstAttribs, String[] arrayValueAttribs, String[] globalAttributes) {
+     * @param globalAttributes  (optional) the attributeKeys saved in first Step Object (in this case "similarartists").
+     *                          For toptracks it would be ["artist"]. the values will replace the attribKeys directly in the given array.
+     */
+    private String[][] convertJSONStringToArray(String jsonString, String[] firstAttribs, String[] arrayValueAttribs, String[] globalAttributes) {
         String[][] arrayValues = null;
         try {
             JSONObject containerObject = new JSONObject(jsonString).getJSONObject(firstAttribs[0]);
@@ -188,7 +185,7 @@ public class LastfmMetadataWrapper extends AbstractMetadataWrapper {
             arrayValues = new String[elementsJsonArray.length()][arrayValueAttribs.length];
             for (int elIndex = 0; elIndex < elementsJsonArray.length(); elIndex++) {
                 JSONObject element = elementsJsonArray.getJSONObject(elIndex);
-                for(int attrIndex = 0; attrIndex < arrayValueAttribs.length; attrIndex++) {
+                for (int attrIndex = 0; attrIndex < arrayValueAttribs.length; attrIndex++) {
                     arrayValues[elIndex][attrIndex] = element.getString(arrayValueAttribs[attrIndex]);
                 }
             }
