@@ -2,8 +2,10 @@ package controllers;
 
 import android.content.Intent;
 import android.content.IntentFilter;
+import android.net.Uri;
 import android.os.Bundle;
 import android.os.Environment;
+import android.support.v4.app.FragmentTransaction;
 import android.support.v7.app.ActionBarActivity;
 import android.util.Log;
 import android.view.Menu;
@@ -11,20 +13,27 @@ import android.view.MenuItem;
 import android.view.View;
 import android.widget.Button;
 
+import com.spotify.sdk.android.authentication.AuthenticationResponse;
+import com.spotify.sdk.android.authentication.SpotifyAuthentication;
 import com.spotify.sdk.android.playback.Config;
 
 import java.util.ArrayList;
 
+import controllers.mainFragments.GeneratorFragment;
+import controllers.mainFragments.MyPlaylistsFragment;
 import models.mediaModels.Playlist;
 import models.mediaModels.Song;
 import models.mediawrappers.FileStreamingMediaService;
 import models.mediawrappers.PlayQueue;
+import models.playlist.PlaylistsManager;
 import tests.R;
 
 /**
  * Created by judith on 02.02.15.
  */
-public class MainActivity extends ActionBarActivity implements View.OnClickListener {
+public class MainActivity extends ActionBarActivity implements
+        View.OnClickListener
+{
 
     private Button myPlaylists;
     private Button playlistsGenerator;
@@ -34,6 +43,8 @@ public class MainActivity extends ActionBarActivity implements View.OnClickListe
     private ArrayList<Song> songs; //TODO: wieder lokale Variable, ist nur wegen der Testklassen
     private Config spotifyConfig;
     private MyBroadcastReceiver broadcastReceiver = null;
+    private MyPlaylistsFragment playlistsListFragment;
+    private GeneratorFragment generatorFragment;
 
     public ArrayList<Song> getSongs() {
         return songs;
@@ -72,6 +83,7 @@ public class MainActivity extends ActionBarActivity implements View.OnClickListe
         playlistsGenerator.setOnClickListener(this);
         otherPlaylists.setOnClickListener(this);
         settings.setOnClickListener(this);
+
         String songpath = Environment.getExternalStorageDirectory().getPath() + "/Download/song.mp3";
     }
 
@@ -101,11 +113,10 @@ public class MainActivity extends ActionBarActivity implements View.OnClickListe
 
         if (view == myPlaylists) {
             this.openMyPlaylists();
-        }
-            /*
         } else if (view == playlistsGenerator) {
             this.openPlaylistGenerator();
-
+        }
+        /*
         } else if (view == otherPlaylists) {
             this.openPlaylistBrowser();
 
@@ -134,12 +145,14 @@ public class MainActivity extends ActionBarActivity implements View.OnClickListe
         Song newSong = new Song("Tocotronic", "Let there be rock");
         Song fifthSong = new Song("Muse", "Hysteria");
 
-        Playlist testListe = new Playlist();
+        Playlist testListe = new Playlist("testListe");
         testListe.addSong(strokes);
         testListe.addSong(random);
         testListe.addSong(random2);
         testListe.addSong(newSong);
         testListe.addSong(fifthSong);
+
+        PlaylistsManager.getInstance().addPlaylist(testListe);
 
         playQueue = new PlayQueue(this, testListe.getSongsList());
         /* we call playSongs with true here i.e. the mediswrappers will all be overwritten!
@@ -156,9 +169,26 @@ public class MainActivity extends ActionBarActivity implements View.OnClickListe
     }
 
     public void openMyPlaylists() {
-       Intent intent = new Intent(this, MyplaylistsActivity.class);
-       startActivity(intent);
+        playlistsListFragment = (MyPlaylistsFragment) getSupportFragmentManager().findFragmentByTag("playlistsListFragment");
+        if (playlistsListFragment == null) {
+            playlistsListFragment = new MyPlaylistsFragment();
+            FragmentTransaction transact = getSupportFragmentManager().beginTransaction();
+            transact.add(android.R.id.content, playlistsListFragment, "playlistsListFragment");
+            transact.addToBackStack(null);
+            transact.commit();
+        }
    }
+
+    public void openPlaylistGenerator() {
+        generatorFragment = (GeneratorFragment) getSupportFragmentManager().findFragmentByTag("generatorFragment");
+        if (generatorFragment == null) {
+            generatorFragment = new GeneratorFragment();
+            FragmentTransaction transact = getSupportFragmentManager().beginTransaction();
+            transact.add(android.R.id.content, generatorFragment, "generatorFragment");
+            transact.addToBackStack(null);
+            transact.commit();
+        }
+    }
 
     /* public void openPlaylistBrowser() {
         Intent intent = new Intent(this, BrowserActivity.class);
@@ -169,4 +199,25 @@ public class MainActivity extends ActionBarActivity implements View.OnClickListe
         Intent intent = new Intent(this, SettingsActivity.class);
         startActivity(intent);
     } */
+
+    @Override
+    protected void onNewIntent(Intent intent) {
+        super.onNewIntent(intent);
+
+        Uri uri = intent.getData();
+        //TODO: intent filter oder sowas
+        Log.d("", "spotify auth received");
+
+        if (uri != null) {
+            Log.d("", "spotify auth received, uri not null");
+
+            AuthenticationResponse response = SpotifyAuthentication.parseOauthResponse(uri);
+            //  Config playerConfig = new Config(this, response.getAccessToken(), SpotifyMediaWrapper.CLIENT_ID);
+            //  setSpotifyConfig(playerConfig);
+
+            Log.d("", "irgendwas config: " + getSpotifyConfig().oauthToken);
+
+
+        }
+    }
 }

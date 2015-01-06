@@ -24,6 +24,7 @@ public class Song {
     private AbstractMediaWrapper mediaWrapper;
     private String wrapperType;
     private int songID;
+    private int length = -1;
 
     /**
      * Constructor for Song with songname and artist.
@@ -40,6 +41,12 @@ public class Song {
         this.songID = currentSongID;
 
         Log.d("", "created song object with " + artist + songname + " with id: " + currentSongID);
+    }
+
+    public Song ()
+    {
+        this("", "");
+        //informations are given afterwards, needed in PlaylistFileHandler
     }
 
     /**
@@ -118,5 +125,34 @@ public class Song {
         this.songname = songname;
     }
 
+    /**returns a filePath if song exists locally else returns remote mediastream*/
+    public void setSongUrl(String url)
+    {
+//        this.url = url;
+    }
 
+    public String getSongUrl()
+    {
+        String path = this.mediaWrapper.getPlayPath();
+        return path != null ? path : this.getMediaWrapperType();
+    }
+
+    public int getLength() {
+        return this.length; //unknown
+    }
+
+    public void setLength(int length) {
+        this.length = length;
+    }
+
+    @Override
+    public boolean equals(Object o) {
+        if (o instanceof Song) {
+            Song songObject = (Song) o;
+            return songObject.getSongname().contentEquals(this.getSongname()) &&
+                   songObject.getArtist().contentEquals(this.getArtist());
+        } else {
+            return false;
+        }
+    }
 }

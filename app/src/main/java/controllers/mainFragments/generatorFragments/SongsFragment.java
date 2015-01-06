@@ -1,7 +1,6 @@
-package controllers.generatorFragments;
+package controllers.mainFragments.generatorFragments;
 
 
-import android.app.Activity;
 import android.os.Bundle;
 import android.support.v4.app.Fragment;
 import android.view.KeyEvent;
@@ -18,13 +17,16 @@ import tests.R;
  */
 public class SongsFragment extends Fragment {
 
-    private Listener mListener;
     private OnSongPass dataPasser;
     private EditText editSong;
     private String enteredSong;
 
     public SongsFragment() {
         // Required empty public constructor
+    }
+
+    public void setListener(OnSongPass dataPasser) {
+        this.dataPasser = dataPasser;
     }
 
     @Override
@@ -36,26 +38,12 @@ public class SongsFragment extends Fragment {
         editSong = (EditText) view.findViewById(R.id.editSong);
         addKeyListener();
         // Add key listener to keep track of user input
-        mListener.songsClicked(view);
         return view;
-    }
-
-    @Override
-    public void onAttach(Activity activity) {
-        super.onAttach(activity);
-        try {
-            mListener = (Listener) activity;
-            dataPasser = (OnSongPass) activity;
-        } catch (ClassCastException e) {
-            throw new ClassCastException(activity.toString()
-                    + " must implement OnFragmentInteractionListener");
-        }
     }
 
     @Override
     public void onDetach() {
         super.onDetach();
-        mListener = null;
         dataPasser = null;
     }
 
@@ -74,10 +62,6 @@ public class SongsFragment extends Fragment {
                 return false;
             }
         });
-    }
-
-    public interface Listener {
-        public void songsClicked(View view);
     }
 
     // Declare interface to pass string entered song to GeneratorActivity

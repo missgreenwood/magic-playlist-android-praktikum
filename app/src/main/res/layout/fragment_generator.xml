@@ -1,0 +1,61 @@
+<FrameLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:id="@+id/generatorMainViewGroup"
+    tools:context="controllers.mainFragments.GeneratorFragment">
+
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_height="fill_parent"
+    android:layout_width="fill_parent"
+    android:orientation="horizontal"
+    android:background="@drawable/listening">
+    <LinearLayout
+        android:layout_width="0dip"
+        android:layout_height="fill_parent"
+        android:layout_weight=".275"
+        android:orientation="horizontal">
+    </LinearLayout>
+    <LinearLayout
+        android:layout_width="0dip"
+        android:layout_height="wrap_content"
+        android:layout_weight=".7"
+        android:orientation="vertical">
+        <Button
+            android:id="@+id/genresBtn"
+            android:text="@string/genres"
+            android:layout_width="fill_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="20dp"
+            style="@style/btnStyleOrange" />
+        <Button
+            android:id="@+id/artistsBtn"
+            android:text="@string/artists"
+            android:layout_width="fill_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="20dp"
+            style="@style/btnStyleOrange" />
+        <Button
+            android:id="@+id/songsBtn"
+            android:text="@string/songs"
+            android:layout_width="fill_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="20dp"
+            style="@style/btnStyleOrange" />
+        <Button
+            android:id="@+id/startGeneratorBtn"
+            android:text="@string/start_generator"
+            android:layout_width="fill_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="20dp"
+            style="@style/btnStyleOrange" />
+    </LinearLayout>
+    <LinearLayout
+        android:layout_width="0dip"
+        android:layout_height="fill_parent"
+        android:layout_weight="0.025">
+    </LinearLayout>
+</LinearLayout>
+
+</FrameLayout>

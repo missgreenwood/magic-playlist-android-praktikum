@@ -1,5 +1,7 @@
 package models.playlist;
 
+import java.util.ArrayList;
+
 import models.mediaModels.Playlist;
 import models.metadatawrappers.LastFmListener;
 import models.metadatawrappers.LastfmMetadataWrapper;
@@ -46,10 +48,14 @@ public class PlaylistGenerator implements LastFmListener {
     @Override
     public void onSimilarArtistsCallback(String[] artists) {
         int artistsCount = artists.length;
-        if (artistsCount == tryCount) {
-            lfm.findTopTracks(artists[tryCount], 1);
-        } else if (artistsCount > 0) {
-            lfm.findTopTracks(artists[artistsCount-1], 1);
+        if (artistsCount > 0) {
+            if (artistsCount == tryCount) {
+                lfm.findTopTracks(artists[tryCount-1], 5);
+            } else if (artistsCount > 0) {
+                lfm.findTopTracks(artists[artistsCount-1], 5);
+            } else {
+                listener.nextSongError(ERROR_NO_ARTIST_FOUND);
+            }
         } else {
             listener.nextSongError(ERROR_NO_ARTIST_FOUND);
         }
@@ -57,15 +63,30 @@ public class PlaylistGenerator implements LastFmListener {
 
     @Override
     public void onTopTracksCallback(Song[] tracks) {
-        if (tracks.length > 0) {
-            listener.nextSongFound(tracks[0]);
-        } else {
-            listener.nextSongError(ERROR_NO_TRACK_FOUND);
+        ArrayList<Song> playlistSongs = playlist.getSongsList();
+        for (Song track : tracks) {
+            if (!playlistSongs.contains(track)) {
+                listener.nextSongFound(track);
+                return;
+            }
         }
+        listener.nextSongError(ERROR_NO_TRACK_FOUND);
     }
 
     public void addSongToPlaylist(Song song) {
         playlist.addSong(song);
+    }
+
+    public void savePlaylist() {
+        PlaylistsManager.getInstance().addPlaylist(playlist);
+    }
+
+    public Playlist getPlaylist() {
+        return playlist;
+    }
+
+    public void createNewPlaylist(String name) {
+        playlist = new Playlist(name);
     }
 
     public interface Listener {

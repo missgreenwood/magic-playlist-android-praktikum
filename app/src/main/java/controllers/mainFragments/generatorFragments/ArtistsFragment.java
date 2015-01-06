@@ -1,7 +1,6 @@
-package controllers.generatorFragments;
+package controllers.mainFragments.generatorFragments;
 
 
-import android.app.Activity;
 import android.os.Bundle;
 import android.support.v4.app.Fragment;
 import android.view.KeyEvent;
@@ -18,13 +17,16 @@ import tests.R;
  */
 public class ArtistsFragment extends Fragment {
 
-    private Listener mListener;
     private OnArtistPass dataPasser;
     private EditText editArtist;
     private String editedArtist;
 
     public ArtistsFragment() {
         // Required empty public constructor
+    }
+
+    public void setListener(OnArtistPass dataPasser) {
+        this.dataPasser = dataPasser;
     }
 
     @Override
@@ -36,26 +38,12 @@ public class ArtistsFragment extends Fragment {
         editArtist = (EditText) view.findViewById(R.id.editArtist);
         addKeyListener();
         // Add key listener to keep track of user input
-        mListener.artistsClicked(view);
         return view;
-    }
-
-    @Override
-    public void onAttach(Activity activity) {
-        super.onAttach(activity);
-        try {
-            mListener = (Listener) activity;
-            dataPasser = (OnArtistPass) activity;
-        } catch (ClassCastException e) {
-            throw new ClassCastException(activity.toString()
-                    + " must implement OnFragmentInteractionListener");
-        }
     }
 
     @Override
     public void onDetach() {
         super.onDetach();
-        mListener = null;
         dataPasser = null;
     }
 
@@ -74,10 +62,6 @@ public class ArtistsFragment extends Fragment {
                 return false;
             }
         });
-    }
-
-    public interface Listener {
-        public void artistsClicked(View view);
     }
 
     // Declare interface to pass string artist to GeneratorActivity

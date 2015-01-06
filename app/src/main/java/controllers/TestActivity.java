@@ -1,6 +1,5 @@
 package controllers;
 
-import android.content.BroadcastReceiver;
 import android.content.Intent;
 import android.content.IntentFilter;
 import android.net.Uri;
@@ -147,8 +146,8 @@ public class TestActivity extends ActionBarActivity implements View.OnClickListe
     }
 
     public void openPlaylistGenerator() {
-        Intent intent = new Intent(this, GeneratorActivity.class);
-        startActivity(intent);
+//        Intent intent = new Intent(this, deprecatedGeneratorActivity.class);
+//        startActivity(intent);
     }
 
 

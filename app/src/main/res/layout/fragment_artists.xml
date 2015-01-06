@@ -1,7 +1,7 @@
 <FrameLayout xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:tools="http://schemas.android.com/tools" android:layout_width="match_parent"
     android:layout_height="match_parent"
-    tools:context="controllers.generatorFragments.ArtistsFragment"
+    tools:context="controllers.mainFragments.generatorFragments.ArtistsFragment"
     android:background="@drawable/listening">
     <!-- @author judith -->
     <LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"

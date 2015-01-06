@@ -1,9 +1,6 @@
 package models.mediawrappers;
 
-import android.content.BroadcastReceiver;
 import android.content.Context;
-import android.content.Intent;
-import android.content.IntentFilter;
 import android.util.Log;
 
 import models.mediaModels.Song;
@@ -285,8 +282,11 @@ public class PlayQueue {
      * Can be used by the GUI when pause button was pressed.
      */
     public void pausePlayer() {
+        Song currentSong = getCurrentSong();
 
-        getCurrentSong().getMediaWrapper().pausePlayer();
+        if (currentSong != null) {
+            currentSong.getMediaWrapper().pausePlayer();
+        }
     }
 
     /**

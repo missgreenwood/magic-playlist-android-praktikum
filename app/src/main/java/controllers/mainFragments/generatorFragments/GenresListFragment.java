@@ -1,6 +1,5 @@
-package controllers.generatorFragments;
+package controllers.mainFragments.generatorFragments;
 
-import android.app.Activity;
 import android.os.Bundle;
 import android.support.v4.app.ListFragment;
 import android.view.LayoutInflater;
@@ -18,10 +17,13 @@ import tests.R;
  */
 public class GenresListFragment extends ListFragment {
 
-    private Listener mListener;
     private OnGenrePass dataPasser;
     public GenresListFragment() {
 
+    }
+
+    public void setListener(OnGenrePass dataPasser) {
+        this.dataPasser = dataPasser;
     }
 
     @Override
@@ -41,33 +43,16 @@ public class GenresListFragment extends ListFragment {
         TextView tv = (TextView) viewg.findViewById(R.id.txtview);
         String selectedGenre = tv.getText().toString();
         Toast.makeText(getActivity(), selectedGenre, Toast.LENGTH_LONG).show();
-        mListener.genresClicked(view);
         // Pass string selectedGenre to GeneratorActivity
         dataPasser.onGenrePass(selectedGenre);
     }
 
     @Override
-    public void onAttach(Activity activity) {
-        super.onAttach(activity);
-        try {
-            mListener = (Listener) activity;
-            dataPasser = (OnGenrePass) activity;
-        } catch (ClassCastException e) {
-            throw new ClassCastException(activity.toString()
-                    + " must implement OnFragmentInteractionListener");
-        }
-    }
-
-    @Override
     public void onDetach() {
         super.onDetach();
-        mListener = null;
         dataPasser = null;
     }
 
-    public interface Listener {
-        public void genresClicked(View view);
-    }
 
     // Declare interface to pass string selectedGenre to GeneratorActivity
     public interface OnGenrePass {

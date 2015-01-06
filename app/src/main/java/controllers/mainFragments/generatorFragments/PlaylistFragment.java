@@ -1,4 +1,4 @@
-package controllers.generatorFragments;
+package controllers.mainFragments.generatorFragments;
 
 import android.app.Activity;
 import android.os.Bundle;
@@ -11,20 +11,13 @@ import models.mediaModels.Playlist;
 import models.mediaModels.Song;
 
 /**
- * A fragment representing a list of Items.
- * <p/>
- * <p/>
- * Activities containing this fragment MUST implement the {@link controllers.generatorFragments.PlaylistFragment.Listener}
- * interface.
+ * created by Andreas
  */
 public class PlaylistFragment extends ListFragment {
 
     private Listener mListener;
     private Playlist playlist;
-    /**
-     * Mandatory empty constructor for the fragment manager to instantiate the
-     * fragment (e.g. upon screen orientation changes).
-     */
+
     public PlaylistFragment() {
     }
 
