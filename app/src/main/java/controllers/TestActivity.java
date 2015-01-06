@@ -180,7 +180,12 @@ public class TestActivity extends ActionBarActivity implements View.OnClickListe
 
 
         playQueue = new PlayQueue(this, testListe.getSongsList());
-        playQueue.playSongs();
+        /* we call playSongs with true here i.e. the mediswrappers will all be overwritten!
+        set to false if you don't want media wrappers to be overwritten if they are not null
+         */
+
+        playQueue.playSongs(true);
+
 
 
         super.onStart();
