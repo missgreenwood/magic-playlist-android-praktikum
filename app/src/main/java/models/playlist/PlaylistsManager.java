@@ -16,14 +16,14 @@ public class PlaylistsManager {
 
     private ArrayList<Playlist> playlists;
 
-    private PlaylistsManager() {
+    public PlaylistsManager() {
         playlists = new ArrayList<>();
         loadPlaylistsFromDB();
     }
 
     private void loadPlaylistsFromDB()
     {
-
+        // TODO: implement
     }
 
     public void addPlaylist(Playlist playlist)
