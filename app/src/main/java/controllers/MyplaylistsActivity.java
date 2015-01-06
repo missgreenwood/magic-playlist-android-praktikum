@@ -18,7 +18,7 @@ import tests.R;
 /**
  * Created by judith on 27.12.14.
  */
-public class MyPlaylistsActivity extends ActionBarActivity implements
+public class MyplaylistsActivity extends ActionBarActivity implements
     PlaylistsListFragment.Listener {
 
     private PlaylistsListFragment playlistsListFragment;
@@ -50,7 +50,7 @@ public class MyPlaylistsActivity extends ActionBarActivity implements
     @Override
     public void playlistClicked(View view) {
         Log.d("", "Klick auf Button");
-        Intent intent = new Intent(this, MediaPlayer.class);
+        Intent intent = new Intent(this, TestActivity.class);
         startActivity(intent);
     }
 }

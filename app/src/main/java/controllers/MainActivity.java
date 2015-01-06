@@ -1,6 +1,7 @@
 package controllers;
 
 import android.content.Intent;
+import android.content.IntentFilter;
 import android.os.Bundle;
 import android.os.Environment;
 import android.support.v7.app.ActionBarActivity;
@@ -12,6 +13,12 @@ import android.widget.Button;
 
 import com.spotify.sdk.android.playback.Config;
 
+import java.util.ArrayList;
+
+import models.mediaModels.Playlist;
+import models.mediaModels.Song;
+import models.mediawrappers.FileStreamingMediaService;
+import models.mediawrappers.PlayQueue;
 import tests.R;
 
 /**
@@ -23,8 +30,26 @@ public class MainActivity extends ActionBarActivity implements View.OnClickListe
     private Button playlistsGenerator;
     private Button otherPlaylists;
     private Button settings;
+    private PlayQueue playQueue; //TODO: lokale Variable
+    private ArrayList<Song> songs; //TODO: wieder lokale Variable, ist nur wegen der Testklassen
     private Config spotifyConfig;
     private MyBroadcastReceiver broadcastReceiver = null;
+
+    public ArrayList<Song> getSongs() {
+        return songs;
+    }
+
+    public void setSongs(ArrayList<Song> songs) {
+        this.songs = songs;
+    }
+
+    public PlayQueue getPlayQueue() {
+        return playQueue;
+    }
+
+    public void setPlayQueue(PlayQueue playQueue) {
+        this.playQueue = playQueue;
+    }
 
     public Config getSpotifyConfig() {
         return spotifyConfig;
@@ -94,8 +119,44 @@ public class MainActivity extends ActionBarActivity implements View.OnClickListe
         startActivity(intent);
     } */
 
+    @Override
+    protected void onStart() {
+        IntentFilter intentFilter = new IntentFilter();
+        intentFilter.addAction(FileStreamingMediaService.TRACK_FINISHED);
+        intentFilter.addAction(PlayQueue.SONG_AVAILABLE);
+        intentFilter.addAction(PlayQueue.SONG_NOT_AVAILABLE);
+        broadcastReceiver = new MyBroadcastReceiver();
+        this.registerReceiver(broadcastReceiver, intentFilter);
+
+        Song strokes = new Song("The Strokes", "Last Nite");
+        Song random = new Song("Caribou", "Melody Day");
+        Song random2 = new Song("The Strokes", "Reptilia");
+        Song newSong = new Song("Tocotronic", "Let there be rock");
+        Song fifthSong = new Song("Muse", "Hysteria");
+
+        Playlist testListe = new Playlist();
+        testListe.addSong(strokes);
+        testListe.addSong(random);
+        testListe.addSong(random2);
+        testListe.addSong(newSong);
+        testListe.addSong(fifthSong);
+
+        playQueue = new PlayQueue(this, testListe.getSongsList());
+        /* we call playSongs with true here i.e. the mediswrappers will all be overwritten!
+        set to false if you don't want media wrappers to be overwritten if they are not null
+         */
+        playQueue.playSongs(true);
+        super.onStart();
+    }
+
+    @Override
+    protected void onStop() {
+        unregisterReceiver(broadcastReceiver);
+        super.onStop();
+    }
+
     public void openMyPlaylists() {
-       Intent intent = new Intent(this, MyPlaylistsActivity.class);
+       Intent intent = new Intent(this, MyplaylistsActivity.class);
        startActivity(intent);
    }
 

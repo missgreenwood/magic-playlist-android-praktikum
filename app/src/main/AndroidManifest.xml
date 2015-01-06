@@ -19,7 +19,7 @@
             android:label="@string/app_name">
         </activity>
         <activity
-            android:name="controllers.MyPlaylistsActivity"
+            android:name="controllers.MyplaylistsActivity"
             android:label="@string/my_playlists">
         </activity>
         <activity

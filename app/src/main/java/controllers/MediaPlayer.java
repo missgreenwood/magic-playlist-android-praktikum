@@ -1,7 +1,6 @@
 package controllers;
 
 import android.content.Intent;
-import android.content.IntentFilter;
 import android.net.Uri;
 import android.os.Bundle;
 import android.os.Environment;
@@ -18,15 +17,11 @@ import com.spotify.sdk.android.playback.Config;
 
 import java.util.ArrayList;
 
-import models.mediaModels.Playlist;
 import models.mediaModels.Song;
-import models.mediawrappers.FileStreamingMediaService;
 import models.mediawrappers.PlayQueue;
 import tests.R;
 
-/**
- * Created by judith on 06.01.15.
- */
+
 public class MediaPlayer extends ActionBarActivity implements View.OnClickListener {
 
     //public static MediaPlayer mediaPlayer = new MediaPlayer();
@@ -151,58 +146,6 @@ public class MediaPlayer extends ActionBarActivity implements View.OnClickListen
         Intent intent = new Intent(this, GeneratorActivity.class);
         startActivity(intent);
     }
-
-
-    @Override
-    protected void onStart() {
-
-
-        IntentFilter intentFilter = new IntentFilter();
-        intentFilter.addAction(FileStreamingMediaService.TRACK_FINISHED);
-        intentFilter.addAction(PlayQueue.SONG_AVAILABLE);
-        intentFilter.addAction(PlayQueue.SONG_NOT_AVAILABLE);
-        broadcastReceiver = new MyBroadcastReceiver();
-        this.registerReceiver(broadcastReceiver, intentFilter);
-
-
-        Song strokes = new Song("The Strokes", "Last Nite");
-        Song random = new Song("Caribou", "Melody Day");
-        Song random2 = new Song("The Strokes", "Reptilia");
-        Song newSong = new Song("Tocotronic", "Let there be rock");
-        Song fifthSong = new Song("Muse", "Hysteria");
-
-
-        Playlist testListe = new Playlist();
-        testListe.addSong(strokes);
-        testListe.addSong(random);
-        testListe.addSong(random2);
-        testListe.addSong(newSong);
-        testListe.addSong(fifthSong);
-
-
-        playQueue = new PlayQueue(this, testListe.getSongsList());
-        playQueue.playSongs();
-
-
-        super.onStart();
-
-
-    }
-
-
-    @Override
-    protected void onStop() {
-
-        unregisterReceiver(broadcastReceiver);
-
-        super.onStop();
-
-
-    }
-
-
-    //TODO: muss das wirklich hier rein?
-
 
     @Override
     protected void onNewIntent(Intent intent) {
