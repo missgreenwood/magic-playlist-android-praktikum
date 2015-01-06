@@ -125,14 +125,14 @@ public class PlayQueue {
 
     /**
      * This method should be used by other classes to play the songs previously added
-     * to the song list of the play queue.
-     *
+     * to the song list of the play queue; will overwrite media wrappers.
+     * @param overwrite Will overwrite existing media wrappers if true
      */
-    public void playSongs() {
+    public void playSongs(boolean overwrite) {
 
 
         Log.d(TAG, "play songs called");
-        initializePlaylist();
+        initializePlaylist(overwrite);
         playCurrentSong();
 
 
@@ -159,6 +159,7 @@ public class PlayQueue {
 
         }
     }
+
 
     public void initializeSong(Song song) {
 
@@ -200,13 +201,18 @@ public class PlayQueue {
 
     }
 
-    public void initializePlaylist() {
+    /**
+     * @param overwrite Will overwrite existing media wrappers if true
+     */
+    public void initializePlaylist(boolean overwrite) {
 
 
         for (Song song : songs) {
 
             Log.d(TAG, "initialize song: " + song.toString());
-            initializeSong(song);
+
+            if (overwrite || (song.getMediaWrapper() == null))
+                initializeSong(song);
 
         }
 
