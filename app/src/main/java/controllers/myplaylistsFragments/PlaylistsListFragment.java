@@ -26,7 +26,7 @@ public class PlaylistsListFragment extends ListFragment {
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
         ViewGroup rootView = (ViewGroup) inflater.inflate(R.layout.fragment_playlists, container, false);
-        // Hard coded array of playlists list for testing purposes
+        // Hard coded string array for testing
         // TODO: call method loadPlaylistsFromDB() from caller MyPlaylistsActivity
         String[] listItems = new String[] { "MyPlaylist1", "MyPlaylist2" , "OtherPlaylist1" , "OtherPlaylist2" };
         ArrayAdapter<String> adapter = new ArrayAdapter<String>(getActivity(), R.layout.rows, R.id.txtview, listItems);
@@ -41,9 +41,9 @@ public class PlaylistsListFragment extends ListFragment {
     public void onListItemClick(ListView l, View view, int position, long id) {
         ViewGroup viewg = (ViewGroup) view;
         TextView tv = (TextView) viewg.findViewById(R.id.txtview);
-        String selectedGenre = tv.getText().toString();
-        Toast.makeText(getActivity(), selectedGenre, Toast.LENGTH_LONG).show();
-        mListener.songClicked(view);
+        String selectedPlaylist = tv.getText().toString();
+        Toast.makeText(getActivity(), selectedPlaylist, Toast.LENGTH_LONG).show();
+        mListener.playlistClicked(view);
     }
 
     @Override
@@ -64,7 +64,7 @@ public class PlaylistsListFragment extends ListFragment {
     }
 
     public interface Listener {
-        public void songClicked(View view);
+        public void playlistClicked(View view);
     }
 }
 
