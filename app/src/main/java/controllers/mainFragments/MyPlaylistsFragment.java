@@ -4,7 +4,6 @@ import android.os.Bundle;
 import android.support.v4.app.FragmentActivity;
 import android.support.v4.app.FragmentTransaction;
 import android.support.v4.app.ListFragment;
-import android.support.v7.app.ActionBar;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -35,7 +34,7 @@ public class MyPlaylistsFragment extends ListFragment {
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
         ViewGroup rootView = (ViewGroup) inflater.inflate(R.layout.fragment_playlists, container, false);
-        getActionBar().setTitle("My Playlists");
+        ((MainActivity) getActivity()).setActionBarTitle("My Playlists");
         // Hard coded string array for testing
         // TODO: call method loadPlaylistsFromDB() from caller MyPlaylistsActivity
         playlists = PlaylistsManager.getInstance().getPlaylists();
@@ -55,10 +54,6 @@ public class MyPlaylistsFragment extends ListFragment {
     // Handle Item click event
     public void onListItemClick(ListView l, View view, int position, long id) {
         playlistClicked(position);
-    }
-
-    private ActionBar getActionBar() {
-        return ((MainActivity) getActivity()).getSupportActionBar();
     }
 
     public void playlistClicked(int playlistId) {

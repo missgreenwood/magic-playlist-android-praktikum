@@ -22,7 +22,6 @@ import models.mediaModels.Playlist;
 import models.mediaModels.Song;
 import models.mediawrappers.FileStreamingMediaService;
 import models.mediawrappers.PlayQueue;
-import models.playlist.PlaylistsManager;
 import tests.R;
 
 /**
@@ -198,6 +197,11 @@ public class MainActivity extends ActionBarActivity implements
         Intent intent = new Intent(this, SettingsActivity.class);
         startActivity(intent);
     } */
+
+
+    public void setActionBarTitle (String title) {
+        getSupportActionBar().setTitle(title);
+    }
 
     @Override
     protected void onNewIntent(Intent intent) {
