@@ -35,7 +35,7 @@ public class SongsFragment extends Fragment {
                              Bundle savedInstanceState) {
         // Inflate the layout for this fragment
         View view = inflater.inflate(R.layout.fragment_songs, container, false);
-        ((MainActivity) getActivity()).setActionBarTitle("Songs");
+        ((MainActivity)getActivity()).getSupportActionBar().setTitle("Songs");
         // Get edittext component
         editSong = (EditText) view.findViewById(R.id.editSong);
         addKeyListener();
