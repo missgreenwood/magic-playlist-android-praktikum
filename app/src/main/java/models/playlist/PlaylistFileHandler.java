@@ -33,20 +33,41 @@ public class PlaylistFileHandler {
         File[] playlistFiles = dir.listFiles(new FilenameFilter() {
             @Override
             public boolean accept(File dir, String filename) {
-                return filename.matches(".+\\.pls");
+                return filename.matches(".+(\\.pls|\\.m3u)$");
             }
         });
 
         for (File playlistFile : playlistFiles) {
-            String playlistName = playlistFile.getName().replace(".pls", "");
-            Playlist playlist = PlaylistFileHandler.loadPlaylist(playlistName);
+            String playlistName = playlistFile.getName();
+            Playlist playlist;
+            if (playlistName.matches(".+\\.pls$")) {
+                playlist = loadPlaylist(playlistName.replaceAll("\\.pls$", ""), "pls");
+            } else if (playlistName.matches(".+\\.m3u$")) {
+                playlist = loadPlaylist(playlistName.replaceAll("\\.m3u$", ""), "m3u");
+            } else {
+                continue;
+            }
             playlists.add(playlist);
         }
 
         return playlists;
     }
 
-    private static Playlist loadPlaylist(String name) {
+    private static Playlist loadPlaylist(String name, String type) {
+        switch (type) {
+            case "pls":
+                return loadPlaylistPls(name);
+            case "m3u":
+                return loadPlaylistM3U(name);
+        }
+        return null;
+    }
+
+    private static Playlist loadPlaylistM3U(String name) {
+        return loadPlaylistPls(name);
+    }
+
+    private static Playlist loadPlaylistPls(String name) {
         Playlist newPlaylist = new Playlist(name);
 
         BufferedReader reader = null;
