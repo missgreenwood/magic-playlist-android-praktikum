@@ -87,7 +87,7 @@ public class PlayQueue {
     }
 
     public void setState(int state) {
-        Log.d(TAG, "set state " + getState() + " to " + state);
+        Log.v(TAG, "set state " + getState() + " to " + state);
 
         this.state = state;
     }
@@ -148,14 +148,14 @@ public class PlayQueue {
     public void playSongs(boolean overwrite) {
 
 
-        Log.d(TAG, "play songs called");
+        Log.v(TAG, "play songs called");
         initializePlaylist(overwrite);
         playCurrentSong();
     }
 
     private void playCurrentSong() {
 
-        Log.d(TAG, "play current song, counter is " + counter);
+        Log.v(TAG, "play current song, counter is " + counter);
 
         if (counter < songs.size() && counter >= 0) {
 
@@ -163,10 +163,10 @@ public class PlayQueue {
 
             if (currentSong.getMediaWrapper() != null) {
                 String playpath = currentSong.getMediaWrapper().getPlayPath();
-                Log.d(TAG, "playpath: " + playpath);
+             //   Log.d(TAG, "playpath: " + playpath);
                 if ((playpath != null) && (!playpath.equals(""))) {
 
-                    Log.d(TAG, "now we can play the current song");
+                 //   Log.d(TAG, "now we can play the current song");
                     setState(STATE_ALREADY_PlAYING);
                     currentSong.getMediaWrapper().play();
                 }
@@ -283,7 +283,7 @@ public class PlayQueue {
      */
     public void jumpToTrack(int index) {
 
-        Log.d(TAG, "is jumping to " + index);
+        Log.v(TAG, "is jumping to " + index);
 
         Song currentSong = getCurrentSong();
 
@@ -355,12 +355,12 @@ public class PlayQueue {
 
     public void onSongAvailable(int songID) {
 
-        Log.d(TAG, "intent received, playpath available for song " + getSongForID(songID));
+        Log.v(TAG, "intent received, playpath available for song " + getSongForID(songID));
 
         Song song = getSongForID(songID);
 
         if (getState() == STATE_WAITING && song == getCurrentSong()) {
-            Log.d(TAG, "state is waiting and song is current song...");
+            Log.v(TAG, "state is waiting and song is current song...");
             playCurrentSong();
 
         }
@@ -369,7 +369,7 @@ public class PlayQueue {
 
     public void onSongNotAvailable(int intExtra) {
 
-        Log.d(TAG, "intent received, try setting next wrapper for song with id " + intExtra);
+        Log.v(TAG, "intent received, try setting next wrapper for song with id " + intExtra);
 
         Song song = getSongForID(intExtra);
         if (trySettingNextWrapper(song)) {

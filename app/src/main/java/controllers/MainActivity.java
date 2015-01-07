@@ -63,7 +63,7 @@ public class MainActivity extends ActionBarActivity implements
     }
 //
     public void setSpotifyConfig(Config spotifyConfig) {
-        Log.d("", "set spotify config");
+        Log.v("", "set spotify config");
         this.spotifyConfig = spotifyConfig;
     }
 
@@ -107,7 +107,7 @@ public class MainActivity extends ActionBarActivity implements
 
     @Override
     public void onClick(View view) {
-        Log.d("", "Klick auf Button");
+        //Log.d("", "Klick auf Button");
 
         if (view == myPlaylists) {
             this.openMyPlaylists();

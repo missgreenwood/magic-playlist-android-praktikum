@@ -70,7 +70,7 @@ public abstract class FileStreamingMediaWrapper extends AbstractMediaWrapper {
     @Override
     public void pausePlayer() {
 
-        Log.d(TAG, "pause player in file streaming media wrapper");
+        Log.v(TAG, "pause player in file streaming media wrapper");
         Intent pauseIntent = new Intent(context, FileStreamingMediaService.class);
         pauseIntent.setAction(FileStreamingMediaService.ACTION_PAUSE);
         context.startService(pauseIntent);
@@ -80,7 +80,7 @@ public abstract class FileStreamingMediaWrapper extends AbstractMediaWrapper {
 
     @Override
     public void resumePlayer() {
-        Log.d(TAG, "resume player in file streaming media wrapper");
+        Log.v(TAG, "resume player in file streaming media wrapper");
         Intent resumeIntent = new Intent(context, FileStreamingMediaService.class);
         resumeIntent.setAction(FileStreamingMediaService.ACTION_RESUME);
         context.startService(resumeIntent);

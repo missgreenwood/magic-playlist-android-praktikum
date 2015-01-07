@@ -40,7 +40,7 @@ public class Song {
         }
         this.songID = currentSongID;
 
-        Log.d("", "created song object with " + artist + songname + " with id: " + currentSongID);
+        Log.v("", "created song object with " + artist + songname + " with id: " + currentSongID);
     }
 
     public Song ()

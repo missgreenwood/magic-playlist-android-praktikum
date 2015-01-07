@@ -18,7 +18,7 @@ public class MyBroadcastReceiver extends BroadcastReceiver {
     @Override
     public void onReceive(Context context, Intent intent) {
 
-        Log.d(TAG, "hier kommen die broadcasts an...");
+        //Log.d(TAG, "hier kommen die broadcasts an...");
 
 
         if (intent.getAction().equals(FileStreamingMediaService.TRACK_FINISHED)) {

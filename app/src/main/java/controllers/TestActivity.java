@@ -51,7 +51,7 @@ public class TestActivity extends ActionBarActivity implements View.OnClickListe
 
     public void setSpotifyConfig(Config spotifyConfig) {
 
-        Log.d("", "set spotify config");
+        Log.v("", "set spotify config");
         this.spotifyConfig = spotifyConfig;
     }
 
@@ -113,19 +113,19 @@ public class TestActivity extends ActionBarActivity implements View.OnClickListe
 
     @Override
     public void onClick(View view) {
-        Log.d("", "Klick auf Button");
+        Log.v("", "Klick auf Button");
         if (PlayQueue.getInstance() != null) {
 
             if (view == nextButton) {
-                Log.d("", "call play queue next track");
+                Log.v("", "call play queue next track");
                 PlayQueue.getInstance().nextTrack();
 
             } else if (view == beforeButton) {
-                Log.d("", "call play queue before track");
+                Log.v("", "call play queue before track");
                 PlayQueue.getInstance().beforeTrack();
 
             } else if (view == pauseButton) {
-                Log.d("", "pause button");
+                Log.v("", "pause button");
                 PlayQueue.getInstance().pausePlayer();
             } else if (view == resumeButton) {
                 PlayQueue.getInstance().resumePlayer();

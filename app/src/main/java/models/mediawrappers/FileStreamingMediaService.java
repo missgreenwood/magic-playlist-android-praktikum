@@ -121,7 +121,7 @@ public class FileStreamingMediaService extends Service implements MediaPlayer.On
 
     @Override
     public void onPrepared(MediaPlayer mp) {
-        Log.d(TAG, "on prepared called, set state to playing");
+        Log.v(TAG, "on prepared called, set state to playing");
 
         try {
             mediaPlayer.start();
@@ -137,7 +137,7 @@ public class FileStreamingMediaService extends Service implements MediaPlayer.On
         try {
             mediaPlayer.release();
             state = AudioState.Stopped;
-            Log.d(TAG, "on completion");
+            Log.v(TAG, "on completion");
         } catch (IllegalStateException e) {
 
             e.printStackTrace();
@@ -158,7 +158,7 @@ public class FileStreamingMediaService extends Service implements MediaPlayer.On
 
     public void onDestroy() {
 
-        Log.d(TAG, "on destroy?");
+        Log.v(TAG, "on destroy?");
 
 
         //  if (mediaPlayer.isPlaying()) {
@@ -175,7 +175,7 @@ public class FileStreamingMediaService extends Service implements MediaPlayer.On
     public boolean onError(MediaPlayer mediaPlayer, int i, int i2) {
         {
 
-            Log.d(TAG, "on error");
+            Log.e(TAG, "Media Player Error");
 
             mediaPlayer.reset();
 

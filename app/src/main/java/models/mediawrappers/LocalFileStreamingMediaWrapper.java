@@ -29,7 +29,7 @@ public class LocalFileStreamingMediaWrapper extends FileStreamingMediaWrapper {
 
     @Override
     public void computePlayPath(Song song) {
-        Log.d(TAG, "start playpath computation for song: " + song.toString());
+        Log.v(TAG, "start playpath computation for song: " + song.toString());
         String path = "";
         String[] projection = {
                 MediaStore.Audio.Media.DATA};
@@ -43,7 +43,7 @@ public class LocalFileStreamingMediaWrapper extends FileStreamingMediaWrapper {
         try {
             while (q.moveToNext()) {
                 path = q.getString(0);
-                Log.d("", "compute playpath path: " + q.getString(0) + "\n");
+                Log.v("", "compute playpath path: " + q.getString(0) + "\n");
             }
         } finally {
             q.close();
@@ -56,14 +56,14 @@ public class LocalFileStreamingMediaWrapper extends FileStreamingMediaWrapper {
     @Override
     public boolean lookForSong() {
 
-        Log.d(TAG, "look for song: " + getSong().toString());
+      //  Log.d(TAG, "look for song: " + getSong().toString());
 
         computePlayPath(getSong());
 
         //TODO: in Methode
 
 
-        Log.d(TAG, "local playpath: " + getPlayPath());
+    //    Log.d(TAG, "local playpath: " + getPlayPath());
 
         if (getPlayPath() == null || getPlayPath().equals("")) {
             // intent.setAction(PlayQueue.SONG_NOT_AVAILABLE);

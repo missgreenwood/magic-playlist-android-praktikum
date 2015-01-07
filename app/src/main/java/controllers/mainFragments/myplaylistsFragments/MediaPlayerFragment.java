@@ -61,17 +61,17 @@ public class MediaPlayerFragment extends android.support.v4.app.Fragment impleme
     public void onClick(View view) {
         switch (view.getId()) {
             case R.id.nextSongBtn:
-                Log.d("", "call play queue next track");
+                Log.v("", "call play queue next track");
                 PlayQueue.getInstance().nextTrack();
                 break;
 
             case R.id.lastSongBtn:
-                Log.d("", "call play queue before track");
+                Log.v("", "call play queue before track");
                 PlayQueue.getInstance().beforeTrack();
                 break;
 
             case R.id.pauseSongBtn:
-                Log.d("", "pause button");
+                Log.v("", "pause button");
                 PlayQueue.getInstance().pausePlayer();
                 break;
 
