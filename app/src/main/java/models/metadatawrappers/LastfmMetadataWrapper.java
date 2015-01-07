@@ -42,17 +42,10 @@ public class LastfmMetadataWrapper extends AbstractMetadataWrapper {
 
     private LastFmListener listener = null;
 
-//    public static void main(String[] args) {
-//        LastfmMetadataWrapper test = new LastfmMetadataWrapper(null);
-//        test.findSimilarArtists("Radiohead", 5);
-//    }
-
     public LastfmMetadataWrapper(LastFmListener listener) {
         this.listener = listener;
     }
 
-    //TODO: sollte der Artist eine eigene Klasse haben? Artist-Namen sind nicht eindeutig...
-    //ich denke erstmal nicht, notfalls schreiben wir das um, aber die beinhalten nicht sonderlich viel informationen... höchstens noch lastfm id?
     public String findSimilarArtists(String artist, int limit) {
         String url = LASTFM_BASE_URL;
 
@@ -63,7 +56,7 @@ public class LastfmMetadataWrapper extends AbstractMetadataWrapper {
         BasicNameValuePair formatPair = new BasicNameValuePair(LASTFM_FORMAT_STRING, LASTFM_FORMAT_JSON);
 
 
-        ArrayList<NameValuePair> params = new ArrayList<NameValuePair>();
+        ArrayList<NameValuePair> params = new ArrayList<>();
         params.add(keyPair);
         params.add(methodPair);
         params.add(artistPair);
@@ -73,12 +66,6 @@ public class LastfmMetadataWrapper extends AbstractMetadataWrapper {
 
         url = APIWrapper.encodeURL(url, params);
 
-        //APIWrapper apiWrapper=new APIWrapper();
-        //String jsonArrayString = apiWrapper.getJSONCall(url, APIWrapper.GET);
-
-        Log.d(TAG, "URL: " + url);
-
-        //TODO: String in Variable
         APIWrapper asyncHTTP = new APIWrapper(this, SIMILAR_ARTISTS_CALLBACK, APIWrapper.GET_METHOD);
         asyncHTTP.execute(url);
 
@@ -190,7 +177,7 @@ public class LastfmMetadataWrapper extends AbstractMetadataWrapper {
                 }
             }
         } catch (Exception e) {
-            Log.e("ERROR while converting element with attribs JSONString to JSONObject", e.getMessage());
+            Log.e("ERROR while converting element with attribs JSONString to JSONObject", "message: " + e.getMessage());
         }
         return arrayValues;
     }

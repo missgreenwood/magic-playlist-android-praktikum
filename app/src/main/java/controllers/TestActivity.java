@@ -121,8 +121,9 @@ public class TestActivity extends ActionBarActivity implements View.OnClickListe
                 PlayQueue.getInstance().nextTrack();
 
             } else if (view == beforeButton) {
+
                 Log.v("", "call play queue before track");
-                PlayQueue.getInstance().beforeTrack();
+                PlayQueue.getInstance().previousTrack();
 
             } else if (view == pauseButton) {
                 Log.v("", "pause button");

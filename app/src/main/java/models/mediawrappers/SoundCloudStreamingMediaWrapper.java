@@ -1,6 +1,7 @@
 package models.mediawrappers;
 
 import android.content.Context;
+import android.util.JsonReader;
 import android.util.Log;
 
 import models.apiwrappers.APIWrapper;
@@ -71,7 +72,7 @@ public class SoundCloudStreamingMediaWrapper extends RemoteFileStreamingMediaWra
             String newURL = "";
             if (trackID != 0) {
                 newURL = SOUNDCLOUD_TRACKS_BASE_URL + trackID + "/" + SOUNDCLOUD_STREAM_STRING;
-                ArrayList<NameValuePair> params = new ArrayList<NameValuePair>();
+                ArrayList<NameValuePair> params = new ArrayList<>();
                 params.add(clientIDPair);
                 newURL = APIWrapper.encodeURL(newURL, params);
 
@@ -98,12 +99,9 @@ public class SoundCloudStreamingMediaWrapper extends RemoteFileStreamingMediaWra
 
             // playState = false;
         } catch (JSONException e) {
-
-
-            e.printStackTrace();
+           Log.e(TAG, "error while process webcall with callback: " + callback + " with message: " + e.getMessage());
+           Thread.dumpStack();
         }
-
-
     }
 
     @Override
