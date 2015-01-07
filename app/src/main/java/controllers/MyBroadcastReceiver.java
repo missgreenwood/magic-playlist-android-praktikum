@@ -9,8 +9,6 @@ import models.mediawrappers.FileStreamingMediaService;
 import models.mediawrappers.PlayQueue;
 
 
-//TODO: Testactivity muss hier durch die KORREKTE Activity ersetzt werden!
-
 public class MyBroadcastReceiver extends BroadcastReceiver {
 
     //should be defined like that according to javadoc
@@ -25,12 +23,9 @@ public class MyBroadcastReceiver extends BroadcastReceiver {
 
         if (intent.getAction().equals(FileStreamingMediaService.TRACK_FINISHED)) {
 
-            if (context instanceof TestActivity) { //TODO: replace with actual Activity
+            if (context instanceof MainActivity) {
 
-                TestActivity testActivity = (TestActivity) context;
-                PlayQueue playQueue = testActivity.getPlayQueue();
-                playQueue.onTrackFinished();
-
+                PlayQueue.getInstance().onTrackFinished();
 
                 Log.d(TAG, "intent received, track finished");
 
@@ -38,14 +33,12 @@ public class MyBroadcastReceiver extends BroadcastReceiver {
             }
         } else if (intent.getAction().equals(PlayQueue.SONG_AVAILABLE)) {
             Log.d(TAG, "received song available");
-            if (context instanceof TestActivity) { //TODO: replace with actual Activity
+            if (context instanceof MainActivity) {
 
 
-                TestActivity testActivity = (TestActivity) context;
-                PlayQueue playQueue = testActivity.getPlayQueue();
-                //   playQueue.onTrackFinished();
+                //   PlayQueue.getInstance().onTrackFinished();
 
-                playQueue.onSongAvailable(intent.getIntExtra(PlayQueue.SONG_ID, -1));
+                PlayQueue.getInstance().onSongAvailable(intent.getIntExtra(PlayQueue.SONG_ID, -1));
 
 
             }
@@ -54,12 +47,9 @@ public class MyBroadcastReceiver extends BroadcastReceiver {
 
             Log.d(TAG, "received song not available");
 
-            if (context instanceof TestActivity) { //TODO: replace with actual Activity
-                TestActivity testActivity = (TestActivity) context;
-                PlayQueue playQueue = testActivity.getPlayQueue();
-
-                playQueue.onSongNotAvailable(intent.getIntExtra(PlayQueue.SONG_ID, -1));
-
+            if (context instanceof MainActivity) {
+                PlayQueue.getInstance()
+                        .onSongNotAvailable(intent.getIntExtra(PlayQueue.SONG_ID, -1));
 
             }
         }

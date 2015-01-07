@@ -1,7 +1,6 @@
 package controllers.mainFragments.myplaylistsFragments;
 
 import android.os.Bundle;
-import android.os.Environment;
 import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -9,25 +8,12 @@ import android.view.ViewGroup;
 
 import com.spotify.sdk.android.playback.Config;
 
-import java.util.ArrayList;
-
-import controllers.MyBroadcastReceiver;
-import models.mediaModels.Song;
 import models.mediawrappers.PlayQueue;
 import tests.R;
 
 public class MediaPlayerFragment extends android.support.v4.app.Fragment implements View.OnClickListener {
 
-    private PlayQueue playQueue;
     private Config spotifyConfig;
-
-    public PlayQueue getPlayQueue() {
-        return playQueue;
-    }
-
-    public void setPlayQueue(PlayQueue playQueue) {
-        this.playQueue = playQueue;
-    }
 
     public Config getSpotifyConfig() {
         return spotifyConfig;
@@ -61,7 +47,6 @@ public class MediaPlayerFragment extends android.support.v4.app.Fragment impleme
 
         //  sw.lookForSong();
 
-
         View v = inflater.inflate(R.layout.fragment_media_player, container, false);
 
         v.findViewById(R.id.nextSongBtn).setOnClickListener(this);
@@ -74,28 +59,25 @@ public class MediaPlayerFragment extends android.support.v4.app.Fragment impleme
 
     @Override
     public void onClick(View view) {
-        Log.d("", "Klick auf Button");
-        if (playQueue != null) {
-            switch (view.getId()) {
-                case R.id.nextSongBtn:
-                    Log.d("", "call play queue next track");
-                    playQueue.nextTrack();
-                    break;
+        switch (view.getId()) {
+            case R.id.nextSongBtn:
+                Log.d("", "call play queue next track");
+                PlayQueue.getInstance().nextTrack();
+                break;
 
-                case R.id.lastSongBtn:
-                    Log.d("", "call play queue before track");
-                    playQueue.beforeTrack();
-                    break;
+            case R.id.lastSongBtn:
+                Log.d("", "call play queue before track");
+                PlayQueue.getInstance().beforeTrack();
+                break;
 
-                case R.id.pauseSongBtn:
-                    Log.d("", "pause button");
-                    playQueue.pausePlayer();
-                    break;
+            case R.id.pauseSongBtn:
+                Log.d("", "pause button");
+                PlayQueue.getInstance().pausePlayer();
+                break;
 
-                case R.id.playSongBtn:
-                    playQueue.resumePlayer();
-                    break;
-            }
+            case R.id.playSongBtn:
+                PlayQueue.getInstance().resumePlayer();
+                break;
         }
     }
 }

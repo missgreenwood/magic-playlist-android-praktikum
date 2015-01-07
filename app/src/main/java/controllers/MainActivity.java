@@ -4,7 +4,6 @@ import android.content.Intent;
 import android.content.IntentFilter;
 import android.net.Uri;
 import android.os.Bundle;
-import android.os.Environment;
 import android.support.v4.app.FragmentTransaction;
 import android.support.v7.app.ActionBarActivity;
 import android.util.Log;
@@ -16,8 +15,6 @@ import android.widget.Button;
 import com.spotify.sdk.android.authentication.AuthenticationResponse;
 import com.spotify.sdk.android.authentication.SpotifyAuthentication;
 import com.spotify.sdk.android.playback.Config;
-
-import java.util.ArrayList;
 
 import controllers.mainFragments.GeneratorFragment;
 import controllers.mainFragments.MyPlaylistsFragment;
@@ -39,33 +36,33 @@ public class MainActivity extends ActionBarActivity implements
     private Button playlistsGenerator;
     private Button otherPlaylists;
     private Button settings;
-    private PlayQueue playQueue; //TODO: lokale Variable
-    private ArrayList<Song> songs; //TODO: wieder lokale Variable, ist nur wegen der Testklassen
+//    private PlayQueue playQueue; //TODO: lokale Variable
+//    private ArrayList<Song> songs; //TODO: wieder lokale Variable, ist nur wegen der Testklassen
     private Config spotifyConfig;
     private MyBroadcastReceiver broadcastReceiver = null;
     private MyPlaylistsFragment playlistsListFragment;
     private GeneratorFragment generatorFragment;
 
-    public ArrayList<Song> getSongs() {
-        return songs;
-    }
+//    public ArrayList<Song> getSongs() {
+//        return songs;
+//    }
+//
+//    public void setSongs(ArrayList<Song> songs) {
+//        this.songs = songs;
+//    }
 
-    public void setSongs(ArrayList<Song> songs) {
-        this.songs = songs;
-    }
+//    public PlayQueue getPlayQueue() {
+//        return playQueue;
+//    }
 
-    public PlayQueue getPlayQueue() {
-        return playQueue;
-    }
-
-    public void setPlayQueue(PlayQueue playQueue) {
-        this.playQueue = playQueue;
-    }
-
+//    public void setPlayQueue(PlayQueue playQueue) {
+//        this.playQueue = playQueue;
+//    }
+//
     public Config getSpotifyConfig() {
         return spotifyConfig;
     }
-
+//
     public void setSpotifyConfig(Config spotifyConfig) {
         Log.d("", "set spotify config");
         this.spotifyConfig = spotifyConfig;
@@ -84,7 +81,9 @@ public class MainActivity extends ActionBarActivity implements
         otherPlaylists.setOnClickListener(this);
         settings.setOnClickListener(this);
 
-        String songpath = Environment.getExternalStorageDirectory().getPath() + "/Download/song.mp3";
+//        String songpath = Environment.getExternalStorageDirectory().getPath() + "/Download/song.mp3";
+
+        PlayQueue.getInstance().setContext(this);
     }
 
 
@@ -152,13 +151,13 @@ public class MainActivity extends ActionBarActivity implements
         testListe.addSong(newSong);
         testListe.addSong(fifthSong);
 
-        PlaylistsManager.getInstance().addPlaylist(testListe);
+//        PlaylistsManager.getInstance().addPlaylist(testListe);
 
-        playQueue = new PlayQueue(this, testListe.getSongsList());
+//        playQueue = new PlayQueue(this, testListe.getSongsList());
         /* we call playSongs with true here i.e. the mediswrappers will all be overwritten!
         set to false if you don't want media wrappers to be overwritten if they are not null
          */
-        playQueue.playSongs(true);
+//        playQueue.playSongs(true);
         super.onStart();
     }
 

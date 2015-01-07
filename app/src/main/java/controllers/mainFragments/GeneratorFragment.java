@@ -170,6 +170,7 @@ public class GeneratorFragment extends android.support.v4.app.Fragment implement
     @Override
     public void nextSongError(int errorStatus) {
         Log.e("nextSongError", String.valueOf(errorStatus));
+        generator.getNextSong(null);
     }
 
     private void finishPlaylistClicked() {

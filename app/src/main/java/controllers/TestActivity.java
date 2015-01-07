@@ -33,7 +33,6 @@ public class TestActivity extends ActionBarActivity implements View.OnClickListe
     private Button pauseButton;
     private Button resumeButton;
     private Button generatePlaylistButton;
-    private PlayQueue playQueue;
     private ArrayList<Song> songs; //TODO: wieder lokale Variable, ist nur wegen der Testklassen
     private Config spotifyConfig;
     private MyBroadcastReceiver broadcastReceiver = null;
@@ -44,14 +43,6 @@ public class TestActivity extends ActionBarActivity implements View.OnClickListe
 
     public void setSongs(ArrayList<Song> songs) {
         this.songs = songs;
-    }
-
-    public PlayQueue getPlayQueue() {
-        return playQueue;
-    }
-
-    public void setPlayQueue(PlayQueue playQueue) {
-        this.playQueue = playQueue;
     }
 
     public Config getSpotifyConfig() {
@@ -123,21 +114,21 @@ public class TestActivity extends ActionBarActivity implements View.OnClickListe
     @Override
     public void onClick(View view) {
         Log.d("", "Klick auf Button");
-        if (playQueue != null) {
+        if (PlayQueue.getInstance() != null) {
 
             if (view == nextButton) {
                 Log.d("", "call play queue next track");
-                playQueue.nextTrack();
+                PlayQueue.getInstance().nextTrack();
 
             } else if (view == beforeButton) {
                 Log.d("", "call play queue before track");
-                playQueue.beforeTrack();
+                PlayQueue.getInstance().beforeTrack();
 
             } else if (view == pauseButton) {
                 Log.d("", "pause button");
-                playQueue.pausePlayer();
+                PlayQueue.getInstance().pausePlayer();
             } else if (view == resumeButton) {
-                playQueue.resumePlayer();
+                PlayQueue.getInstance().resumePlayer();
 
             } else if (view == generatePlaylistButton) {
                 this.openPlaylistGenerator();
@@ -178,12 +169,12 @@ public class TestActivity extends ActionBarActivity implements View.OnClickListe
         testListe.addSong(fifthSong);
 
 
-        playQueue = new PlayQueue(this, testListe.getSongsList());
+        PlayQueue.getInstance().importPlaylist(testListe);
         /* we call playSongs with true here i.e. the mediswrappers will all be overwritten!
         set to false if you don't want media wrappers to be overwritten if they are not null
          */
 
-        playQueue.playSongs(true);
+        PlayQueue.getInstance().playSongs(true);
 
 
 

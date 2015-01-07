@@ -3,6 +3,7 @@ package models.mediawrappers;
 import android.content.Context;
 import android.util.Log;
 
+import models.mediaModels.Playlist;
 import models.mediaModels.Song;
 
 import java.util.ArrayList;
@@ -35,16 +36,20 @@ public class PlayQueue {
     private int counter;
     private ArrayList<Song> songs;
     private int state = 2;
+
+    private static final PlayQueue instance = new PlayQueue();
+
     //TODO: should be read from a preferences file or something
     private ArrayList<String> mediaWrappers;
     /**
      * This class should be used to create a playlist/queue with a list of songs.
      * The mediawrapper type that should be used has to be specified for every song (see Song class).
-     *
-     * @param context should be the parent activity, used for intents
-     * @param songs   list of songs
      */
-    public PlayQueue(Context context, ArrayList<Song> songs) {
+    public PlayQueue() {
+
+        if (PlayQueue.getInstance() != null) {
+            Log.e("ERROR", "dont initialize PlayQueue! It's a wild singleton!");
+        }
 
         mediaWrappers = new ArrayList<String>();
         mediaWrappers.add(Song.MEDIA_WRAPPER_LOCAL_FILE);
@@ -54,13 +59,21 @@ public class PlayQueue {
 
         //TODO: this should be done somewhere else!
 
-
-        this.context = context;
-        this.songs = songs;
-
         setState(IDLE);
+    }
 
+    public static PlayQueue getInstance()
+    {
+        return instance;
+    }
 
+    public void setContext(Context context) {
+        this.context = context;
+    }
+
+    public void importPlaylist(Playlist playlist) {
+        songs = playlist.getSongsList();
+        initializePlaylist(true);
     }
 
     public int getState() {
@@ -131,8 +144,6 @@ public class PlayQueue {
         Log.d(TAG, "play songs called");
         initializePlaylist(overwrite);
         playCurrentSong();
-
-
     }
 
     private void playCurrentSong() {

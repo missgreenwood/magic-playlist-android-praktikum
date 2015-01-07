@@ -64,9 +64,7 @@ public class MyPlaylistsFragment extends ListFragment {
             transact.addToBackStack(null);
             transact.commit();
         }
-        PlayQueue queue = new PlayQueue(this.getActivity().getApplicationContext(), playlists.get(playlistId).getSongsList());
-        mediaPlayerListFragment.setPlayQueue(queue);
-        queue.initializePlaylist(true);
+        PlayQueue.getInstance().importPlaylist(playlists.get(playlistId));
     }
 }
 

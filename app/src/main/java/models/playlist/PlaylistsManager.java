@@ -19,12 +19,6 @@ public class PlaylistsManager {
 
     public PlaylistsManager() {
         playlists = new ArrayList<>();
-        loadPlaylistsFromDB();
-    }
-
-    private void loadPlaylistsFromDB()
-    {
-        // TODO: implement
     }
 
     public void addPlaylist(Playlist playlist)
