@@ -49,15 +49,6 @@ public class PlayQueue {
         if (PlayQueue.getInstance() != null) {
             Log.e("ERROR", "dont initialize PlayQueue! It's a wild singleton!");
         }
-
-        mediaWrappers = new ArrayList<String>();
-        mediaWrappers.add(Song.MEDIA_WRAPPER_LOCAL_FILE);
-        mediaWrappers.add(Song.MEDIA_WRAPPER_REMOTE_SOUNDCLOUD);
-        mediaWrappers.add(Song.MEDIA_WRAPPER_SPOTIFY);
-
-
-        //TODO: this should be done somewhere else!
-
         setState(STATE_IDLE);
     }
 
@@ -417,6 +408,10 @@ public class PlayQueue {
         initializeSong(song);
         setCurrentSong(song);
         playSongIntern();
+    }
+
+    public void setMediaWrappers(ArrayList<String> mediaWrappers) {
+        this.mediaWrappers = mediaWrappers;
     }
 
     //test for git

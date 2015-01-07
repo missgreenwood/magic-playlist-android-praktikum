@@ -140,7 +140,6 @@ public class SoundCloudStreamingMediaWrapper extends RemoteFileStreamingMediaWra
     @Override
     public boolean lookForSong() {
 
-
         //TODO: diese Methoden ist eigentlich nicht notwendig, weil sie nur computePlayPath aufruft
         computePlayPath(getSong());
         return true;

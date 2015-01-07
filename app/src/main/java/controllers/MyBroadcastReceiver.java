@@ -40,7 +40,6 @@ public class MyBroadcastReceiver extends BroadcastReceiver {
 
                 PlayQueue.getInstance().onSongAvailable(intent.getIntExtra(PlayQueue.SONG_ID, -1));
 
-
             }
 
         } else if (intent.getAction().equals(PlayQueue.SONG_NOT_AVAILABLE)) {
