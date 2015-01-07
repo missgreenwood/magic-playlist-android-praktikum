@@ -12,7 +12,7 @@ import java.util.Random;
 
 /**
  * Created by charlotte on 06.12.14.
- * @author charlotte
+ * @author charlotte, andy
  *
  * Represents the play queue comprised of a collection of songs that can be played one after another,
  * randomly or chosen individually.
