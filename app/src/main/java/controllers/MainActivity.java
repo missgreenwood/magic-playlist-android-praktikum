@@ -16,6 +16,8 @@ import com.spotify.sdk.android.authentication.AuthenticationResponse;
 import com.spotify.sdk.android.authentication.SpotifyAuthentication;
 import com.spotify.sdk.android.playback.Config;
 
+import java.util.ArrayList;
+
 import controllers.mainFragments.GeneratorFragment;
 import controllers.mainFragments.MyPlaylistsFragment;
 import models.Settings;
@@ -161,8 +163,16 @@ public class MainActivity extends ActionBarActivity implements
 //        playQueue.playSongs(true);
 
         Settings.getInstance().loadSettings(getPreferences(MODE_PRIVATE));
-        PlayQueue.getInstance().setMediaWrappers(Settings.getInstance().getMediaWrappers());
 
+        Settings.getInstance().addOnMediaWrapperListChangeListener(new Settings.Listener() {
+            @Override
+            public void onMediaWrapperListChange(ArrayList<String> mediaWrappers) {
+                PlayQueue.getInstance().setMediaWrappers(mediaWrappers);
+            }
+        });
+
+        PlayQueue.getInstance().setMediaWrappers(Settings.getInstance().getMediaWrappers());
+        Settings.getInstance().deactivateWrapper(Song.MEDIA_WRAPPER_REMOTE_SOUNDCLOUD);
 
         super.onStart();
     }

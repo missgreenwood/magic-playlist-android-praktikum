@@ -2,6 +2,7 @@ package models;
 
 import android.content.Context;
 import android.content.SharedPreferences;
+import android.util.Log;
 
 import java.lang.reflect.Array;
 import java.util.ArrayList;
@@ -19,6 +20,8 @@ public class Settings {
         return instance;
     }
 
+    private Listener listener;
+
     private ArrayList<String> mediaWrappers;
     private HashMap<String, Boolean> mediaWrappersState;
     private SharedPreferences preferences;
@@ -34,19 +37,24 @@ public class Settings {
                 usedMediaWrappers.add(mediaWrappers.get(i));
             }
         }
+        Log.d("SETTINGS", "usedMediaWrappers: " + usedMediaWrappers);
         return usedMediaWrappers;
+    }
+
+    public void addOnMediaWrapperListChangeListener(Listener listener) {
+        this.listener = listener;
     }
 
     public void loadSettings(SharedPreferences preferences)
     {
         ArrayList<String> defWrapperList = getDefaultMediaWrappersList();
         mediaWrappers = new ArrayList<>(defWrapperList.size());
-        mediaWrappersState = new HashMap<>();
+        mediaWrappersState = new HashMap<>(defWrapperList.size());
         for (int i = 0; i < defWrapperList.size(); i++) {
             String wrapper = defWrapperList.get(i);
             //add to index, which represents the priority of the wrapper
             mediaWrappers.add(preferences.getInt(wrapper, i), wrapper);
-            mediaWrappersState.put(wrapper + "_bool", preferences.getBoolean(wrapper, true));
+            mediaWrappersState.put(wrapper, preferences.getBoolean(wrapper + "_bool", true));
         }
         this.preferences = preferences;
     }
@@ -66,14 +74,13 @@ public class Settings {
             return;
         }
         SharedPreferences.Editor editor = preferences.edit();
-
         for (int i = 0; i < mediaWrappers.size(); i++) {
             String wrapper = mediaWrappers.get(i);
             editor.putInt(wrapper, i);
             editor.putBoolean(wrapper + "_bool", mediaWrappersState.get(wrapper));
         }
-
         editor.apply();
+        listener.onMediaWrapperListChange(getMediaWrappers());
     }
 
     public void increaseWrapperPriority(String wrapper) {
@@ -98,9 +105,15 @@ public class Settings {
 
     public void deactivateWrapper(String wrapper) {
         mediaWrappersState.put(wrapper, false);
+        saveSettings();
     }
 
     public void activateWrapper(String wrapper) {
         mediaWrappersState.put(wrapper, true);
+        saveSettings();
+    }
+
+    public interface Listener {
+        void onMediaWrapperListChange(ArrayList<String> mediaWrappers);
     }
 }
