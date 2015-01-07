@@ -44,6 +44,7 @@ public class MainActivity extends ActionBarActivity implements
     private MyBroadcastReceiver broadcastReceiver = null;
     private MyPlaylistsFragment playlistsListFragment;
     private GeneratorFragment generatorFragment;
+    private SettingsFragment settingsFragment;
 
 //    public ArrayList<Song> getSongs() {
 //        return songs;
@@ -116,14 +117,10 @@ public class MainActivity extends ActionBarActivity implements
             this.openMyPlaylists();
         } else if (view == playlistsGenerator) {
             this.openPlaylistGenerator();
-        }
-        /*
-        } else if (view == otherPlaylists) {
-            this.openPlaylistBrowser();
-
         } else if (view == settings) {
             this.openSettings();
-        } */
+        } /* else if (view == otherPlaylists) {
+            this.openPlaylistBrowser(); */
     }
 
     /* public void openPlaylistGenerator() {
@@ -210,20 +207,17 @@ public class MainActivity extends ActionBarActivity implements
         }
     }
 
-    /* public void openPlaylistBrowser() {
-        Intent intent = new Intent(this, BrowserActivity.class);
-        startActivity(intent);
+    public void openSettings() {
+        settingsFragment = (SettingsFragment) getSupportFragmentManager().findFragmentByTag("settingsFragment");
+        if (settingsFragment == null) {
+            settingsFragment = new SettingsFragment();
+            FragmentTransaction transact = getSupportFragmentManager().beginTransaction();
+            transact.add(android.R.id.content, settingsFragment, "settingsFragment");
+            transact.addToBackStack(null);
+            transact.commit();
+        }
     }
 
-    public void openSettings() {
-        Intent intent = new Intent(this, SettingsActivity.class);
-        startActivity(intent);
-    } */
-
-
-    /* public void setActionBarTitle (String title) {
-        getSupportActionBar().setTitle(title);
-    } */
 
     @Override
     protected void onNewIntent(Intent intent) {
