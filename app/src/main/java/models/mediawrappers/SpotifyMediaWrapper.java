@@ -1,5 +1,6 @@
 package models.mediawrappers;
 
+import android.app.Activity;
 import android.content.Context;
 import android.content.Intent;
 import android.util.Log;
@@ -8,6 +9,7 @@ import models.apiwrappers.APIWrapper;
 import models.mediaModels.Song;
 
 import com.spotify.sdk.android.Spotify;
+import com.spotify.sdk.android.authentication.SpotifyAuthentication;
 import com.spotify.sdk.android.playback.Config;
 import com.spotify.sdk.android.playback.ConnectionStateCallback;
 import com.spotify.sdk.android.playback.Player;
@@ -37,6 +39,11 @@ public class SpotifyMediaWrapper extends RemoteFileStreamingMediaWrapper impleme
     // public int counter;
     public static String TYPE_TRACK = "track";
     public static String SPOTIFY_QUERY_STRING = "q";
+    public static final String CLIENT_ID = "605ac27c70444b499869422e93a492f8";
+    public static final String RESPONSE_TYPE_CODE = "code";
+    public static final String REDIRECT_URI = "my-first-android-app-login://callback";
+
+
     // private List<Song> songs;
     // private String playPath;
     // private  Context context;
@@ -46,6 +53,7 @@ public class SpotifyMediaWrapper extends RemoteFileStreamingMediaWrapper impleme
 
     public SpotifyMediaWrapper(Context context, Song songsTemp) {
         super(context, songsTemp);
+        openAuthWindow();
         // this.context=context;
         //  setSong(songsTemp);
 
@@ -64,7 +72,7 @@ public class SpotifyMediaWrapper extends RemoteFileStreamingMediaWrapper impleme
         String accessToken = "BQAikzApJ-5PxbXEEnou32JJeeCdNsY5BBGI2WnDt7C82jCEImuIR7XZgzR9SSiDRMsLnhodWU78sQkJ7AhMPOs5m-g3kgY3QCKUHdHouFjvG0DIa4zwmmkwXGFNDtXsXgotCfOefvFha9tb0xc4SONKC4Z0MoV-5hhN3F4";
 
 
-        Config spotifyConfig = new Config(context, accessToken, SpotifyLoginHandler.CLIENT_ID);
+        Config spotifyConfig = new Config(context, accessToken, CLIENT_ID);
 
 
         Log.d(TAG, "spotify play, config: " + (spotifyConfig == null));
@@ -249,5 +257,11 @@ public class SpotifyMediaWrapper extends RemoteFileStreamingMediaWrapper impleme
         //    Intent intent=new Intent();
         //  intent.setAction(PlayQueue.SONG_AVAILABLE);
 //        context.sendBroadcast(intent);
+    }
+
+
+    public void openAuthWindow() {
+        SpotifyAuthentication.openAuthWindow(CLIENT_ID, RESPONSE_TYPE_CODE, REDIRECT_URI, new String[]{"user-read-private", "streaming"}, null, (Activity)context);
+
     }
 }

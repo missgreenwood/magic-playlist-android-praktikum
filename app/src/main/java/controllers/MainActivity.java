@@ -22,6 +22,7 @@ import models.mediaModels.Playlist;
 import models.mediaModels.Song;
 import models.mediawrappers.FileStreamingMediaService;
 import models.mediawrappers.PlayQueue;
+import models.mediawrappers.SpotifyMediaWrapper;
 import tests.R;
 
 /**
@@ -138,6 +139,9 @@ public class MainActivity extends ActionBarActivity implements
         this.registerReceiver(broadcastReceiver, intentFilter);
         this.setTitle("Magic Playlist");
 
+
+
+
         Song strokes = new Song("The Strokes", "Last Nite");
         Song random = new Song("Caribou", "Melody Day");
         Song random2 = new Song("The Strokes", "Reptilia");
@@ -219,13 +223,26 @@ public class MainActivity extends ActionBarActivity implements
         Log.d("", "spotify auth received");
 
         if (uri != null) {
+
+
+
             Log.d("", "spotify auth received, uri not null");
 
             AuthenticationResponse response = SpotifyAuthentication.parseOauthResponse(uri);
-            //  Config playerConfig = new Config(this, response.getAccessToken(), SpotifyMediaWrapper.CLIENT_ID);
+          String codeOrWhat=  response.getCode();
+
+
+
+          //   Config playerConfig = new Config(this, response.getAccessToken(), SpotifyMediaWrapper.CLIENT_ID);
             //  setSpotifyConfig(playerConfig);
 
-            Log.d("", "irgendwas config: " + getSpotifyConfig().oauthToken);
+            Log.d("", "set spotify response: "+response);
+            Log.d("", "code?: "+codeOrWhat);
+          //  Log.d("", "access token: "+accessToken);
+
+
+
+//            Log.d("", "irgendwas config: " + getSpotifyConfig().oauthToken);
 
 
         }
