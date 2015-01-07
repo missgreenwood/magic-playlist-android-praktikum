@@ -25,21 +25,19 @@ public class PlayQueue {
     //TODO: muss in FileStreamingMediaService
     public static final String SONG_AVAILABLE = "com.example.song_available";
     public static final String SONG_NOT_AVAILABLE = "com.example.song_not_available";
-    private final static Object lockObject = new Object();
     public static final int STATE_WAITING = 0;
     public static final int STATE_ALREADY_PlAYING = 1;
     public static final int STATE_IDLE = 2;
+    private int state = STATE_IDLE;
+    private final static Object lockObject = new Object();
     private static final int STATE_PAUSED = 3;
+    private static final PlayQueue instance = new PlayQueue();
     public static String SONG_ID = "com.example.song_id";
     //TODO: das ist nur vorläufig:
     private Song currentSong;
     private Context context;
     private int counter;
     private ArrayList<Song> songs;
-    private int state = STATE_IDLE;
-
-    private static final PlayQueue instance = new PlayQueue();
-
     //TODO: should be read from a preferences file or something
     private ArrayList<String> mediaWrappers;
     /**
@@ -175,8 +173,7 @@ public class PlayQueue {
         playSongIntern();
     }
 
-    private void playSongIntern()
-    {
+    private void playSongIntern() {
         if (currentSong != null) {
             Log.d(TAG, "playing song: " + currentSong.toString());
             if (currentSong.getMediaWrapper() != null) {
