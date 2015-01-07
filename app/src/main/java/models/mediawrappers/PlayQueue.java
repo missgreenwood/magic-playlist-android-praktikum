@@ -66,13 +66,17 @@ public class PlayQueue {
 
     public void importPlaylist(Playlist playlist) {
         songs = playlist.getSongsList();
-        initializePlaylist(true);
-        Song currentSong = getCurrentSong();
-        if (currentSong != null) {
-            currentSong.getMediaWrapper().stopPlayer();
+        if (songs.size() > 0) {
+            initializePlaylist(true);
+            Song currentSong = getCurrentSong();
+            if (currentSong != null) {
+                currentSong.getMediaWrapper().stopPlayer();
+            }
+            counter = 0;
+            setCurrentSong(songs.get(counter));
+        } else {
+            Log.e(TAG, "tried to import playlist without songs");
         }
-        counter = 0;
-        setCurrentSong(songs.get(counter));
     }
 
     public int getState() {

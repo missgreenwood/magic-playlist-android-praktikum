@@ -11,7 +11,7 @@ import models.playlist.PlaylistsManager;
  * Created by TheDaAndy on 27.12.2014.
  */
 public class Playlist {
-
+    //TODO save in DB
     private static int uniqueId = 0;
 
     private ArrayList<IPlaylistListener> observers;
