@@ -15,7 +15,7 @@
     <string name="songs">Songs</string>
     <string name="go">Go!</string>
     <string name="generate_playlist">Generate Playlist</string>
-    <string name="start_generator">start generator</string>
+    <string name="start_generator">Start Generator!</string>
     <string name="selected_items">Show selected items</string>
 
 </resources>
