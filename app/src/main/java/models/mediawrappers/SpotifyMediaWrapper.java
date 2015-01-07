@@ -3,6 +3,7 @@ package models.mediawrappers;
 import android.app.Activity;
 import android.content.Context;
 import android.content.Intent;
+import android.content.SharedPreferences;
 import android.util.Log;
 
 import models.apiwrappers.APIWrapper;
@@ -33,27 +34,28 @@ public class SpotifyMediaWrapper extends RemoteFileStreamingMediaWrapper impleme
 
 
     public static final String TAG = "main.java.models.mediawrappers.SpotifyMediaWrapper";
-
+    public static final String CLIENT_ID = "605ac27c70444b499869422e93a492f8";
+    public static final String RESPONSE_TYPE_CODE = "code";
+    public static final String REDIRECT_URI = "my-first-android-app-login://callback";
+    private static final String SPOTIFY_SHARED_PREF_STRING = "spotify-shared-preferences";
+    private static final String SPOTIFY_REFRESH_TOKEN_STRING = "spotify-refresh-token";
     public static String SPOTIFY_SEARCH_URL = "https://api.spotify.com/v1/search";
     public static String TYPE_TRACK_STRING = "type";
     // public int counter;
     public static String TYPE_TRACK = "track";
     public static String SPOTIFY_QUERY_STRING = "q";
-    public static final String CLIENT_ID = "605ac27c70444b499869422e93a492f8";
-    public static final String RESPONSE_TYPE_CODE = "code";
-    public static final String REDIRECT_URI = "my-first-android-app-login://callback";
-
-
     // private List<Song> songs;
     // private String playPath;
     // private  Context context;
     private Spotify spotify;
     private Player mPlayer;
+    private SharedPreferences preferences;
 
 
     public SpotifyMediaWrapper(Context context, Song songsTemp) {
         super(context, songsTemp);
         openAuthWindow();
+        preferences = context.getSharedPreferences(SPOTIFY_SHARED_PREF_STRING, 0);
         // this.context=context;
         //  setSong(songsTemp);
 
@@ -263,5 +265,20 @@ public class SpotifyMediaWrapper extends RemoteFileStreamingMediaWrapper impleme
     public void openAuthWindow() {
         SpotifyAuthentication.openAuthWindow(CLIENT_ID, RESPONSE_TYPE_CODE, REDIRECT_URI, new String[]{"user-read-private", "streaming"}, null, (Activity)context);
 
+    }
+
+
+    public void saveRefreshToken(String refreshToken) {
+
+        SharedPreferences.Editor editor = preferences.edit();
+        editor.putString(SPOTIFY_REFRESH_TOKEN_STRING, refreshToken);
+        // Commit the edits!
+        editor.commit();
+    }
+
+
+    public String retrieveRefreshToken() {
+
+        return preferences.getString(SPOTIFY_REFRESH_TOKEN_STRING, null);
     }
 }
