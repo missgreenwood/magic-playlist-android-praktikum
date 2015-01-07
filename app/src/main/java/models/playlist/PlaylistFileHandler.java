@@ -1,11 +1,14 @@
 package models.playlist;
 
 import android.os.Environment;
+import android.util.Log;
 
 import java.io.BufferedReader;
 import java.io.File;
+import java.io.FileFilter;
 import java.io.FileOutputStream;
 import java.io.FileReader;
+import java.io.FilenameFilter;
 import java.io.OutputStreamWriter;
 import java.util.ArrayList;
 import java.util.HashMap;
@@ -22,6 +25,26 @@ public class PlaylistFileHandler {
 
     private static final String PLAYLISTS_FILE_TYPE = ".pls";
 
+    public static ArrayList<Playlist> loadPlaylists()
+    {
+        File dir = new File(PlaylistFileHandler.getFilePath(null));
+        ArrayList<Playlist> playlists = new ArrayList<>();
+
+        File[] playlistFiles = dir.listFiles(new FilenameFilter() {
+            @Override
+            public boolean accept(File dir, String filename) {
+                return filename.matches(".+\\.pls");
+            }
+        });
+
+        for (File playlistFile : playlistFiles) {
+            String playlistName = playlistFile.getName().replace(".pls", "");
+            Playlist playlist = PlaylistFileHandler.loadPlaylist(playlistName);
+            playlists.add(playlist);
+        }
+
+        return playlists;
+    }
 
     private static Playlist loadPlaylist(String name) {
         Playlist newPlaylist = new Playlist(name);
@@ -29,12 +52,14 @@ public class PlaylistFileHandler {
         BufferedReader reader = null;
 
         try {
+            Log.d("read Playlist", "start");
             reader = new BufferedReader(new FileReader(getFilePath(name)));
+            Log.d("read Playlist", "reader init");
 
             String line;
 
             HashMap<Integer, Song> songs = new HashMap<>();
-
+            Log.d("read Playlist", "start reading...");
             while ((line = reader.readLine()) != null) {
                 int i = line.indexOf('=');
                 int songNumber;
@@ -51,37 +76,47 @@ public class PlaylistFileHandler {
 
                 String label = line.substring(0, i-1).toLowerCase(),
                        value = line.substring(i + 1);
+                Log.d("read Playlist", "label: " + label + " value: " + value);
 
                 Song song;
                 if (!songs.containsKey(songNumber)) {
                     song = new Song();
                     songs.put(songNumber, song);
+                    Log.d("read Playlist", "new song #" + songNumber);
                 } else {
                     song = songs.get(songNumber);
+                    Log.d("read Playlist", "found song #" + songNumber);
                 }
 
                 switch (label) {
                     case "file":
+                        Log.d("read Playlist", "set url " + value);
                         song.setSongUrl(value);
                         break;
                     case "title":
-                        String[] valueParts = value.split("-");
+                        Log.d("read Playlist", "set title"  + value);
+                        String[] valueParts = value.split("-", 2);
                         if (valueParts.length == 2) {
                             song.setArtist(valueParts[0].trim());
                             song.setSongname(valueParts[1].trim());
+                            Log.d("read Playlist", "artist: "  + valueParts[0].trim() + "song: " + valueParts[1].trim());
                         } else {
                             song.setArtist("Unknown");
                             song.setSongname(value);
+                            Log.d("read Playlist", "artist: Unknown song: " + value);
                         }
                         break;
                     case "length":
                         song.setLength(Integer.parseInt(value));
+                        Log.d("read Playlist", "set length " + value);
                         break;
                 }
             }
+            Log.d("read Playlist", "finished reading file");
             //TODO: check time effort for sorting...
             SortedSet<Integer> keys = new TreeSet<>(songs.keySet());
             for (int key : keys) {
+                Log.d("read Playlist", "sorted: " + songs.get(key).toString());
                 newPlaylist.addSong(songs.get(key));
             }
         } catch (Exception e) {
@@ -140,8 +175,14 @@ public class PlaylistFileHandler {
         String directoryPath;
 
         if (isExternalStorageWritable()) {
-            directoryPath = Environment.getExternalStorageDirectory().getPath() + "/Playlists/MagicPlaylists/";
+            String externalPath = Environment.getExternalStorageDirectory().getPath();
+            directoryPath =  externalPath + "/Playlists/MagicPlaylists/";
+            new File (directoryPath).mkdirs();
+            if (name == null) {
+                return directoryPath;
+            }
         } else {
+            Log.e("ERROR", "external storage is needed!");
             return null;
         }
         return directoryPath + name + PLAYLISTS_FILE_TYPE;

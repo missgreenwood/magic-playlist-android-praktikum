@@ -15,7 +15,6 @@ public class PlaylistGenerator implements LastFmListener {
     private static final int ERROR_NO_ARTIST_FOUND = 0;
     private static final int ERROR_NO_TRACK_FOUND = 1;
 
-
     private Listener listener;
 
     private Playlist playlist;

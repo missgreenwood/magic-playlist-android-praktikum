@@ -74,6 +74,12 @@ public class PlayQueue {
     public void importPlaylist(Playlist playlist) {
         songs = playlist.getSongsList();
         initializePlaylist(true);
+        Song currentSong = getCurrentSong();
+        if (currentSong != null) {
+            currentSong.getMediaWrapper().stopPlayer();
+        }
+        counter = 0;
+        setCurrentSong(songs.get(counter));
     }
 
     public int getState() {
@@ -137,6 +143,7 @@ public class PlayQueue {
      * This method should be used by other classes to play the songs previously added
      * to the song list of the play queue; will overwrite media wrappers.
      * @param overwrite Will overwrite existing media wrappers if true
+     * @deprecated use importPlaylist function, this does all you want...
      */
     public void playSongs(boolean overwrite) {
 
@@ -169,7 +176,7 @@ public class PlayQueue {
     }
 
 
-    public void initializeSong(Song song) {
+    private void initializeSong(Song song) {
 
 
         //  ArrayList<Song> songsTemp = new ArrayList<Song>();
@@ -212,7 +219,7 @@ public class PlayQueue {
     /**
      * @param overwrite Will overwrite existing media wrappers if true
      */
-    public void initializePlaylist(boolean overwrite) {
+    private void initializePlaylist(boolean overwrite) {
 
 
         for (Song song : songs) {
@@ -278,7 +285,11 @@ public class PlayQueue {
 
         Log.d(TAG, "is jumping to " + index);
 
-        getCurrentSong().getMediaWrapper().stopPlayer();
+        Song currentSong = getCurrentSong();
+
+        if (currentSong != null) {
+            currentSong.getMediaWrapper().stopPlayer();
+        }
 
         counter = index;
 

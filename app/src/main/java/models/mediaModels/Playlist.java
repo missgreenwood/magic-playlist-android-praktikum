@@ -1,6 +1,10 @@
 package models.mediaModels;
 
+import android.util.Log;
+
 import java.util.ArrayList;
+
+import models.playlist.PlaylistFileHandler;
 import models.playlist.PlaylistsManager;
 
 /**
@@ -8,13 +12,15 @@ import models.playlist.PlaylistsManager;
  */
 public class Playlist {
 
+    private static int uniqueId = 0;
+
     private ArrayList<IPlaylistListener> observers;
 
     private ArrayList<Song> songs;
     private String name;
 
     public Playlist () {
-        name = "new Playlist " + PlaylistsManager.getInstance().getUniquePlaylistId();
+        name = "new Playlist " + uniqueId++;
         songs = new ArrayList<>();
         observers = new ArrayList<>();
     }
@@ -34,12 +40,12 @@ public class Playlist {
 
     public boolean addSong(Song newSong) {
         songs.add(newSong);
-//        boolean success = PlaylistFileHandler.savePlaylist(this);
-//        if (!success) {
-//            songs.remove(newSong);
-//            Log.e("ERROR", "could not save Playlist with new Song, write Rights?");
-//            return false;
-//        }
+        boolean success = PlaylistFileHandler.savePlaylist(this);
+        if (!success) {
+            songs.remove(newSong);
+            Log.e("ERROR", "could not save Playlist with new Song, write Rights?");
+            return false;
+        }
         notifyChange();
         return true;
     }
@@ -60,12 +66,12 @@ public class Playlist {
 
     public void setName(String name)
     {
-//        boolean success = PlaylistFileHandler.changePlaylistName(this.name, name);
-//        if (success) {
+        boolean success = PlaylistFileHandler.changePlaylistName(this.name, name);
+        if (success) {
             this.name = name;
-//        } else {
-//            Log.e("ERROR", "could not change Playlistname, due being unable to rename Playlistfile. Rights?");
-//        }
+        } else {
+            Log.e("ERROR", "could not change Playlistname, due being unable to rename Playlistfile. Rights?");
+        }
     }
 
     private void notifyChange()

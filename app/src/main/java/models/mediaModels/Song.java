@@ -133,8 +133,8 @@ public class Song {
 
     public String getSongUrl()
     {
-        String path = this.mediaWrapper.getPlayPath();
-        return path != null ? path : this.getMediaWrapperType();
+        String path = mediaWrapper != null ? mediaWrapper.getPlayPath() : getMediaWrapperType();
+        return path;
     }
 
     public int getLength() {

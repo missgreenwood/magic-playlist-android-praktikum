@@ -9,7 +9,6 @@ import models.mediaModels.Playlist;
  */
 public class PlaylistsManager {
     private static PlaylistsManager ourInstance = new PlaylistsManager();
-    private int uniquePlaylistId = 0;
 
     public static PlaylistsManager getInstance() {
         return ourInstance;
@@ -18,7 +17,7 @@ public class PlaylistsManager {
     private ArrayList<Playlist> playlists;
 
     public PlaylistsManager() {
-        playlists = new ArrayList<>();
+        playlists = PlaylistFileHandler.loadPlaylists();
     }
 
     public void addPlaylist(Playlist playlist)
@@ -29,9 +28,5 @@ public class PlaylistsManager {
     public ArrayList<Playlist> getPlaylists()
     {
         return playlists;
-    }
-
-    public int getUniquePlaylistId() {
-        return uniquePlaylistId++;
     }
 }
