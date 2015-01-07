@@ -67,7 +67,7 @@ public class MediaPlayerFragment extends android.support.v4.app.Fragment impleme
 
             case R.id.lastSongBtn:
                 Log.d("", "call play queue before track");
-                PlayQueue.getInstance().beforeTrack();
+                PlayQueue.getInstance().previousTrack();
                 break;
 
             case R.id.pauseSongBtn:

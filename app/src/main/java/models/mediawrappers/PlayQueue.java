@@ -26,16 +26,17 @@ public class PlayQueue {
     public static final String SONG_AVAILABLE = "com.example.song_available";
     public static final String SONG_NOT_AVAILABLE = "com.example.song_not_available";
     private final static Object lockObject = new Object();
-    private static final int STATE_WAITING = 0;
-    private static final int STATE_ALREADY_PlAYING = 1;
-    private static final int IDLE = 2;
+    public static final int STATE_WAITING = 0;
+    public static final int STATE_ALREADY_PlAYING = 1;
+    public static final int STATE_IDLE = 2;
+    private static final int STATE_PAUSED = 3;
     public static String SONG_ID = "com.example.song_id";
     //TODO: das ist nur vorläufig:
     private Song currentSong;
     private Context context;
     private int counter;
     private ArrayList<Song> songs;
-    private int state = 2;
+    private int state = STATE_IDLE;
 
     private static final PlayQueue instance = new PlayQueue();
 
@@ -59,7 +60,7 @@ public class PlayQueue {
 
         //TODO: this should be done somewhere else!
 
-        setState(IDLE);
+        setState(STATE_IDLE);
     }
 
     public static PlayQueue getInstance()
@@ -102,6 +103,11 @@ public class PlayQueue {
 
 
     public Song getSongForID(int songID) {
+
+        Song currentSong = getCurrentSong();
+        if (currentSong != null && currentSong.getSongID() == songID) {
+            return currentSong;
+        }
 
         for (Song song : songs) {
 
@@ -157,24 +163,34 @@ public class PlayQueue {
 
         Log.d(TAG, "play current song, counter is " + counter);
 
-        if (counter < songs.size() && counter >= 0) {
-
+        if (songs == null) {
+            Log.d(TAG, "no songs list given");
+            if (getCurrentSong() == null) {
+                Log.d(TAG, "also no single song given, canceling playing song!");
+                return; //neither single song nor playlist is given...
+            }
+        } else if (getCurrentSong() == null && counter < songs.size() && counter >= 0) {
             setCurrentSong(songs.get(counter));
+        }
+        playSongIntern();
+    }
 
+    private void playSongIntern()
+    {
+        if (currentSong != null) {
+            Log.d(TAG, "playing song: " + currentSong.toString());
             if (currentSong.getMediaWrapper() != null) {
                 String playpath = currentSong.getMediaWrapper().getPlayPath();
                 Log.d(TAG, "playpath: " + playpath);
                 if ((playpath != null) && (!playpath.equals(""))) {
 
-                    Log.d(TAG, "now we can play the current song");
+                    Log.d(TAG, "now we can play the current song: " + currentSong);
                     setState(STATE_ALREADY_PlAYING);
                     currentSong.getMediaWrapper().play();
-                }
+                } else setState(STATE_WAITING);
             } else setState(STATE_WAITING);
-
         }
     }
-
 
     private void initializeSong(Song song) {
 
@@ -203,7 +219,7 @@ public class PlayQueue {
         } else if (mediaWrapperType.equals(Song.MEDIA_WRAPPER_SPOTIFY)) {
 
             abstractMediaWrapper = new SpotifyMediaWrapper(context, song);
-            }
+        }
 
 
         song.setMediaWrapper(abstractMediaWrapper);
@@ -251,7 +267,7 @@ public class PlayQueue {
      * Can be used by the GUI to go to the next track (back button).
      *
      */
-    public void beforeTrack() {
+    public void previousTrack() {
 
         synchronized (lockObject) {
             counter--;
@@ -291,13 +307,20 @@ public class PlayQueue {
             currentSong.getMediaWrapper().stopPlayer();
         }
 
+        if (songs == null) {
+            Log.e("ERROR", "no songs list given...");
+            return;
+        }
         counter = index;
-
-        setState(IDLE);
+        if (counter >= songs.size()) {
+            counter = counter % songs.size();
+        }
+        if (counter >= 0) {
+            setCurrentSong(songs.get(counter));
+        }
+        setState(STATE_IDLE);
         //playSongs();
         playCurrentSong();
-
-
     }
 
     /**
@@ -307,7 +330,11 @@ public class PlayQueue {
         Song currentSong = getCurrentSong();
 
         if (currentSong != null) {
-            currentSong.getMediaWrapper().pausePlayer();
+            AbstractMediaWrapper wrapper = currentSong.getMediaWrapper();
+            if (wrapper != null) {
+                wrapper.pausePlayer();
+                setState(STATE_PAUSED);
+            }
         }
     }
 
@@ -315,11 +342,11 @@ public class PlayQueue {
      * Can be used by the GUI when resume button was pressed.
      */
     public void resumePlayer() {
-
-        if (getState() == STATE_ALREADY_PlAYING)
+        if (getState() == STATE_PAUSED) {
             getCurrentSong().getMediaWrapper().resumePlayer();
-
-        else playCurrentSong();
+        } else if (getState() == STATE_IDLE) {
+            playCurrentSong();
+        }
     }
 
     /**
@@ -359,6 +386,8 @@ public class PlayQueue {
 
         Song song = getSongForID(songID);
 
+        Log.d(TAG, "state at onSongAvailable: " + getState());
+
         if (getState() == STATE_WAITING && song == getCurrentSong()) {
             Log.d(TAG, "state is waiting and song is current song...");
             playCurrentSong();
@@ -378,6 +407,19 @@ public class PlayQueue {
         }
 
 
+    }
+
+    public void playSingleSong(Song song) {
+        Song currentSong = getCurrentSong();
+        if (currentSong != null) {
+            AbstractMediaWrapper wrapper = currentSong.getMediaWrapper();
+            if (wrapper != null) {
+                wrapper.stopPlayer();
+            }
+        }
+        initializeSong(song);
+        setCurrentSong(song);
+        playSongIntern();
     }
 
     //test for git

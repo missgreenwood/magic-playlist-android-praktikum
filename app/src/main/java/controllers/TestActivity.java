@@ -122,7 +122,7 @@ public class TestActivity extends ActionBarActivity implements View.OnClickListe
 
             } else if (view == beforeButton) {
                 Log.d("", "call play queue before track");
-                PlayQueue.getInstance().beforeTrack();
+                PlayQueue.getInstance().previousTrack();
 
             } else if (view == pauseButton) {
                 Log.d("", "pause button");
