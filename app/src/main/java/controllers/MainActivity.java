@@ -71,7 +71,6 @@ public class MainActivity extends ActionBarActivity implements
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
-        this.setTitle("Magic Playlist");
         myPlaylists = (Button) this.findViewById(R.id.button5);
         playlistsGenerator = (Button) this.findViewById(R.id.button6);
         otherPlaylists = (Button) this.findViewById(R.id.button7);
@@ -137,6 +136,7 @@ public class MainActivity extends ActionBarActivity implements
         intentFilter.addAction(PlayQueue.SONG_NOT_AVAILABLE);
         broadcastReceiver = new MyBroadcastReceiver();
         this.registerReceiver(broadcastReceiver, intentFilter);
+        this.setTitle("Magic Playlist");
 
         Song strokes = new Song("The Strokes", "Last Nite");
         Song random = new Song("Caribou", "Melody Day");
@@ -159,6 +159,12 @@ public class MainActivity extends ActionBarActivity implements
          */
 //        playQueue.playSongs(true);
         super.onStart();
+    }
+
+    @Override
+    public void onResume() {
+        super.onResume();
+        this.setTitle("Magic Playlist");
     }
 
     @Override
@@ -200,9 +206,9 @@ public class MainActivity extends ActionBarActivity implements
     } */
 
 
-    public void setActionBarTitle (String title) {
+    /* public void setActionBarTitle (String title) {
         getSupportActionBar().setTitle(title);
-    }
+    } */
 
     @Override
     protected void onNewIntent(Intent intent) {

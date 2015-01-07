@@ -34,9 +34,8 @@ public class MyPlaylistsFragment extends ListFragment {
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
         ViewGroup rootView = (ViewGroup) inflater.inflate(R.layout.fragment_playlists, container, false);
-        ((MainActivity) getActivity()).setActionBarTitle("My Playlists");
-        // Hard coded string array for testing
-        // TODO: call method loadPlaylistsFromDB() from caller MyPlaylistsActivity
+        ((MainActivity)getActivity()).getSupportActionBar().setTitle("My Playlists");
+        // ((MainActivity) getActivity()).setActionBarTitle("My Playlists");
         playlists = PlaylistsManager.getInstance().getPlaylists();
         int length = playlists.size();
         String[] listItems = new String[length];
@@ -49,6 +48,12 @@ public class MyPlaylistsFragment extends ListFragment {
         // Retain the ListFragment instance across Activity re-creation
         setRetainInstance(true);
         return rootView;
+    }
+
+    @Override
+    public void onResume() {
+        super.onResume();
+        ((MainActivity)getActivity()).getSupportActionBar().setTitle("My Playlists");
     }
 
     // Handle Item click event
