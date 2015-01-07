@@ -3,6 +3,7 @@ package models.mediawrappers;
 import android.content.Context;
 import android.util.Log;
 
+import models.Settings;
 import models.mediaModels.Playlist;
 import models.mediaModels.Song;
 
@@ -40,6 +41,7 @@ public class PlayQueue {
     private ArrayList<Song> songs;
     //TODO: should be read from a preferences file or something
     private ArrayList<String> mediaWrappers;
+    //  private Settings settings;
     /**
      * This class should be used to create a playlist/queue with a list of songs.
      * The mediawrapper type that should be used has to be specified for every song (see Song class).
@@ -50,6 +52,7 @@ public class PlayQueue {
             Log.e("ERROR", "dont initialize PlayQueue! It's a wild singleton!");
         }
         setState(STATE_IDLE);
+        //  setMediaWrappers(Settings.getInstance().getMediaWrappers());
     }
 
     public static PlayQueue getInstance()
@@ -109,6 +112,7 @@ public class PlayQueue {
 
     //TODO: should rather be in class Song?
     public String getNextType(Song song) {
+
 
         ListIterator<String> it = mediaWrappers.listIterator();
 
@@ -188,7 +192,7 @@ public class PlayQueue {
 
         //  if (song.getMediaWrapper() == null) {
 
-
+        // ArrayList<String> mediaWrappers = Settings.getInstance().getMediaWrappers();
         AbstractMediaWrapper abstractMediaWrapper = null;
 
         if (!mediaWrappers.contains(song.getMediaWrapperType()))
