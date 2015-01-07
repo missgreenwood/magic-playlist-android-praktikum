@@ -16,6 +16,14 @@ import java.util.List;
  */
 public abstract class AbstractMediaWrapper {
 
+    public Context getContext() {
+        return context;
+    }
+
+    public void setContext(Context context) {
+        this.context = context.getApplicationContext();
+    }
+
     Context context;
     private Song song;
     private String playPath;

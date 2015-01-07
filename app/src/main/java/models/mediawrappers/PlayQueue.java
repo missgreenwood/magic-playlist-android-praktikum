@@ -67,7 +67,7 @@ public class PlayQueue {
     }
 
     public void setContext(Context context) {
-        this.context = context;
+        this.context = context.getApplicationContext();
     }
 
     public void importPlaylist(Playlist playlist) {

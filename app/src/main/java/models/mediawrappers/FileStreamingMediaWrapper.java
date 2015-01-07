@@ -19,7 +19,7 @@ public abstract class FileStreamingMediaWrapper extends AbstractMediaWrapper {
     public int counter;
 
     public FileStreamingMediaWrapper(Context context, String playPath) {
-        this.context = context;
+        setContext(context);
         setPlayPath(playPath);
 
     }
