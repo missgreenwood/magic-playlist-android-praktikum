@@ -60,7 +60,7 @@ public class FileStreamingMediaService extends Service implements MediaPlayer.On
 
             Notification notification = new Notification();
             notification.tickerText = "Musik";
-            notification.icon = R.drawable.ic_launcher;
+            notification.icon = R.drawable.metrodroid_music;
             notification.flags |= Notification.FLAG_ONGOING_EVENT;
 
 
