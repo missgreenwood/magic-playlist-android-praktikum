@@ -172,7 +172,6 @@ public class MainActivity extends ActionBarActivity implements
         });
 
         PlayQueue.getInstance().setMediaWrappers(Settings.getInstance().getMediaWrappers());
-        Settings.getInstance().deactivateWrapper(Song.MEDIA_WRAPPER_REMOTE_SOUNDCLOUD);
 
         super.onStart();
     }
