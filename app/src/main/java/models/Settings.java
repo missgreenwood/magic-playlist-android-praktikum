@@ -18,6 +18,7 @@ public class Settings {
     }
 
     private ArrayList<String> mediaWrappers;
+    private SharedPreferences preferences;
 
     private Settings() {
     }
@@ -36,6 +37,7 @@ public class Settings {
             //add to index, which represents the priority of the wrapper
             mediaWrappers.add(preferences.getInt(wrapper, i), wrapper);
         }
+        this.preferences = preferences;
     }
 
     private ArrayList<String> getDefaultMediaWrappersList()
@@ -47,6 +49,20 @@ public class Settings {
         return defaultWrappersList;
     }
 
+    private void saveSettings()
+    {
+        if (preferences == null) {
+            return;
+        }
+        SharedPreferences.Editor editor = preferences.edit();
+
+        for (int i = 0; i < mediaWrappers.size(); i++) {
+            editor.putInt(mediaWrappers.get(i), i);
+        }
+
+        editor.apply();
+    }
+
     public void increaseWrapperPriority(String wrapper) {
         int prio = mediaWrappers.indexOf(wrapper);
         if (prio > 0) { //its not already the first item
@@ -54,6 +70,7 @@ public class Settings {
             mediaWrappers.set(prio-1, mediaWrappers.get(prio));
             mediaWrappers.set(prio, upperWrapper);
         }
+        saveSettings();
     }
 
     public void decreaseWrapperPriority(String wrapper) {
@@ -63,5 +80,6 @@ public class Settings {
             mediaWrappers.set(prio + 1, mediaWrappers.get(prio));
             mediaWrappers.set(prio, upperWrapper);
         }
+        saveSettings();
     }
 }

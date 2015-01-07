@@ -163,6 +163,7 @@ public class MainActivity extends ActionBarActivity implements
         Settings.getInstance().loadSettings(getPreferences(MODE_PRIVATE));
         PlayQueue.getInstance().setMediaWrappers(Settings.getInstance().getMediaWrappers());
 
+
         super.onStart();
     }
 
