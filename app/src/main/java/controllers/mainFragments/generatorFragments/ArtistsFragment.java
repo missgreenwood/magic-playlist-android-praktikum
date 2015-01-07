@@ -10,6 +10,7 @@ import android.view.ViewGroup;
 import android.widget.EditText;
 import android.widget.Toast;
 
+import controllers.MainActivity;
 import tests.R;
 
 /**
@@ -34,6 +35,7 @@ public class ArtistsFragment extends Fragment {
                              Bundle savedInstanceState) {
         // Inflate the layout for this fragment
         View view = inflater.inflate(R.layout.fragment_artists, container, false);
+        ((MainActivity) getActivity()).setActionBarTitle("Artists");
         // Get edittext component
         editArtist = (EditText) view.findViewById(R.id.editArtist);
         addKeyListener();

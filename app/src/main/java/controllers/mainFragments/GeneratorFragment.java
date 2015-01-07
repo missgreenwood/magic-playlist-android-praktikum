@@ -14,6 +14,7 @@ import android.view.ViewGroup;
 import android.widget.EditText;
 import android.widget.Toast;
 
+import controllers.MainActivity;
 import controllers.mainFragments.generatorFragments.ArtistsFragment;
 import controllers.mainFragments.generatorFragments.GenresListFragment;
 import controllers.mainFragments.generatorFragments.SongsFragment;
@@ -56,7 +57,7 @@ public class GeneratorFragment extends android.support.v4.app.Fragment implement
 
         // Inflate the layout for this fragment
         View view = inflater.inflate(R.layout.fragment_generator, container, false);
-
+        ((MainActivity) getActivity()).setActionBarTitle("Playlist Generator");
         view.findViewById(R.id.genresBtn).setOnClickListener(this);
         view.findViewById(R.id.artistsBtn).setOnClickListener(this);
         view.findViewById(R.id.songsBtn).setOnClickListener(this);

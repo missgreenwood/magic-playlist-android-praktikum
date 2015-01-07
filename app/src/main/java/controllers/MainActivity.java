@@ -71,6 +71,7 @@ public class MainActivity extends ActionBarActivity implements
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
+        this.setTitle("Magic Playlist");
         myPlaylists = (Button) this.findViewById(R.id.button5);
         playlistsGenerator = (Button) this.findViewById(R.id.button6);
         otherPlaylists = (Button) this.findViewById(R.id.button7);
