@@ -48,14 +48,19 @@ public class Settings {
     public void loadSettings(SharedPreferences preferences)
     {
         ArrayList<String> defWrapperList = getDefaultMediaWrappersList();
-        mediaWrappers = new ArrayList<>(defWrapperList.size());
-        mediaWrappersState = new HashMap<>(defWrapperList.size());
+        mediaWrappersState = new HashMap<>();
+        String[] wrappers = new String[defWrapperList.size()];
         for (int i = 0; i < defWrapperList.size(); i++) {
             String wrapper = defWrapperList.get(i);
             //add to index, which represents the priority of the wrapper
-            mediaWrappers.add(preferences.getInt(wrapper, i), wrapper);
+            wrappers[preferences.getInt(wrapper, i)] = wrapper;
             mediaWrappersState.put(wrapper, preferences.getBoolean(wrapper + "_bool", true));
         }
+        mediaWrappers = new ArrayList<>();
+        for (String wrapper : wrappers) {
+            mediaWrappers.add(wrapper);
+        }
+
         this.preferences = preferences;
     }
 
