@@ -68,8 +68,8 @@ public class APIWrapper extends AsyncTask<String, Void, String> {
 
     @Override
     protected void onPostExecute(String response) {
-        Log.d(TAG, "onpostexecute");
-        Log.d(TAG, "json array string: " + response);
+        Log.v(TAG, "onpostexecute");
+        Log.v(TAG, "json array string: " + response);
 
         //   parent.processWebCallResult(response, true);
 
@@ -131,15 +131,15 @@ public class APIWrapper extends AsyncTask<String, Void, String> {
 
         if (httpResponse != null) {
             httpEntity = httpResponse.getEntity();
-            Log.d(TAG, "length: " + httpEntity.getContentLength());
-            Log.d(TAG, "teeest: " + httpEntity.toString());
+          //  Log.d(TAG, "length: " + httpEntity.getContentLength());
+          //  Log.d(TAG, "teeest: " + httpEntity.toString());
 
 
             try {
                 response = EntityUtils.toString(httpEntity);
 
 
-                Log.d(TAG, "response: " + response);
+              //  Log.d(TAG, "response: " + response);
             } catch (IOException e) {
                 e.printStackTrace();
             }

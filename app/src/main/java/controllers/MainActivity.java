@@ -18,6 +18,7 @@ import com.spotify.sdk.android.playback.Config;
 
 import controllers.mainFragments.GeneratorFragment;
 import controllers.mainFragments.MyPlaylistsFragment;
+import models.Settings;
 import models.mediaModels.Playlist;
 import models.mediaModels.Song;
 import models.mediawrappers.FileStreamingMediaService;
@@ -63,7 +64,7 @@ public class MainActivity extends ActionBarActivity implements
     }
 //
     public void setSpotifyConfig(Config spotifyConfig) {
-        Log.d("", "set spotify config");
+        Log.v("", "set spotify config");
         this.spotifyConfig = spotifyConfig;
     }
 
@@ -107,7 +108,7 @@ public class MainActivity extends ActionBarActivity implements
 
     @Override
     public void onClick(View view) {
-        Log.d("", "Klick auf Button");
+        //Log.d("", "Klick auf Button");
 
         if (view == myPlaylists) {
             this.openMyPlaylists();
@@ -158,6 +159,11 @@ public class MainActivity extends ActionBarActivity implements
         set to false if you don't want media wrappers to be overwritten if they are not null
          */
 //        playQueue.playSongs(true);
+
+        Settings.getInstance().loadSettings(getPreferences(MODE_PRIVATE));
+        PlayQueue.getInstance().setMediaWrappers(Settings.getInstance().getMediaWrappers());
+
+
         super.onStart();
     }
 

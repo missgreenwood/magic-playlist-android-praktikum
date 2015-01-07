@@ -1,6 +1,7 @@
 package models.mediawrappers;
 
 import android.content.Context;
+import android.util.JsonReader;
 import android.util.Log;
 
 import models.apiwrappers.APIWrapper;
@@ -47,7 +48,7 @@ public class SoundCloudStreamingMediaWrapper extends RemoteFileStreamingMediaWra
 
         BasicNameValuePair clientIDPair = new BasicNameValuePair(SOUNDCLOUD_CLIENT_ID_STRING, SOUNDCLOUD_CLIENT_ID);
 
-        Log.d(TAG, "call process Web Call Result");
+        Log.v(TAG, "call process Web Call Result");
         try {
             JSONArray jsonArray = new JSONArray(result);
 
@@ -66,16 +67,16 @@ public class SoundCloudStreamingMediaWrapper extends RemoteFileStreamingMediaWra
             //JSONObject first = (JSONObject) jsonArray.get(0);
             //  = first.getInt("id");
 
-            Log.d(TAG, "trackid: " + trackID);
+            Log.v(TAG, "trackid: " + trackID);
 
             String newURL = "";
             if (trackID != 0) {
                 newURL = SOUNDCLOUD_TRACKS_BASE_URL + trackID + "/" + SOUNDCLOUD_STREAM_STRING;
-                ArrayList<NameValuePair> params = new ArrayList<NameValuePair>();
+                ArrayList<NameValuePair> params = new ArrayList<>();
                 params.add(clientIDPair);
                 newURL = APIWrapper.encodeURL(newURL, params);
 
-                Log.d(TAG, "track_url :" + newURL);
+                Log.v(TAG, "track_url :" + newURL);
                 setPlayPath(newURL);
 
             }
@@ -98,12 +99,9 @@ public class SoundCloudStreamingMediaWrapper extends RemoteFileStreamingMediaWra
 
             // playState = false;
         } catch (JSONException e) {
-
-
-            e.printStackTrace();
+           Log.e(TAG, "error while process webcall with callback: " + callback + " with message: " + e.getMessage());
+           Thread.dumpStack();
         }
-
-
     }
 
     @Override
@@ -127,7 +125,7 @@ public class SoundCloudStreamingMediaWrapper extends RemoteFileStreamingMediaWra
 
         url = APIWrapper.encodeURL(url, params);
 
-        Log.d(TAG, url);
+        //Log.d(TAG, url);
 
         //APIWrapper apiWrapper=new APIWrapper();
         //String jsonArrayString = apiWrapper.getJSONCall(url, APIWrapper.GET);
@@ -141,7 +139,6 @@ public class SoundCloudStreamingMediaWrapper extends RemoteFileStreamingMediaWra
 
     @Override
     public boolean lookForSong() {
-
 
         //TODO: diese Methoden ist eigentlich nicht notwendig, weil sie nur computePlayPath aufruft
         computePlayPath(getSong());

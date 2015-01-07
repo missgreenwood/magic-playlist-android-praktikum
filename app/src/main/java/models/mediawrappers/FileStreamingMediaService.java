@@ -1,6 +1,7 @@
 package models.mediawrappers;
 
 import android.app.Notification;
+import android.app.PendingIntent;
 import android.app.Service;
 import android.content.Intent;
 import android.media.AudioManager;
@@ -8,6 +9,7 @@ import android.media.MediaPlayer;
 import android.os.IBinder;
 import android.util.Log;
 
+import controllers.MainActivity;
 import tests.R;
 
 import java.io.IOException;
@@ -58,10 +60,22 @@ public class FileStreamingMediaService extends Service implements MediaPlayer.On
 
             Notification notification = new Notification();
             notification.tickerText = "Musik";
-            notification.icon = R.drawable.ic_launcher;
+            notification.icon = R.drawable.metrodroid_music;
             notification.flags |= Notification.FLAG_ONGOING_EVENT;
+
+
+            Intent toLaunch = new Intent(getApplicationContext(), MainActivity.class);
+            toLaunch.setAction("android.intent.action.MAIN");
+            toLaunch.addCategory("android.intent.category.LAUNCHER");
+
+            PendingIntent intentBack = PendingIntent.getActivity(getApplicationContext(), 0, toLaunch, PendingIntent.FLAG_UPDATE_CURRENT);
+
+
             notification.setLatestEventInfo(getApplicationContext(), "MagicPlaylist",
-                    "Playing " + songname, null);
+                    "Playing " + songname, intentBack);
+
+
+
 
             startForeground(NOTIFICATION_ID, notification);
             Log.d(TAG, "start play");
@@ -121,7 +135,7 @@ public class FileStreamingMediaService extends Service implements MediaPlayer.On
 
     @Override
     public void onPrepared(MediaPlayer mp) {
-        Log.d(TAG, "on prepared called, set state to playing");
+        Log.v(TAG, "on prepared called, set state to playing");
 
         try {
             mediaPlayer.start();
@@ -137,7 +151,7 @@ public class FileStreamingMediaService extends Service implements MediaPlayer.On
         try {
             mediaPlayer.release();
             state = AudioState.Stopped;
-            Log.d(TAG, "on completion");
+            Log.v(TAG, "on completion");
         } catch (IllegalStateException e) {
 
             e.printStackTrace();
@@ -158,7 +172,7 @@ public class FileStreamingMediaService extends Service implements MediaPlayer.On
 
     public void onDestroy() {
 
-        Log.d(TAG, "on destroy?");
+        Log.v(TAG, "on destroy?");
 
 
         //  if (mediaPlayer.isPlaying()) {
@@ -175,7 +189,7 @@ public class FileStreamingMediaService extends Service implements MediaPlayer.On
     public boolean onError(MediaPlayer mediaPlayer, int i, int i2) {
         {
 
-            Log.d(TAG, "on error");
+            Log.e(TAG, "Media Player Error");
 
             mediaPlayer.reset();
 

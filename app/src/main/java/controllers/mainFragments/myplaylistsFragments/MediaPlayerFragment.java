@@ -15,6 +15,10 @@ public class MediaPlayerFragment extends android.support.v4.app.Fragment impleme
 
     private Config spotifyConfig;
 
+    public MediaPlayerFragment() {
+        // Required empty public constructor
+    }
+
     public Config getSpotifyConfig() {
         return spotifyConfig;
     }
@@ -23,10 +27,6 @@ public class MediaPlayerFragment extends android.support.v4.app.Fragment impleme
 
         Log.d("", "set spotify config");
         this.spotifyConfig = spotifyConfig;
-    }
-
-    public MediaPlayerFragment() {
-        // Required empty public constructor
     }
 
     @Override
@@ -61,17 +61,19 @@ public class MediaPlayerFragment extends android.support.v4.app.Fragment impleme
     public void onClick(View view) {
         switch (view.getId()) {
             case R.id.nextSongBtn:
-                Log.d("", "call play queue next track");
+                Log.v("", "call play queue next track");
                 PlayQueue.getInstance().nextTrack();
                 break;
 
             case R.id.lastSongBtn:
-                Log.d("", "call play queue before track");
-                PlayQueue.getInstance().beforeTrack();
+
+                Log.v("", "call play queue previous track");
+                PlayQueue.getInstance().previousTrack();
+
                 break;
 
             case R.id.pauseSongBtn:
-                Log.d("", "pause button");
+                Log.v("", "pause button");
                 PlayQueue.getInstance().pausePlayer();
                 break;
 

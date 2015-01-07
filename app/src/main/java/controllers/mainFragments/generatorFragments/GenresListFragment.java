@@ -39,6 +39,7 @@ public class GenresListFragment extends ListFragment {
         setRetainInstance(true);
         return rootView;
     }
+
     // Handle Item click event
     public void onListItemClick(ListView l, View view, int position, long id) {
         ViewGroup viewg = (ViewGroup) view;
