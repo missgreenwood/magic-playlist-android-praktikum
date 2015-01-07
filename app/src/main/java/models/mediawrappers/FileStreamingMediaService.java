@@ -1,6 +1,7 @@
 package models.mediawrappers;
 
 import android.app.Notification;
+import android.app.PendingIntent;
 import android.app.Service;
 import android.content.Intent;
 import android.media.AudioManager;
@@ -8,6 +9,7 @@ import android.media.MediaPlayer;
 import android.os.IBinder;
 import android.util.Log;
 
+import controllers.MainActivity;
 import tests.R;
 
 import java.io.IOException;
@@ -60,8 +62,20 @@ public class FileStreamingMediaService extends Service implements MediaPlayer.On
             notification.tickerText = "Musik";
             notification.icon = R.drawable.ic_launcher;
             notification.flags |= Notification.FLAG_ONGOING_EVENT;
+
+
+            Intent toLaunch = new Intent(getApplicationContext(), MainActivity.class);
+            toLaunch.setAction("android.intent.action.MAIN");
+            toLaunch.addCategory("android.intent.category.LAUNCHER");
+
+            PendingIntent intentBack = PendingIntent.getActivity(getApplicationContext(), 0, toLaunch, PendingIntent.FLAG_UPDATE_CURRENT);
+
+
             notification.setLatestEventInfo(getApplicationContext(), "MagicPlaylist",
-                    "Playing " + songname, null);
+                    "Playing " + songname, intentBack);
+
+
+
 
             startForeground(NOTIFICATION_ID, notification);
             Log.d(TAG, "start play");
