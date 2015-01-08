@@ -29,11 +29,15 @@ public class Settings {
     private Settings() {
     }
 
-    public ArrayList<String> getMediaWrappers()
+    public ArrayList<String> getMediaWrappers() {
+        return getMediaWrappers(false);
+    }
+
+    public ArrayList<String> getMediaWrappers(boolean inclusiveInactive)
     {
         ArrayList<String> usedMediaWrappers = new ArrayList<>();
         for (int i = 0; i < mediaWrappers.size(); i++) {
-            if (mediaWrappersState.get(mediaWrappers.get(i))) {
+            if (mediaWrappersState.get(mediaWrappers.get(i)) || inclusiveInactive) {
                 usedMediaWrappers.add(mediaWrappers.get(i));
             }
         }
@@ -41,7 +45,7 @@ public class Settings {
         return usedMediaWrappers;
     }
 
-    public void addOnMediaWrapperListChangeListener(Listener listener) {
+    public void setOnMediaWrapperListChangeListener(Listener listener) {
         this.listener = listener;
     }
 
@@ -116,6 +120,10 @@ public class Settings {
     public void activateWrapper(String wrapper) {
         mediaWrappersState.put(wrapper, true);
         saveSettings();
+    }
+
+    public boolean isWrapperActive(String wrapper) {
+        return mediaWrappersState.get(wrapper);
     }
 
     public interface Listener {
