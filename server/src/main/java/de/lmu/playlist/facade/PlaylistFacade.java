@@ -23,5 +23,5 @@ public interface PlaylistFacade {
     @GET
     @Path("/find")
     @Produces(MediaType.APPLICATION_JSON)
-    public Iterable<Playlist> findPlaylists(@QueryParam("author") String author);
+    public Playlist findPlaylistByName(@QueryParam("name") String name);
 }

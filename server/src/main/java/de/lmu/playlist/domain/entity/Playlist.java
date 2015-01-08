@@ -1,37 +1,33 @@
 package de.lmu.playlist.domain.entity;
 
-import org.mongojack.Id;
+import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 
+@JsonIgnoreProperties(ignoreUnknown = true)
 public class Playlist {
 
-    public static final String AUTHOR = "author";
+    public static final String NAME = "name";
 
-    @Id
-    private String id;
+    private String name;
 
-    private String author;
+    private Iterable<Song> songs;
 
     public Playlist() {
-        // dummy
+        // dummy constructor
     }
 
-    public Playlist(String author) {
-        this.author = author;
+    public String getName() {
+        return name;
     }
 
-    public String getAuthor() {
-        return author;
+    public void setName(String name) {
+        this.name = name;
     }
 
-    public String getId() {
-        return id;
+    public Iterable<Song> getSongs() {
+        return songs;
     }
 
-    public void setId(String id) {
-        this.id = id;
-    }
-
-    public void setAuthor(String author) {
-        this.author = author;
+    public void setSongs(Iterable<Song> songs) {
+        this.songs = songs;
     }
 }

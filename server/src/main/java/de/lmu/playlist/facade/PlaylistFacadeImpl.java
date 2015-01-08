@@ -1,6 +1,7 @@
 package de.lmu.playlist.facade;
 
 import com.google.inject.Inject;
+
 import de.lmu.playlist.domain.entity.Playlist;
 import de.lmu.playlist.service.PlaylistService;
 
@@ -24,7 +25,7 @@ public class PlaylistFacadeImpl implements PlaylistFacade {
     }
 
     @Override
-    public Iterable<Playlist> findPlaylists(String author) {
-        return playlistService.findPlaylist(author);
+    public Playlist findPlaylistByName(String name) {
+        return playlistService.findPlaylist(name);
     }
 }

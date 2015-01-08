@@ -1,0 +1,16 @@
+apply plugin: 'java'
+
+repositories {
+    mavenCentral()
+}
+
+dependencies {
+    compile 'org.eclipse.jetty:jetty-servlet:9.1.5.v20140505'
+    compile 'com.sun.jersey:jersey-server:1.18.1'
+    compile 'com.sun.jersey.contribs:jersey-guice:1.18.1'
+    compile 'com.fasterxml.jackson.jaxrs:jackson-jaxrs-json-provider:2.3.0'
+    compile 'org.mongojack:mongojack:2.0.0'
+    compile 'org.mongodb:mongo-java-driver:2.11.4'
+    compile 'com.google.inject.extensions:guice-servlet:3.0'
+    compile 'org.testng:testng:6.1.1'
+}
