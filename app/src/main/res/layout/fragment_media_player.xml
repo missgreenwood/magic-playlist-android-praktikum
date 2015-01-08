@@ -1,55 +1,50 @@
 <!-- @author andreas -->
 <LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:tools="http://schemas.android.com/tools"
-    android:layout_height="fill_parent"
+    android:layout_height="wrap_content"
     android:layout_width="fill_parent"
-    android:orientation="horizontal"
-    android:background="@drawable/listening"
+    android:orientation="vertical"
+    android:baselineAligned="false"
+    android:background="@android:color/darker_gray"
     tools:context="controllers.mainFragments.myplaylistsFragments.MediaPlayerFragment">
-    <LinearLayout
-        android:layout_width="0dip"
-        android:layout_height="fill_parent"
-        android:layout_weight=".275"
-        android:orientation="horizontal">
-    </LinearLayout>
-    <LinearLayout
-        android:layout_width="0dip"
+
+    <TextView
+        android:id="@+id/songInfo"
+        android:layout_width="fill_parent"
         android:layout_height="wrap_content"
-        android:layout_weight=".7"
-        android:orientation="vertical">
-        <Button
-            android:id="@+id/nextSongBtn"
-            android:text=">"
-            android:layout_width="fill_parent"
-            android:layout_height="wrap_content"
-            android:layout_marginTop="20dp"
-            style="@style/btnStyleOrange" />
+        android:textColor="@android:color/black"
+        android:text="@string/artist_song"/>
+    <LinearLayout
+        android:layout_height="wrap_content"
+        android:layout_width="fill_parent"
+        android:orientation="horizontal" >
         <Button
             android:id="@+id/lastSongBtn"
-            android:text="&lt;"
-            android:layout_width="fill_parent"
-            android:layout_height="wrap_content"
-            android:layout_marginTop="20dp"
-            style="@style/btnStyleOrange" />
+            android:text="@string/previousSong"
+            android:layout_width="0dip"
+            android:layout_weight="0.25"
+            android:layout_height="30dip"
+            style="@style/mediaPlayerBtn"/>
         <Button
             android:id="@+id/pauseSongBtn"
-            android:text="Stop"
-            android:layout_width="fill_parent"
-            android:layout_height="wrap_content"
-            android:layout_marginTop="20dp"
-            style="@style/btnStyleOrange" />
+            android:text="@string/Stop"
+            android:layout_width="0dip"
+            android:layout_weight="0.25"
+            android:layout_height="30dip"
+            style="@style/mediaPlayerBtn" />
         <Button
             android:id="@+id/playSongBtn"
-            android:text="Play"
-            android:layout_width="fill_parent"
-            android:layout_height="wrap_content"
-            android:layout_marginTop="20dp"
-            style="@style/btnStyleOrange" />
+            android:text="@string/Play"
+            android:layout_width="0dip"
+            android:layout_weight="0.25"
+            android:layout_height="30dip"
+            style="@style/mediaPlayerBtn" />
+        <Button
+            android:id="@+id/nextSongBtn"
+            android:text="@string/nextSong"
+            android:layout_width="0dip"
+            android:layout_weight="0.25"
+            android:layout_height="30dip"
+            style="@style/mediaPlayerBtn" />
     </LinearLayout>
-    <LinearLayout
-        android:layout_width="0dip"
-        android:layout_height="fill_parent"
-        android:layout_weight="0.025">
-    </LinearLayout>
-
 </LinearLayout>

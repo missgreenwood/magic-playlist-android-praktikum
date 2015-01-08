@@ -3,7 +3,6 @@ package models.mediawrappers;
 import android.content.Context;
 import android.util.Log;
 
-import models.Settings;
 import models.mediaModels.Playlist;
 import models.mediaModels.Song;
 
@@ -41,18 +40,16 @@ public class PlayQueue {
     private ArrayList<Song> songs;
     //TODO: should be read from a preferences file or something
     private ArrayList<String> mediaWrappers;
-    //  private Settings settings;
+    private Playlist currentPlaylist;
+    private ArrayList<Listener> observers;
+
     /**
      * This class should be used to create a playlist/queue with a list of songs.
      * The mediawrapper type that should be used has to be specified for every song (see Song class).
      */
-    public PlayQueue() {
-
-        if (PlayQueue.getInstance() != null) {
-            Log.e("ERROR", "dont initialize PlayQueue! It's a wild singleton!");
-        }
+    private PlayQueue() {
+        observers = new ArrayList<>();
         setState(STATE_IDLE);
-        //  setMediaWrappers(Settings.getInstance().getMediaWrappers());
     }
 
     public static PlayQueue getInstance()
@@ -65,7 +62,8 @@ public class PlayQueue {
     }
 
     public void importPlaylist(Playlist playlist) {
-        songs = playlist.getSongsList();
+        currentPlaylist = playlist;
+        songs = playlist.getSongsList(true);
         if (songs.size() > 0) {
             initializePlaylist(true);
             Song currentSong = getCurrentSong();
@@ -178,6 +176,7 @@ public class PlayQueue {
             if (currentSong.getMediaWrapper() != null) {
                 String playpath = currentSong.getMediaWrapper().getPlayPath();
                 Log.d(TAG, "playpath: " + playpath);
+                notifyNewSongPlaying(currentSong);
                 if ((playpath != null) && (!playpath.equals(""))) {
 
                     Log.d(TAG, "now we can play the current song: " + currentSong);
@@ -372,7 +371,7 @@ public class PlayQueue {
 
 
     public void onTrackFinished() {
-        if (counter < songs.size())
+        if (songs != null && counter < songs.size())
             nextTrack();
     }
 
@@ -399,10 +398,14 @@ public class PlayQueue {
         Song song = getSongForID(intExtra);
         if (trySettingNextWrapper(song)) {
             initializeSong(song);
-
+        } else {
+            Log.e(TAG, "could not find wrapper for song: " + song);
+            if (song == currentSong) {
+                nextTrack();
+            }
+            song.setNotPlayable(true);
+            notifyCannotInitializeSong(song);
         }
-
-
     }
 
     public void playSingleSong(Song song) {
@@ -420,6 +423,36 @@ public class PlayQueue {
 
     public void setMediaWrappers(ArrayList<String> mediaWrappers) {
         this.mediaWrappers = mediaWrappers;
+    }
+
+    public Playlist getCurrentPlaylist() {
+        return currentPlaylist;
+    }
+
+    public void addObserver(Listener observer) {
+        this.observers.add(observer);
+    }
+
+    public void removeObserver(Listener observer) {
+        this.observers.remove(observer);
+    }
+
+    public void notifyNewSongPlaying(Song song)
+    {
+        for (Listener observer : observers) {
+            observer.onNewSongPlaying(song);
+        }
+    }
+
+    private void notifyCannotInitializeSong(Song song) {
+        for (Listener observer : observers) {
+            observer.onCannotInitializeSong(song);
+        }
+    }
+
+    public interface Listener {
+        void onNewSongPlaying(Song song);
+        void onCannotInitializeSong(Song song);
     }
 
     //test for git

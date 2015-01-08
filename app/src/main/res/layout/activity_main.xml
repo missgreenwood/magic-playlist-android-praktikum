@@ -2,53 +2,23 @@
 <LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:tools="http://schemas.android.com/tools"
     tools:context=".MainActivity"
-    android:orientation="horizontal"
+    android:orientation="vertical"
     android:layout_height="fill_parent"
-    android:layout_width="fill_parent"
-    android:background="@drawable/listening" >
-    <LinearLayout
-        android:layout_width="0dip"
-        android:layout_height="fill_parent"
-        android:layout_weight=".275"
-        android:orientation="horizontal">
-    </LinearLayout>
-    <LinearLayout
-        android:layout_width="0dip"
+    android:layout_width="fill_parent">
+    <FrameLayout
+        android:id="@+id/mainViewGroup"
+        android:layout_width="fill_parent"
+        android:layout_height="0dp"
+        android:layout_weight="1">
+        <fragment
+            android:layout_width="fill_parent"
+            android:layout_height="fill_parent"
+            android:name="controllers.MainFragment"
+            tools:layout="@layout/fragment_main_fragment" />
+    </FrameLayout>
+    <fragment
+        android:name="controllers.mainFragments.myplaylistsFragments.MediaPlayerFragment"
+        android:layout_width="fill_parent"
         android:layout_height="wrap_content"
-        android:layout_weight=".7"
-        android:orientation="vertical">
-        <Button
-            android:id="@+id/button5"
-            android:text="@string/my_playlists"
-            android:layout_width="fill_parent"
-            android:layout_height="wrap_content"
-            android:layout_marginTop="20dp"
-            style="@style/btnStyleOrange" />
-        <Button
-            android:id="@+id/button6"
-            android:text="@string/playlist_generator"
-            android:layout_width="fill_parent"
-            android:layout_height="wrap_content"
-            android:layout_marginTop="20dp"
-            style="@style/btnStyleOrange" />
-        <Button
-            android:id="@+id/button7"
-            android:text="@string/playlist_browser"
-            android:layout_width="fill_parent"
-            android:layout_height="wrap_content"
-            android:layout_marginTop="20dp"
-            style="@style/btnStyleOrange" />
-        <Button
-            android:id="@+id/button8"
-            android:text="@string/priority_list"
-            android:layout_width="fill_parent"
-            android:layout_height="wrap_content"
-            android:layout_marginTop="20dp"
-            style="@style/btnStyleOrange" />
-    </LinearLayout>
-    <LinearLayout
-        android:layout_width="0dip"
-        android:layout_height="fill_parent"
-        android:layout_weight="0.025">
-    </LinearLayout>
+        tools:layout="@layout/fragment_media_player" />
 </LinearLayout>

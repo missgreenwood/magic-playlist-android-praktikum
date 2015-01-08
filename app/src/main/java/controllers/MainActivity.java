@@ -20,9 +20,8 @@ import java.util.ArrayList;
 
 import controllers.mainFragments.GeneratorFragment;
 import controllers.mainFragments.MyPlaylistsFragment;
+import controllers.mainFragments.SettingsFragment;
 import models.Settings;
-import models.mediaModels.Playlist;
-import models.mediaModels.Song;
 import models.mediawrappers.FileStreamingMediaService;
 import models.mediawrappers.PlayQueue;
 import tests.R;
@@ -138,18 +137,18 @@ public class MainActivity extends ActionBarActivity implements
         this.registerReceiver(broadcastReceiver, intentFilter);
         this.setTitle("Magic Playlist");
 
-        Song strokes = new Song("The Strokes", "Last Nite");
-        Song random = new Song("Caribou", "Melody Day");
-        Song random2 = new Song("The Strokes", "Reptilia");
-        Song newSong = new Song("Tocotronic", "Let there be rock");
-        Song fifthSong = new Song("Muse", "Hysteria");
-
-        Playlist testListe = new Playlist("testListe");
-        testListe.addSong(strokes);
-        testListe.addSong(random);
-        testListe.addSong(random2);
-        testListe.addSong(newSong);
-        testListe.addSong(fifthSong);
+//        Song strokes = new Song("The Strokes", "Last Nite");
+//        Song random = new Song("Caribou", "Melody Day");
+//        Song random2 = new Song("The Strokes", "Reptilia");
+//        Song newSong = new Song("Tocotronic", "Let there be rock");
+//        Song fifthSong = new Song("Muse", "Hysteria");
+//
+//        Playlist testListe = new Playlist("testListe");
+//        testListe.addSong(strokes);
+//        testListe.addSong(random);
+//        testListe.addSong(random2);
+//        testListe.addSong(newSong);
+//        testListe.addSong(fifthSong);
 
 //        PlaylistsManager.getInstance().addPlaylist(testListe);
 
@@ -190,7 +189,7 @@ public class MainActivity extends ActionBarActivity implements
         if (playlistsListFragment == null) {
             playlistsListFragment = new MyPlaylistsFragment();
             FragmentTransaction transact = getSupportFragmentManager().beginTransaction();
-            transact.add(android.R.id.content, playlistsListFragment, "playlistsListFragment");
+            transact.replace(R.id.mainViewGroup, playlistsListFragment, "playlistsListFragment");
             transact.addToBackStack(null);
             transact.commit();
         }
@@ -201,7 +200,7 @@ public class MainActivity extends ActionBarActivity implements
         if (generatorFragment == null) {
             generatorFragment = new GeneratorFragment();
             FragmentTransaction transact = getSupportFragmentManager().beginTransaction();
-            transact.add(android.R.id.content, generatorFragment, "generatorFragment");
+            transact.replace(R.id.mainViewGroup, generatorFragment, "generatorFragment");
             transact.addToBackStack(null);
             transact.commit();
         }
@@ -212,7 +211,7 @@ public class MainActivity extends ActionBarActivity implements
         if (settingsFragment == null) {
             settingsFragment = new SettingsFragment();
             FragmentTransaction transact = getSupportFragmentManager().beginTransaction();
-            transact.add(android.R.id.content, settingsFragment, "settingsFragment");
+            transact.replace(R.id.mainViewGroup, settingsFragment, "settingsFragment");
             transact.addToBackStack(null);
             transact.commit();
         }

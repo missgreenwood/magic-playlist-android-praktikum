@@ -115,7 +115,7 @@ public class GeneratorFragment extends android.support.v4.app.Fragment implement
             genresListFragment = new GenresListFragment();
             genresListFragment.setListener(this);
             FragmentTransaction transact = getActivity().getSupportFragmentManager().beginTransaction();
-            transact.add(android.R.id.content,genresListFragment,"genresListFragment");
+            transact.add(R.id.generatorMainViewGroup,genresListFragment,"genresListFragment");
             transact.addToBackStack(null);
             transact.commit();
         }
@@ -208,7 +208,7 @@ public class GeneratorFragment extends android.support.v4.app.Fragment implement
 
     private void finishPlaylistClicked() {
         generator.savePlaylist();
-        Toast.makeText(getActivity().getApplicationContext(), "playlist " + generator.getPlaylist().getName(), Toast.LENGTH_SHORT);
+        Toast.makeText(getActivity(), "playlist " + generator.getPlaylist().getName(), Toast.LENGTH_SHORT);
     }
 
     @Override

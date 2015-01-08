@@ -14,27 +14,27 @@ public class Playlist {
     //TODO save in DB
     private static int uniqueId = 0;
 
-    private ArrayList<IPlaylistListener> observers;
+    private ArrayList<Listener> observers;
 
     private ArrayList<Song> songs;
     private String name;
 
-    public Playlist () {
+    public Playlist() {
         name = "new Playlist " + uniqueId++;
         songs = new ArrayList<>();
         observers = new ArrayList<>();
     }
 
-    public Playlist (String name) {
+    public Playlist(String name) {
         this();
         this.name = name;
     }
 
-    public void addObserver(IPlaylistListener newObserver) {
+    public void addObserver(Listener newObserver) {
         observers.add(newObserver);
     }
 
-    public void removeObserver(IPlaylistListener observer) {
+    public void removeObserver(Listener observer) {
         observers.remove(observer);
     }
 
@@ -50,22 +50,31 @@ public class Playlist {
         return true;
     }
 
-    public void removeSong (Song song) {
+    public boolean removeSong(Song song) {
         songs.remove(song);
+        boolean success = PlaylistFileHandler.savePlaylist(this);
+        if (!success) {
+            songs.add(song);
+            Log.e("ERROR", "could not save Playlist with removed Song, write Rights?");
+            return false;
+        }
         notifyChange();
+        return true;
+    }
+
+    public ArrayList<Song> getSongsList(boolean directAccess) {
+        return songs;
     }
 
     public ArrayList<Song> getSongsList() {
         return new ArrayList<>(songs);
     }
 
-    public String getName()
-    {
+    public String getName() {
         return name;
     }
 
-    public void setName(String name)
-    {
+    public void setName(String name) {
         boolean success = PlaylistFileHandler.changePlaylistName(this.name, name);
         if (success) {
             this.name = name;
@@ -74,10 +83,17 @@ public class Playlist {
         }
     }
 
-    private void notifyChange()
-    {
+    private void notifyChange() {
         for (int i = 0; i < observers.size(); i++) {
             observers.get(i).onPlaylistChange();
         }
+    }
+
+    public void destroy() {
+        PlaylistFileHandler.destroy(getName());
+    }
+
+    public interface Listener {
+        void onPlaylistChange();
     }
 }

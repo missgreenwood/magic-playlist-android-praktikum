@@ -1,4 +1,4 @@
-package controllers;
+package controllers.mainFragments;
 
 import android.os.Bundle;
 import android.support.v4.app.ListFragment;
@@ -12,6 +12,7 @@ import android.widget.Toast;
 
 import java.util.ArrayList;
 
+import controllers.MainActivity;
 import models.Settings;
 import tests.R;
 
