@@ -355,6 +355,8 @@ public class PlayQueue {
     private boolean trySettingNextWrapper(Song song) {
 
 
+        Log.d(TAG, "try setting next wrapper for song: " + song.toString());
+
         String type = getNextType(song);
 
 
@@ -383,11 +385,14 @@ public class PlayQueue {
 
         Song song = getSongForID(songID);
 
-        Log.d(TAG, "state at onSongAvailable: " + getState());
+        if (song != null) {
+            Log.d(TAG, "state at onSongAvailable: " + getState());
 
-        if (getState() == STATE_WAITING && song == getCurrentSong()) {
-            Log.d(TAG, "state is waiting and song is current song...");
-            playCurrentSong();
+            if (getState() == STATE_WAITING && song == getCurrentSong()) {
+                Log.d(TAG, "state is waiting and song is current song...");
+                playCurrentSong();
+
+            }
 
         }
         // getCurrentSong().getMediaWrapper().play();
@@ -398,15 +403,19 @@ public class PlayQueue {
         Log.d(TAG, "intent received, try setting next wrapper for song with id " + intExtra);
 
         Song song = getSongForID(intExtra);
-        if (trySettingNextWrapper(song)) {
-            initializeSong(song);
-        } else {
-            Log.e(TAG, "could not find wrapper for song: " + song);
-            if (song == currentSong) {
-                nextTrack();
+
+        if (song != null) {
+            if (trySettingNextWrapper(song)) {
+                initializeSong(song);
+            } else {
+                Log.e(TAG, "could not find wrapper for song: " + song);
+                if (song == currentSong) {
+                    nextTrack();
+                }
+                song.setNotPlayable(true);
+                notifyCannotInitializeSong(song);
             }
-            song.setNotPlayable(true);
-            notifyCannotInitializeSong(song);
+
         }
     }
 
