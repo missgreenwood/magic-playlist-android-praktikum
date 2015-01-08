@@ -7,9 +7,11 @@ import android.graphics.Color;
 import android.graphics.Paint;
 import android.os.Bundle;
 import android.support.v4.app.ListFragment;
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.AbsListView;
 import android.widget.AdapterView;
 import android.widget.ArrayAdapter;
 import android.widget.ListView;
@@ -26,12 +28,31 @@ import tests.R;
  * created by Andreas
  */
 public class PlaylistFragment extends ListFragment implements
-    PlayQueue.Listener, AdapterView.OnItemLongClickListener, Playlist.Listener {
+        PlayQueue.Listener, AdapterView.OnItemLongClickListener, Playlist.Listener, AbsListView.OnScrollListener {
 
     private Playlist playlist;
     private View currentlyPlayingView;
+    private int firstVisibleItem;
+    private int visibleItemCount;
+    private int totalItemCount;
 
     public PlaylistFragment() {
+    }
+
+    public int getFirstVisibleItem() {
+        return firstVisibleItem;
+    }
+
+    public void setFirstVisibleItem(int firstVisibleItem) {
+        this.firstVisibleItem = firstVisibleItem;
+    }
+
+    public int getVisibleItemCount() {
+        return visibleItemCount;
+    }
+
+    public void setVisibleItemCount(int visibleItemCount) {
+        this.visibleItemCount = visibleItemCount;
     }
 
     @Override
@@ -45,12 +66,34 @@ public class PlaylistFragment extends ListFragment implements
                 android.R.layout.simple_list_item_1, android.R.id.text1, playlist.getSongsList(true)));
 
         PlayQueue.getInstance().addObserver(this);
+
     }
 
     private void markAsCurrentlyPlaying(int index) {
         removeCurrentlyPlayingMark();
-        currentlyPlayingView = getListView().getChildAt(index);
-        currentlyPlayingView.setBackgroundColor(Color.argb(100, 80, 80, 80));
+        Log.v("", "mark as currently playing index: " + index);
+        Log.v("", "first visible position: " + firstVisibleItem + "visible item count: " + visibleItemCount);
+        int correctedIndex = index - firstVisibleItem;
+
+
+        if ((visibleItemCount + firstVisibleItem - 1) < index) {
+            Log.v("", "too far up, item not visible, totalItemcount+firstvisibleitem-1 <index");
+        } else if ((firstVisibleItem > index)) {
+            Log.v("", "too far down, item not visible, firstVisibleItem>index, ");
+        } else {
+            Log.v("", " corrected index (at least when ignoring partial visibility: " + correctedIndex);
+            currentlyPlayingView = getListView().getChildAt(correctedIndex);
+
+            if (currentlyPlayingView == null) {
+
+                Log.v("", "some case we haven't caught yet...?but this should actually be handled before");
+            } else {
+                Log.v("", "currently playing view: " + currentlyPlayingView.toString());
+                currentlyPlayingView.setBackgroundColor(Color.argb(100, 80, 80, 80));
+
+            }
+
+        }
     }
 
     private void removeCurrentlyPlayingMark() {
@@ -68,6 +111,8 @@ public class PlaylistFragment extends ListFragment implements
     public void onViewCreated(View view, Bundle savedInstanceState) {
         super.onViewCreated(view, savedInstanceState);
         getListView().setOnItemLongClickListener(this);
+        getListView().setOnScrollListener(this);
+
     }
 
     @Override
@@ -143,6 +188,21 @@ public class PlaylistFragment extends ListFragment implements
     @Override
     public void onPlaylistChange() {
         ((ArrayAdapter<Song>)getListAdapter()).notifyDataSetChanged();
+    }
+
+    @Override
+    public void onScrollStateChanged(AbsListView view, int scrollState) {
+
+    }
+
+    @Override
+    public void onScroll(AbsListView view, int firstVisibleItem, int visibleItemCount, int totalItemCount) {
+
+        this.visibleItemCount = visibleItemCount;
+        this.firstVisibleItem = firstVisibleItem;
+        this.totalItemCount = totalItemCount;
+
+        Log.v("", "on scroll: visibleItemCount: " + visibleItemCount + " firstVisibleItem: " + firstVisibleItem);
     }
 
     private class SongArrayAdapter extends ArrayAdapter<Song>

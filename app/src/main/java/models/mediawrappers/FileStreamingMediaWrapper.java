@@ -54,6 +54,8 @@ public abstract class FileStreamingMediaWrapper extends AbstractMediaWrapper {
         Intent playIntent = new Intent(context, FileStreamingMediaService.class);
         playIntent.putExtra(FileStreamingMediaService.INFO_PlAYPATH, getPlayPath());
         playIntent.putExtra(FileStreamingMediaService.INFO_SONGNAME, getSong().getSongname());
+        playIntent.putExtra(FileStreamingMediaService.INFO_ARTIST, getSong().getArtist());
+        playIntent.putExtra(FileStreamingMediaService.INFO_MEDIA_WRAPPER, getSong().getMediaWrapperType());
         playIntent.setAction(FileStreamingMediaService.ACTION_PLAY);
         context.startService(playIntent);
         return true;
