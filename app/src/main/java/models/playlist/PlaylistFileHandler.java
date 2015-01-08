@@ -73,14 +73,11 @@ public class PlaylistFileHandler {
         BufferedReader reader = null;
 
         try {
-            Log.d("read Playlist", "start");
             reader = new BufferedReader(new FileReader(getFilePath(name)));
-            Log.d("read Playlist", "reader init");
 
             String line;
 
             HashMap<Integer, Song> songs = new HashMap<>();
-            Log.d("read Playlist", "start reading...");
             while ((line = reader.readLine()) != null) {
                 int i = line.indexOf('=');
                 int songNumber;
@@ -97,47 +94,37 @@ public class PlaylistFileHandler {
 
                 String label = line.substring(0, i-1).toLowerCase(),
                        value = line.substring(i + 1);
-                Log.d("read Playlist", "label: " + label + " value: " + value);
 
                 Song song;
                 if (!songs.containsKey(songNumber)) {
                     song = new Song();
                     songs.put(songNumber, song);
-                    Log.d("read Playlist", "new song #" + songNumber);
                 } else {
                     song = songs.get(songNumber);
-                    Log.d("read Playlist", "found song #" + songNumber);
                 }
 
                 switch (label) {
                     case "file":
-                        Log.d("read Playlist", "set url " + value);
                         song.setSongUrl(value);
                         break;
                     case "title":
-                        Log.d("read Playlist", "set title"  + value);
                         String[] valueParts = value.split("-", 2);
                         if (valueParts.length == 2) {
                             song.setArtist(valueParts[0].trim());
                             song.setSongname(valueParts[1].trim());
-                            Log.d("read Playlist", "artist: "  + valueParts[0].trim() + "song: " + valueParts[1].trim());
                         } else {
                             song.setArtist("Unknown");
                             song.setSongname(value);
-                            Log.d("read Playlist", "artist: Unknown song: " + value);
                         }
                         break;
                     case "length":
                         song.setLength(Integer.parseInt(value));
-                        Log.d("read Playlist", "set length " + value);
                         break;
                 }
             }
-            Log.d("read Playlist", "finished reading file");
             //TODO: check time effort for sorting...
             SortedSet<Integer> keys = new TreeSet<>(songs.keySet());
             for (int key : keys) {
-                Log.d("read Playlist", "sorted: " + songs.get(key).toString());
                 newPlaylist.addSong(songs.get(key));
             }
         } catch (Exception e) {
@@ -189,6 +176,10 @@ public class PlaylistFileHandler {
             }
         }
         return success;
+    }
+
+    public static boolean destroy(String name) {
+        return new File(getFilePath(name)).delete();
     }
 
     private static String getFilePath(String name)

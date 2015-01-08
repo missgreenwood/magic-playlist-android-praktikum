@@ -20,5 +20,11 @@
     <string name="local_file">Local file</string>
     <string name="remote_soundcloud">Soundcloud</string>
     <string name="remote_spotify">Spotify</string>
+    <string name="artist_song">No song playing...</string>
+    <string name="Play">Play</string>
+    <string name="Stop">Stop</string>
+    <string name="previousSong"><![CDATA[<]]></string>
+    <string name="nextSong"><![CDATA[>]]></string>
+    <string name="hello_blank_fragment">Hello blank fragment</string>
 
 </resources>

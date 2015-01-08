@@ -2,8 +2,10 @@ package de.lmu.playlist.domain.dao;
 
 import com.google.inject.Inject;
 import com.mongodb.DBCollection;
+
 import de.lmu.playlist.domain.entity.Playlist;
 import de.lmu.playlist.service.MongoService;
+
 import org.mongojack.DBQuery;
 import org.mongojack.JacksonDBCollection;
 
@@ -13,11 +15,11 @@ public class PlaylistDaoImpl implements PlaylistDao {
 
     @Inject
     public PlaylistDaoImpl(final MongoService mongoService) {
-        DBCollection collection = mongoService.getDB().getCollection("playlists");
+        DBCollection collection = mongoService.getDB().getCollection("playlist");
         dbCollection = JacksonDBCollection.wrap(collection, Playlist.class, String.class);
     }
 
-    private JacksonDBCollection getDBCollection() {
+    private JacksonDBCollection<Playlist, String> getDBCollection() {
         return dbCollection;
     }
 
@@ -27,8 +29,8 @@ public class PlaylistDaoImpl implements PlaylistDao {
     }
 
     @Override
-    public Iterable<Playlist> findPlaylist(String author) {
-        return getDBCollection().find(DBQuery.is(Playlist.AUTHOR, author)).toArray();
+    public Playlist findPlaylist(String name) {
+        return getDBCollection().findOne(DBQuery.is(Playlist.NAME, name));
     }
 
     @Override

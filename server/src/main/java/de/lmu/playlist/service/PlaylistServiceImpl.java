@@ -1,6 +1,7 @@
 package de.lmu.playlist.service;
 
 import com.google.inject.Inject;
+
 import de.lmu.playlist.domain.dao.PlaylistDao;
 import de.lmu.playlist.domain.entity.Playlist;
 
@@ -19,7 +20,7 @@ public class PlaylistServiceImpl implements PlaylistService {
     }
 
     @Override
-    public Iterable<Playlist> findPlaylist(String author) {
+    public Playlist findPlaylist(String author) {
         return playlistDao.findPlaylist(author);
     }
 }

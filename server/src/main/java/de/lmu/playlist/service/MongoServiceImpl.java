@@ -17,7 +17,7 @@ public class MongoServiceImpl implements MongoService {
     }
 
     @Override
-    public DB getDB(){
+    public DB getDB() {
         return db;
     }
 }

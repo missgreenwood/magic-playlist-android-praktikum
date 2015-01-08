@@ -1,7 +1,5 @@
 package de.lmu.playlist.service;
 
-import com.sun.istack.internal.NotNull;
-import com.sun.istack.internal.Nullable;
 import de.lmu.playlist.domain.entity.Playlist;
 
 public interface PlaylistService {
@@ -11,13 +9,13 @@ public interface PlaylistService {
      *
      * @param playlist the playlist to persist. Must not be null.
      */
-    void addPlaylist(@NotNull Playlist playlist);
+    void addPlaylist(Playlist playlist);
 
     /**
-     * Returns all the playlists by the given author.
+     * Returns the playlist by the given name.
      *
-     * @param author the author to retrieve playlists for.
-     * @return the playlists by the author or null if none were found.
+     * @param name the name of the playlist.
+     * @return the playlist with that name or null if none was found.
      */
-    @Nullable Iterable<Playlist> findPlaylist(@NotNull String author);
+    Playlist findPlaylist(String name);
 }

@@ -1,4 +1,4 @@
-package controllers;
+package controllers.mainFragments;
 
 /**
  * Created by judith on 02.01.15.

@@ -8,7 +8,16 @@
         <item name="android:actionBarStyle">@style/MyCustomTheme.MyActionBarTheme</item>
     </style>
 
-    <style name="btnStyleOrange" parent="@android:style/Widget.Button">
+    <style name="btnStyleOrange" parent="basicStyleOrange">
+        <item name="android:padding">10dip</item>
+    </style>
+
+    <style name="mediaPlayerBtn" parent="basicStyleOrange">
+        <item name="android:paddingLeft">10dip</item>
+        <item name="android:paddingRight">10dip</item>
+    </style>
+
+    <style name="basicStyleOrange" parent="@android:style/Widget.Button">
         <item name="android:textSize">15sp</item>
         <item name="android:textStyle">bold</item>
         <item name="android:textColor">#000000</item>
@@ -19,7 +28,6 @@
         <item name="android:shadowDy">1</item>
         <item name="android:shadowRadius">0.6</item>
         <item name="android:background">@drawable/button_orange</item>
-        <item name="android:padding">10dip</item>
         <item name="android:clickable">true</item>
     </style>
     <style name="MyCustomTheme.MyActionBarTheme" parent="@android:style/Widget.Holo.Light.ActionBar">

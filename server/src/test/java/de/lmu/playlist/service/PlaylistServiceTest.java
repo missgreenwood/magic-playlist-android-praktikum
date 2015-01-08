@@ -26,14 +26,16 @@ public class PlaylistServiceTest {
 
     @Test
     public void testAdd() {
-        playlistService.addPlaylist(new Playlist("test.user"));
-        playlistService.addPlaylist(new Playlist("test.user"));
-        playlistService.addPlaylist(new Playlist("random.user"));
-        Iterable<Playlist> playlists = playlistService.findPlaylist("test.user");
-        Assert.assertNotNull(playlists);
-        for (Playlist playlist : playlists) {
-            Assert.assertEquals(playlist.getAuthor(), "test.user");
-        }
+        Playlist playlist1 = new Playlist();
+        playlist1.setName("test.user");
+        playlistService.addPlaylist(playlist1);
+
+        Playlist playlist2 = new Playlist();
+        playlist2.setName("random.user");
+        playlistService.addPlaylist(playlist2);
+
+        Playlist playlist = playlistService.findPlaylist("test.user");
+        Assert.assertEquals(playlist.getName(), "test.user");
     }
 
     @AfterClass

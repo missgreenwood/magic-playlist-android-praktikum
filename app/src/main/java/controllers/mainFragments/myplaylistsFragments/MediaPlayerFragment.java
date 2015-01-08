@@ -1,17 +1,22 @@
 package controllers.mainFragments.myplaylistsFragments;
 
 import android.os.Bundle;
+import android.support.v4.app.Fragment;
 import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.TextView;
 
 import com.spotify.sdk.android.playback.Config;
 
+import models.mediaModels.Song;
 import models.mediawrappers.PlayQueue;
 import tests.R;
 
-public class MediaPlayerFragment extends android.support.v4.app.Fragment implements View.OnClickListener {
+public class MediaPlayerFragment extends Fragment implements View.OnClickListener, PlayQueue.Listener {
+
+    private TextView songInfo;
 
     private Config spotifyConfig;
 
@@ -54,6 +59,10 @@ public class MediaPlayerFragment extends android.support.v4.app.Fragment impleme
         v.findViewById(R.id.pauseSongBtn).setOnClickListener(this);
         v.findViewById(R.id.playSongBtn).setOnClickListener(this);
 
+        PlayQueue.getInstance().addObserver(this);
+
+        songInfo = (TextView) v.findViewById(R.id.songInfo);
+
         return v;
     }
 
@@ -81,5 +90,15 @@ public class MediaPlayerFragment extends android.support.v4.app.Fragment impleme
                 PlayQueue.getInstance().resumePlayer();
                 break;
         }
+    }
+
+    @Override
+    public void onNewSongPlaying(Song song) {
+        songInfo.setText(song.getArtist() + " - " + song.getSongname());
+    }
+
+    @Override
+    public void onCannotInitializeSong(Song song) {
+        //ignore
     }
 }

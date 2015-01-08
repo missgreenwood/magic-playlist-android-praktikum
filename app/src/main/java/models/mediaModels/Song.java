@@ -24,6 +24,7 @@ public class Song {
     private String songname;
     private AbstractMediaWrapper mediaWrapper;
     private String wrapperType;
+    private boolean notPlayable = false;
     private int songID;
     private int length = -1;
 
@@ -156,5 +157,13 @@ public class Song {
         } else {
             return false;
         }
+    }
+
+    public boolean isNotPlayable() {
+        return notPlayable;
+    }
+
+    public void setNotPlayable(boolean notPlayable) {
+        this.notPlayable = notPlayable;
     }
 }
