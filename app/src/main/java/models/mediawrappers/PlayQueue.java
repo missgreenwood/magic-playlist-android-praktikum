@@ -116,11 +116,14 @@ public class PlayQueue {
     public String getNextType(Song song) {
 
 
+        Log.d(TAG, "method getNextType: get next type for song: " + song.toString());
+
         ListIterator<String> it = mediaWrappers.listIterator();
 
         while (it.hasNext()) {
 
             String mediaWrapperType = it.next();
+            Log.d(TAG, "mediaWrapperType in list: " + mediaWrapperType);
             if (mediaWrapperType.equals(song.getMediaWrapperType()) && it.hasNext())
                 return it.next();
         }
