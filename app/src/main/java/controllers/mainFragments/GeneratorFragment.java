@@ -10,51 +10,37 @@ import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
-import android.widget.Button;
 import android.widget.EditText;
-import android.widget.Toast;
 
 import controllers.MainActivity;
 import controllers.mainFragments.generatorFragments.ArtistsFragment;
 import controllers.mainFragments.generatorFragments.GenresListFragment;
 import controllers.mainFragments.generatorFragments.SongsFragment;
-import models.mediaModels.Song;
-import models.mediawrappers.PlayQueue;
-import models.playlist.PlaylistGenerator;
+import controllers.mainFragments.generatorFragments.playlistFragment.GeneratorPlaylistFragment;
 import tests.R;
 
 /**
  * created by Andreas 06.01.2015
  */
 public class GeneratorFragment extends android.support.v4.app.Fragment implements
-        PlaylistGenerator.Listener,
         GenresListFragment.OnGenrePass,
         ArtistsFragment.OnArtistPass,
         SongsFragment.OnSongPass,
         View.OnClickListener {
 
 
-    private PlaylistGenerator generator;
     private GenresListFragment genresListFragment;
     private ArtistsFragment artistsFragment;
     private SongsFragment songsFragment;
+    private GeneratorPlaylistFragment playlistFragment;
 
     private String artist;
-    private String song;
+    private String songname;
     private String genre;
-
-    private boolean isPlayingSingleSong = false;
-
-    public GeneratorFragment() {
-        // Required empty public constructor
-    }
-
 
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
                              Bundle savedInstanceState) {
-
-        generator = new PlaylistGenerator(this);
 
         // Inflate the layout for this fragment
         View view = inflater.inflate(R.layout.fragment_generator, container, false);
@@ -75,37 +61,55 @@ public class GeneratorFragment extends android.support.v4.app.Fragment implement
 
     public void startGeneratorClicked(View view)
     {
+        if ((songname == null || songname.isEmpty()) &&
+            (artist == null || artist.isEmpty()) &&
+            (genre == null || genre.isEmpty())
+        ) {
+            AlertDialog.Builder setArtistInfo = new AlertDialog.Builder(getActivity());
+            setArtistInfo.setTitle("No initial info given!");
+            setArtistInfo.setNeutralButton("Okay", null);
+            setArtistInfo.setMessage("You have to set any initial info like genre, artist or songname before");
+            setArtistInfo.create().show();
+            return;
+        }
+
         AlertDialog.Builder dialogBuilder = new AlertDialog.Builder(getActivity());
         final EditText nameInput = new EditText(getActivity().getApplicationContext());
         nameInput.setTextColor(Color.BLACK);
-        final GeneratorFragment _this = this;
 
-        dialogBuilder.setTitle("set playlist name");
+        dialogBuilder.setTitle("Playlist name:");
         dialogBuilder.setPositiveButton("OK", new DialogInterface.OnClickListener() {
             @Override
             public void onClick(DialogInterface dialog, int which) {
-                if (artist != null) {
-                    generator.createNewPlaylist(nameInput.getText().toString());
-                    if (song == null) {
-                        Song song = new Song();
-                        song.setArtist(artist);
-                        generator.getNextSong(song);
-                    } else {
-                        generator.getNextSong(new Song(_this.artist, _this.song));
-                    }
-                } else {
-                    AlertDialog.Builder setArtistInfo = new AlertDialog.Builder(_this.getActivity());
-                    setArtistInfo.setTitle("set first artist info before!");
-                    setArtistInfo.setNeutralButton("Okay", null);
-                    setArtistInfo.setMessage("You have to insert an artist, which will be used to find similar artists!");
-                    setArtistInfo.create().show();
-                }
+                createGeneratorView(nameInput.getText().toString());
             }
         });
         dialogBuilder.setNegativeButton("Cancel", null);
         dialogBuilder.setCancelable(true);
         dialogBuilder.setView(nameInput);
         dialogBuilder.create().show();
+    }
+
+    private void createGeneratorView(String playlistName) {
+
+        Bundle args = new Bundle();
+        args.putString("playlistName", playlistName);
+        args.putString("artist", artist);
+        args.putString("genre", genre);
+        args.putString("songname", songname);
+
+        playlistFragment = (GeneratorPlaylistFragment)getActivity().getSupportFragmentManager().findFragmentByTag("genresListFragment");
+        if (playlistFragment==null) {
+            playlistFragment = new GeneratorPlaylistFragment();
+            playlistFragment.setArguments(args);
+            FragmentTransaction transact = getActivity().getSupportFragmentManager().beginTransaction();
+            transact.add(R.id.generatorMainViewGroup,playlistFragment,"genresListFragment");
+//            transact.addToBackStack(null); //not needed, because generation is completed now
+            transact.commit();
+        } else {
+            playlistFragment.setArguments(args);
+        }
+
     }
 
     public void genresClicked(View view) {
@@ -145,71 +149,7 @@ public class GeneratorFragment extends android.support.v4.app.Fragment implement
         }
     }
 
-    @Override
-    public void nextSongFound(final Song song) {
-        final PlaylistGenerator _generator = generator;
-        final GeneratorFragment _this = this;
-        AlertDialog.Builder dialogBuilder = new AlertDialog.Builder(getActivity());
-        dialogBuilder.setTitle("Song zu Playliste hinzufügen?")
-                .setMessage("Song: " + song.getArtist() + " - " + song.getSongname())
-                .setCancelable(false);
-        dialogBuilder.setPositiveButton("Hinzufügen", new DialogInterface.OnClickListener() {
-            @Override
-            public void onClick(DialogInterface dialog, int which) {
-                _generator.addSongToPlaylist(song);
-                _generator.getNextSong(song);
-                _this.stopPlayingSingleSong(song);
-            }
-        });
-        dialogBuilder.setNeutralButton("Verwerfen", new DialogInterface.OnClickListener() {
-            @Override
-            public void onClick(DialogInterface dialog, int which) {
-                _generator.getNextSong(null);
-                _this.stopPlayingSingleSong(song);
-            }
-        });
-        dialogBuilder.setNegativeButton("Abschließen", new DialogInterface.OnClickListener() {
-            @Override
-            public void onClick(DialogInterface dialog, int which) {
-                _this.finishPlaylistClicked();
-                _this.stopPlayingSingleSong(song);
-            }
-        });
-        
-        Button playSongBtn = new Button(getActivity());
-        playSongBtn.setText("play song");
-        playSongBtn.setOnClickListener(new View.OnClickListener() {
 
-            @Override
-            public void onClick(View v) {
-                if (_this.isPlayingSingleSong) {
-                    ((Button)v).setText("play song");
-                    PlayQueue.getInstance().pausePlayer();
-                } else {
-                    ((Button)v).setText("stop song");
-                    if (PlayQueue.getInstance().getCurrentSong() == song) {
-                        PlayQueue.getInstance().resumePlayer();
-                    } else {
-                        PlayQueue.getInstance().playSingleSong(song);
-                    }
-                }
-                _this.isPlayingSingleSong = !_this.isPlayingSingleSong;
-            }
-        });
-        dialogBuilder.setView(playSongBtn);
-        
-        dialogBuilder.create().show();
-    }
-
-    @Override
-    public void nextSongError(int errorStatus) {
-        generator.getNextSong(null);
-    }
-
-    private void finishPlaylistClicked() {
-        generator.savePlaylist();
-        Toast.makeText(getActivity(), "playlist " + generator.getPlaylist().getName(), Toast.LENGTH_SHORT);
-    }
 
     @Override
     public void onGenrePass(String data) {
@@ -227,9 +167,9 @@ public class GeneratorFragment extends android.support.v4.app.Fragment implement
 
     @Override
     public void onSongPass(String data) {
-        this.song = data;
+        this.songname = data;
         // Display enteredSong in Log
-        Log.d("LOG", "Entered song: " + data);
+        Log.d("LOG", "Entered songname: " + data);
     }
 
     @Override
@@ -250,19 +190,5 @@ public class GeneratorFragment extends android.support.v4.app.Fragment implement
         }
     }
 
-    private boolean isPlayingSingleSong(Song song) {
-        Song currentSong = PlayQueue.getInstance().getCurrentSong();
-        return song == currentSong &&
-               PlayQueue.getInstance().getState() == PlayQueue.STATE_ALREADY_PlAYING;
-    }
 
-    private void stopPlayingSingleSong(Song song) {
-        if (isPlayingSingleSong(song)) {
-            song.getMediaWrapper().stopPlayer();
-            PlayQueue.getInstance().setCurrentSong(null);
-        } else if (PlayQueue.getInstance().getCurrentSong() == song) {
-            PlayQueue.getInstance().setCurrentSong(null);
-        }
-        isPlayingSingleSong = false;
-    }
 }

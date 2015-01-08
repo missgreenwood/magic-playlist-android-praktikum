@@ -18,6 +18,7 @@ public class Playlist {
 
     private ArrayList<Song> songs;
     private String name;
+    private String genre;
 
     public Playlist() {
         name = "new Playlist " + uniqueId++;
@@ -91,6 +92,14 @@ public class Playlist {
 
     public void destroy() {
         PlaylistFileHandler.destroy(getName());
+    }
+
+    public String getGenre() {
+        return genre;
+    }
+
+    public void setGenre(String genre) {
+        this.genre = genre;
     }
 
     public interface Listener {
