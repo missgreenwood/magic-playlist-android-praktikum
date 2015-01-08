@@ -71,10 +71,8 @@ public class PlaylistFragment extends ListFragment implements
 
     private void markAsCurrentlyPlaying(int index) {
         removeCurrentlyPlayingMark();
-        Log.d("", "mark as currently playing index: " + index);
-        Log.d("", "get list view: " + getListView().toString());
-        Log.d("", "number of elements: " + getListView().getAdapter().getCount());
-        Log.d("", "first visible position: " + firstVisibleItem + "visible item count: " + visibleItemCount);
+        Log.v("", "mark as currently playing index: " + index);
+        Log.v("", "first visible position: " + firstVisibleItem + "visible item count: " + visibleItemCount);
         int correctedIndex = index - firstVisibleItem;
 
 
@@ -83,14 +81,14 @@ public class PlaylistFragment extends ListFragment implements
         } else if ((firstVisibleItem > index)) {
             Log.v("", "too far down, item not visible, firstVisibleItem>index, ");
         } else {
-            Log.d("", " corrected index (at least when ignoring partial visibility: " + correctedIndex);
+            Log.v("", " corrected index (at least when ignoring partial visibility: " + correctedIndex);
             currentlyPlayingView = getListView().getChildAt(correctedIndex);
 
             if (currentlyPlayingView == null) {
 
-                Log.d("", "some case we haven't caught yet...?but this should actually be handled before");
+                Log.v("", "some case we haven't caught yet...?but this should actually be handled before");
             } else {
-                Log.d("", "currently playing view: " + currentlyPlayingView.toString());
+                Log.v("", "currently playing view: " + currentlyPlayingView.toString());
                 currentlyPlayingView.setBackgroundColor(Color.argb(100, 80, 80, 80));
 
             }
