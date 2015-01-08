@@ -17,5 +17,8 @@
     <string name="generate_playlist">Generate Playlist</string>
     <string name="start_generator">start generator</string>
     <string name="selected_items">Show selected items</string>
+    <string name="local_file">Local file</string>
+    <string name="remote_soundcloud">Soundcloud</string>
+    <string name="remote_spotify">Spotify</string>
 
 </resources>
