@@ -30,8 +30,7 @@ import tests.R;
  * Created by judith on 02.02.15.
  */
 public class MainActivity extends ActionBarActivity implements
-        View.OnClickListener
-{
+        View.OnClickListener {
 
     private Button myPlaylists;
     private Button playlistsGenerator;
@@ -121,11 +120,6 @@ public class MainActivity extends ActionBarActivity implements
         } /* else if (view == otherPlaylists) {
             this.openPlaylistBrowser(); */
     }
-
-    /* public void openPlaylistGenerator() {
-        Intent intent = new Intent(this, GeneratorActivity.class);
-        startActivity(intent);
-    } */
 
     @Override
     protected void onStart() {
