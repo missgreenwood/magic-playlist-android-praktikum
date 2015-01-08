@@ -3,6 +3,7 @@ package models.mediaModels;
 import android.util.Log;
 
 import models.mediawrappers.AbstractMediaWrapper;
+import tests.R;
 
 /**
  * Created by lotta on 02.12.14.
@@ -14,10 +15,10 @@ import models.mediawrappers.AbstractMediaWrapper;
 
 
 public class Song {
+    public static final String MEDIA_WRAPPER_LOCAL_FILE = "local_file";
+    public static final String MEDIA_WRAPPER_REMOTE_SOUNDCLOUD = "remote_soundcloud";
+    public static final String MEDIA_WRAPPER_SPOTIFY = "remote_spotify";
     private static final Object countLock = new Object();
-    public static String MEDIA_WRAPPER_LOCAL_FILE = "local file";
-    public static String MEDIA_WRAPPER_REMOTE_SOUNDCLOUD = "remote file soundcloud";
-    public static String MEDIA_WRAPPER_SPOTIFY = "media warpper spotify";
     private static int currentSongID = 0;
     private String artist;
     private String songname;
@@ -40,7 +41,7 @@ public class Song {
         }
         this.songID = currentSongID;
 
-        Log.v("", "created song object with " + artist + songname + " with id: " + currentSongID);
+        Log.d("", "created song object with " + artist + songname + " with id: " + currentSongID);
     }
 
     public Song ()
@@ -125,16 +126,17 @@ public class Song {
         this.songname = songname;
     }
 
-    /**returns a filePath if song exists locally else returns remote mediastream*/
-    public void setSongUrl(String url)
-    {
-//        this.url = url;
-    }
-
     public String getSongUrl()
     {
         String path = mediaWrapper != null ? mediaWrapper.getPlayPath() : getMediaWrapperType();
         return path;
+    }
+
+    /**
+     * returns a filePath if song exists locally else returns remote mediastream
+     */
+    public void setSongUrl(String url) {
+//        this.url = url;
     }
 
     public int getLength() {
