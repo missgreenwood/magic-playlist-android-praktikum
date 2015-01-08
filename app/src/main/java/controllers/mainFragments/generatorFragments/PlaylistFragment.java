@@ -34,6 +34,7 @@ public class PlaylistFragment extends ListFragment implements
     private View currentlyPlayingView;
     private int firstVisibleItem;
     private int visibleItemCount;
+    private int totalItemCount;
 
     public PlaylistFragment() {
     }
@@ -75,10 +76,26 @@ public class PlaylistFragment extends ListFragment implements
         Log.d("", "number of elements: " + getListView().getAdapter().getCount());
         Log.d("", "first visible position: " + firstVisibleItem + "visible item count: " + visibleItemCount);
         int correctedIndex = index - firstVisibleItem;
-        Log.d("", " corrected index (at least when ignoring partial visibility: " + correctedIndex);
-        currentlyPlayingView = getListView().getChildAt(correctedIndex);
-        Log.d("", "currently playing view: " + currentlyPlayingView.toString());
-        currentlyPlayingView.setBackgroundColor(Color.argb(100, 80, 80, 80));
+
+
+        if ((visibleItemCount + firstVisibleItem - 1) < index) {
+            Log.v("", "too far up, item not visible, totalItemcount+firstvisibleitem-1 <index");
+        } else if ((firstVisibleItem > index)) {
+            Log.v("", "too far down, item not visible, firstVisibleItem>index, ");
+        } else {
+            Log.d("", " corrected index (at least when ignoring partial visibility: " + correctedIndex);
+            currentlyPlayingView = getListView().getChildAt(correctedIndex);
+
+            if (currentlyPlayingView == null) {
+
+                Log.d("", "some case we haven't caught yet...?but this should actually be handled before");
+            } else {
+                Log.d("", "currently playing view: " + currentlyPlayingView.toString());
+                currentlyPlayingView.setBackgroundColor(Color.argb(100, 80, 80, 80));
+
+            }
+
+        }
     }
 
     private void removeCurrentlyPlayingMark() {
@@ -185,6 +202,7 @@ public class PlaylistFragment extends ListFragment implements
 
         this.visibleItemCount = visibleItemCount;
         this.firstVisibleItem = firstVisibleItem;
+        this.totalItemCount = totalItemCount;
 
         Log.v("", "on scroll: visibleItemCount: " + visibleItemCount + " firstVisibleItem: " + firstVisibleItem);
     }
