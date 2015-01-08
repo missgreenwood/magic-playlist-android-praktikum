@@ -35,7 +35,6 @@ public class MyPlaylistsFragment extends ListFragment {
     public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
         ViewGroup rootView = (ViewGroup) inflater.inflate(R.layout.fragment_playlists, container, false);
         ((MainActivity)getActivity()).getSupportActionBar().setTitle("My Playlists");
-        // ((MainActivity) getActivity()).setActionBarTitle("My Playlists");
         playlists = PlaylistsManager.getInstance().getPlaylists();
         int length = playlists.size();
         String[] listItems = new String[length];
