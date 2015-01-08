@@ -179,12 +179,11 @@ public class PlayQueue {
             if (currentSong.getMediaWrapper() != null) {
                 String playpath = currentSong.getMediaWrapper().getPlayPath();
                 Log.d(TAG, "playpath: " + playpath);
-                notifyNewSongPlaying(currentSong);
                 if ((playpath != null) && (!playpath.equals(""))) {
-
                     Log.d(TAG, "now we can play the current song: " + currentSong);
                     setState(STATE_ALREADY_PlAYING);
                     currentSong.getMediaWrapper().play();
+                    notifyNewSongPlaying(currentSong);
                 } else setState(STATE_WAITING);
             } else setState(STATE_WAITING);
         }
