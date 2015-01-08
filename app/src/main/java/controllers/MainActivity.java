@@ -160,7 +160,7 @@ public class MainActivity extends ActionBarActivity implements
 
         Settings.getInstance().loadSettings(getPreferences(MODE_PRIVATE));
 
-        Settings.getInstance().addOnMediaWrapperListChangeListener(new Settings.Listener() {
+        Settings.getInstance().setOnMediaWrapperListChangeListener(new Settings.Listener() {
             @Override
             public void onMediaWrapperListChange(ArrayList<String> mediaWrappers) {
                 PlayQueue.getInstance().setMediaWrappers(mediaWrappers);

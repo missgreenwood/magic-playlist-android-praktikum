@@ -145,7 +145,7 @@ public class PlaylistFragment extends ListFragment implements
             }
         });
         deleteDialog.setNegativeButton("no", null);
-        deleteDialog.setMessage("Are you shure you want to delete \"" + song.getArtist() + " - " + song.getSongname() + "\" from your Playlist \"" + playlist.getName() + "\"?");
+        deleteDialog.setMessage("Are you shure you want to delete \"" + song.getArtist() + " - " + song.getSongname() + "\" from your playlist \"" + playlist.getName() + "\"?");
         deleteDialog.create().show();
         return true;
     }

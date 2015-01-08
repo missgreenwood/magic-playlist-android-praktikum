@@ -1,5 +1,7 @@
 package models.metadatawrappers;
 
+import java.util.ArrayList;
+
 import models.mediaModels.Song;
 
 /**
@@ -8,8 +10,10 @@ import models.mediaModels.Song;
 public interface LastFmListener {
     /**
      * will be called when the similar artists api call finishes
-     * @param artists array with jsonObjects... call artists.get(0).get("name") for the first artist's name
+     * @param artists array [[String id, String name, String (parseable to double)fitting], ...]
      * */
-    public void onSimilarArtistsCallback(String[] artists);
-    public void onTopTracksCallback(Song[] tracks);
+    public void onSimilarArtistsCallback(String[][] artists);
+    public void onTopTracksCallback(String artistName, ArrayList<Song> tracks);
+
+    void onTagArtistsCallback(String[][] artistsArray);
 }

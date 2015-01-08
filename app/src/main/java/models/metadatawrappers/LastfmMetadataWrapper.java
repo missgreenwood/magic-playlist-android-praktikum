@@ -26,6 +26,7 @@ public class LastfmMetadataWrapper extends AbstractMetadataWrapper {
 
     public static final String SIMILAR_ARTISTS_CALLBACK = "similar artists callback";
     public static final String TOP_TRACKS_CALLBACK = "top tracks callback";
+    public static final String TAG_ARTISTS_CALLBACK = "tag artists callback";
 
     public static final String LASTFM_BASE_URL = "http://ws.audioscrobbler.com/2.0/";
     public static final String LASTFM_API_KEY = "b0bf622f9e06f86d9dd5b6ad28cd0fed";
@@ -36,9 +37,11 @@ public class LastfmMetadataWrapper extends AbstractMetadataWrapper {
     public static final String LASTFM_LIMIT_STRING = "limit";
 
     public static final String LASTFM_GET_SIMILAR_METHOD = "artist.getSimilar";
-    public static final String LASTFM_ARTIST_STRING = "artist";
-
     public static final String LASTFM_GET_TOP_TRACKS_METHOD = "artist.gettoptracks";
+    public static final String LASTFM_GET_TAG_ARTISTS_METHOD = "tag.getTopArtists";
+
+    public static final String LASTFM_ARTIST_STRING = "artist";
+    public static final String LASTFM_TAG_STRING = "tag";
 
     private LastFmListener listener = null;
 
@@ -96,6 +99,30 @@ public class LastfmMetadataWrapper extends AbstractMetadataWrapper {
         asyncHTTP.execute(url);
     }
 
+    public void findGenreArtists(String genre, int limit) {
+        String url = LASTFM_BASE_URL;
+
+        BasicNameValuePair keyPair = new BasicNameValuePair(LASTFM_API_KEY_STRING, LASTFM_API_KEY);
+        BasicNameValuePair methodPair = new BasicNameValuePair(LASTFM_METHOD_STRING, LASTFM_GET_TAG_ARTISTS_METHOD);
+        BasicNameValuePair artistPair = new BasicNameValuePair(LASTFM_TAG_STRING, genre);
+        BasicNameValuePair limitPair = new BasicNameValuePair(LASTFM_LIMIT_STRING, "" + limit);
+        BasicNameValuePair formatPair = new BasicNameValuePair(LASTFM_FORMAT_STRING, LASTFM_FORMAT_JSON);
+
+
+        ArrayList<NameValuePair> params = new ArrayList<NameValuePair>();
+        params.add(keyPair);
+        params.add(methodPair);
+        params.add(artistPair);
+        params.add(limitPair);
+        params.add(formatPair);
+
+
+        url = APIWrapper.encodeURL(url, params);
+
+        APIWrapper asyncHTTP = new APIWrapper(this, TAG_ARTISTS_CALLBACK, APIWrapper.POST_METHOD);
+        asyncHTTP.execute(url);
+    }
+
     @Override
     public void processWebCallResult(String result, String callback) {
         if (listener == null) {
@@ -104,14 +131,9 @@ public class LastfmMetadataWrapper extends AbstractMetadataWrapper {
         switch (callback) {
             case SIMILAR_ARTISTS_CALLBACK: {
                 String[] firstAttribs = {"similarartists", "artist"},
-                        getAttribs = {"name"};
+                        getAttribs = {"mbid", "name", "match"};
                 String[][] artistsArray = convertJSONStringToArray(result, firstAttribs, getAttribs, null);
-                String[] artistsNames = new String[artistsArray.length];
-
-                for (int i = 0; i < artistsArray.length; i++) {
-                    artistsNames[i] = artistsArray[i][0];//artist name
-                }
-                listener.onSimilarArtistsCallback(artistsNames);
+                listener.onSimilarArtistsCallback(artistsArray);
                 break;
             }
             case TOP_TRACKS_CALLBACK: {
@@ -119,16 +141,22 @@ public class LastfmMetadataWrapper extends AbstractMetadataWrapper {
                         globalAttribs = {"artist"},
                         getAttribs = {"name"};
                 String[][] fetchedTacksArray = convertJSONStringToArray(result, firstAttribs, getAttribs, globalAttribs);
-                Song[] songsArray = new Song[fetchedTacksArray.length];
+                ArrayList<Song> songsArray = new ArrayList<>();
                 for (int i = 0; i < fetchedTacksArray.length; i++) {
-                    songsArray[i] = new Song(globalAttribs[0], fetchedTacksArray[i][0]);
+                    songsArray.add(new Song(globalAttribs[0], fetchedTacksArray[i][0]));
                 }
-                listener.onTopTracksCallback(songsArray);
+                listener.onTopTracksCallback(globalAttribs[0], songsArray);
+                break;
+            }
+            case TAG_ARTISTS_CALLBACK: {
+                String[] firstAttribs = {"topartists", "artist"},
+                        globalAttribs = null,
+                        getAttribs = {"mbid", "name"};
+                String[][] artistsArray = convertJSONStringToArray(result, firstAttribs, getAttribs, globalAttribs);
+                listener.onTagArtistsCallback(artistsArray);
                 break;
             }
         }
-
-
     }
 
     /**
