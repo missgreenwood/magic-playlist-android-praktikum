@@ -4,12 +4,14 @@ import android.app.Notification;
 import android.app.PendingIntent;
 import android.app.Service;
 import android.content.Intent;
+import android.content.res.Resources;
 import android.media.AudioManager;
 import android.media.MediaPlayer;
 import android.os.IBinder;
 import android.util.Log;
 
 import controllers.MainActivity;
+import models.mediaModels.Song;
 import tests.R;
 
 import java.io.IOException;
@@ -34,6 +36,8 @@ public class FileStreamingMediaService extends Service implements MediaPlayer.On
     public static final String INFO_SONGNAME = "com.example.info.songname";
     public static final int NOTIFICATION_ID = 555;
     public static final String TRACK_FINISHED = "track finished";
+    public static final String INFO_ARTIST = "com.example.info.artist";
+    public static final String INFO_MEDIA_WRAPPER = "com.example.info.mediawrapper";
     AudioState state;
     private String playPath;
     private MediaPlayer mediaPlayer = null;
@@ -49,6 +53,8 @@ public class FileStreamingMediaService extends Service implements MediaPlayer.On
 
             playPath = intent.getStringExtra(INFO_PlAYPATH);
             String songname = intent.getStringExtra(INFO_SONGNAME);
+            String artist = intent.getStringExtra(INFO_ARTIST);
+            String mediaWrapperType = intent.getStringExtra(INFO_MEDIA_WRAPPER);
 
             //TODO: should do something
 
@@ -58,11 +64,11 @@ public class FileStreamingMediaService extends Service implements MediaPlayer.On
             //          PendingIntent.FLAG_UPDATE_CURRENT);
             //TODO: durch andere Activity ersetzen
 
+
             Notification notification = new Notification();
-            notification.tickerText = "Musik";
+            notification.tickerText = "MagicPlaylist";
             notification.icon = R.drawable.metrodroid_music;
             notification.flags |= Notification.FLAG_ONGOING_EVENT;
-
 
             Intent toLaunch = new Intent(getApplicationContext(), MainActivity.class);
             toLaunch.setAction("android.intent.action.MAIN");
@@ -70,14 +76,22 @@ public class FileStreamingMediaService extends Service implements MediaPlayer.On
 
             PendingIntent intentBack = PendingIntent.getActivity(getApplicationContext(), 0, toLaunch, PendingIntent.FLAG_UPDATE_CURRENT);
 
+            String displayMediaWrapper = "";
+            Resources resources = getApplicationContext().getResources();
+            int resId = resources.getIdentifier(mediaWrapperType, "string", getPackageName());
+            displayMediaWrapper = resources.getString(resId);
+            String notificationText = artist + " - " + songname + " in " + displayMediaWrapper;
+
 
             notification.setLatestEventInfo(getApplicationContext(), "MagicPlaylist",
-                    "Playing " + songname, intentBack);
+                    notificationText, intentBack);
 
 
 
 
             startForeground(NOTIFICATION_ID, notification);
+
+
             Log.d(TAG, "start play");
 
             mediaPlayer = new MediaPlayer();  // initialize it here
@@ -208,6 +222,12 @@ public class FileStreamingMediaService extends Service implements MediaPlayer.On
         but we don't need it now*/
     }
 
+    public void createNotification(String artist, String songname, String mediaWrapperType) {
+
+
+
+    }
+
 
     enum AudioState {
         Preparing,
@@ -216,6 +236,5 @@ public class FileStreamingMediaService extends Service implements MediaPlayer.On
         Stopped
 
     }
-
 
 }
