@@ -32,9 +32,11 @@ public class SettingsFragment extends ListFragment {
         ((MainActivity)getActivity()).getSupportActionBar().setTitle("Settings");
         settings = Settings.getInstance();
         mediaWrappers = settings.getMediaWrappers();
+        // settings.activateWrapper("Spotify");
+        // settings.activateWrapper("LocalFile");
+        // settings.activateWrapper("SoundCloud");
+        // mediaWrappers = new ArrayList<String>(Arrays.asList("Spotify","LocalFile","SoundCloud"));
         ArrayAdapter<String> adapter=new ArrayAdapter<String>(getActivity(),R.layout.rows_checkable,R.id.txt_title,mediaWrappers);
-        /* for (int i=0; i < mediaWrappers.size(); i++) {
-            if () */
         // Bind adapter to the ListFragment
         setListAdapter(adapter);
         // Retain the ListFragment instance across Activity re-creation
@@ -44,12 +46,13 @@ public class SettingsFragment extends ListFragment {
 
     // Handle Item check event
     public void onListItemClick(ListView l, View view, int position, long id) {
+        l.setChoiceMode(ListView.CHOICE_MODE_MULTIPLE);
         l.setOnItemClickListener(new AdapterView.OnItemClickListener() {
             @Override
             public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
                 // Selected wrapper
                 String selectedWrapper = (String) getListAdapter().getItem(position);
-                if(mediaWrappers.contains(selectedWrapper)) {
+                if (settings.isWrapperActive(selectedWrapper)) {
                     // Remove deselected wrapper from the list of selected wrappers
                     settings.deactivateWrapper(selectedWrapper);
                     Toast.makeText(getActivity(), selectedWrapper + " deactivated!", Toast.LENGTH_LONG).show();
@@ -57,10 +60,9 @@ public class SettingsFragment extends ListFragment {
                 else {
                     // Add selected wrapper to the list of selected wrappers
                     settings.activateWrapper(selectedWrapper);
-                    mediaWrappers.add(selectedWrapper);
                     Toast.makeText(getActivity(), selectedWrapper + " activated!", Toast.LENGTH_LONG).show();
                 }
-            }
+           }
         });
 
     }
