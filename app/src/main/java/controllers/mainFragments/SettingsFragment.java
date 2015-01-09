@@ -31,7 +31,7 @@ public class SettingsFragment extends ListFragment {
         ViewGroup rootView = (ViewGroup) inflater.inflate(R.layout.fragment_settings, container, false);
         ((MainActivity)getActivity()).getSupportActionBar().setTitle("Settings");
         settings = Settings.getInstance();
-        mediaWrappers = settings.getMediaWrappers();
+        mediaWrappers = settings.getMediaWrappers(true);
         // settings.activateWrapper("Spotify");
         // settings.activateWrapper("LocalFile");
         // settings.activateWrapper("SoundCloud");
@@ -47,6 +47,7 @@ public class SettingsFragment extends ListFragment {
     // Handle Item check event
     public void onListItemClick(ListView l, View view, int position, long id) {
         l.setChoiceMode(ListView.CHOICE_MODE_MULTIPLE);
+        l.setLongClickable(true);
         l.setOnItemClickListener(new AdapterView.OnItemClickListener() {
             @Override
             public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
@@ -63,6 +64,13 @@ public class SettingsFragment extends ListFragment {
                     Toast.makeText(getActivity(), selectedWrapper + " activated!", Toast.LENGTH_LONG).show();
                 }
            }
+        });
+        l.setOnItemLongClickListener(new AdapterView.OnItemLongClickListener() {
+            @Override
+            public boolean onItemLongClick(AdapterView<?> parent, View view, int position, long id) {
+
+                return true;
+            }
         });
 
     }
