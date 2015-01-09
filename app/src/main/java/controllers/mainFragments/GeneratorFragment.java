@@ -6,6 +6,7 @@ import android.content.DialogInterface;
 import android.graphics.Color;
 import android.os.Bundle;
 import android.support.v4.app.FragmentTransaction;
+import android.text.Editable;
 import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -17,6 +18,7 @@ import controllers.mainFragments.generatorFragments.ArtistsFragment;
 import controllers.mainFragments.generatorFragments.GenresListFragment;
 import controllers.mainFragments.generatorFragments.SongsFragment;
 import controllers.mainFragments.generatorFragments.playlistFragment.GeneratorPlaylistFragment;
+import models.playlist.PlaylistsManager;
 import tests.R;
 
 /**
@@ -73,15 +75,35 @@ public class GeneratorFragment extends android.support.v4.app.Fragment implement
             return;
         }
 
+        showSetPlaylistNameDialog(false);
+    }
+
+    private void showSetPlaylistNameDialog(boolean alreadyExists)
+    {
         AlertDialog.Builder dialogBuilder = new AlertDialog.Builder(getActivity());
         final EditText nameInput = new EditText(getActivity().getApplicationContext());
+        nameInput.setSingleLine();
         nameInput.setTextColor(Color.BLACK);
 
         dialogBuilder.setTitle("Playlist name:");
+
+        if (alreadyExists) {
+            dialogBuilder.setMessage("Playlist name already exists, please choose another one.");
+        }
+
         dialogBuilder.setPositiveButton("OK", new DialogInterface.OnClickListener() {
             @Override
             public void onClick(DialogInterface dialog, int which) {
-                createGeneratorView(nameInput.getText().toString());
+                String playlistName = nameInput.getText().toString().trim();
+                if (playlistName != null && !playlistName.isEmpty()) {
+                    if (PlaylistsManager.getInstance().isPlaylistNameUnique(playlistName)) {
+                        createGeneratorView(playlistName);
+                    } else {
+                        showSetPlaylistNameDialog(true);
+                    }
+                } else {
+                    showSetPlaylistNameDialog(false);
+                }
             }
         });
         dialogBuilder.setNegativeButton("Cancel", null);
@@ -98,17 +120,15 @@ public class GeneratorFragment extends android.support.v4.app.Fragment implement
         args.putString("genre", genre);
         args.putString("songname", songname);
 
-        playlistFragment = (GeneratorPlaylistFragment)getActivity().getSupportFragmentManager().findFragmentByTag("genresListFragment");
+        playlistFragment = (GeneratorPlaylistFragment)getActivity().getSupportFragmentManager().findFragmentByTag("generatorPlaylistFragment");
         if (playlistFragment==null) {
             playlistFragment = new GeneratorPlaylistFragment();
-            playlistFragment.setArguments(args);
-            FragmentTransaction transact = getActivity().getSupportFragmentManager().beginTransaction();
-            transact.add(R.id.generatorMainViewGroup,playlistFragment,"genresListFragment");
-//            transact.addToBackStack(null); //not needed, because generation is completed now
-            transact.commit();
-        } else {
-            playlistFragment.setArguments(args);
         }
+        playlistFragment.setGeneratorData(args);
+        FragmentTransaction transact = getActivity().getSupportFragmentManager().beginTransaction();
+        transact.add(R.id.generatorMainViewGroup,playlistFragment,"generatorPlaylistFragment");
+//            transact.addToBackStack(null); //not needed, because generation is completed now
+        transact.commit();
 
     }
 
