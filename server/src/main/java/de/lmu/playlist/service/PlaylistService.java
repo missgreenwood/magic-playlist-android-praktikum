@@ -1,5 +1,7 @@
 package de.lmu.playlist.service;
 
+import java.util.List;
+
 import de.lmu.playlist.domain.entity.Playlist;
 
 public interface PlaylistService {
@@ -12,10 +14,24 @@ public interface PlaylistService {
     void addPlaylist(Playlist playlist);
 
     /**
-     * Returns the playlist by the given name.
+     * Retrieves the playlist with the given name.
      *
      * @param name the name of the playlist.
      * @return the playlist with that name or null if none was found.
      */
     Playlist findPlaylist(String name);
+
+    /**
+     * Returns all playlists of the given genre and/or containing the given artist
+     *
+     * @param genre  the genre of the playlist.
+     * @param artist the artist that must be contained in the playlist.
+     * @return the playlists or null if none satisfied the search conditions.
+     */
+    List<Playlist> findPlaylists(String genre, String artist);
+
+    /**
+     * Proceed with caution.
+     */
+    void cleanDB();
 }

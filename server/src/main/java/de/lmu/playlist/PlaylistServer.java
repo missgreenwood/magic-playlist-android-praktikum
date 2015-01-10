@@ -7,9 +7,9 @@ import org.eclipse.jetty.server.Server;
 import org.eclipse.jetty.servlet.DefaultServlet;
 import org.eclipse.jetty.servlet.ServletContextHandler;
 
-import javax.servlet.DispatcherType;
-
 import java.util.EnumSet;
+
+import javax.servlet.DispatcherType;
 
 public class PlaylistServer {
 

@@ -2,8 +2,12 @@ package de.lmu.playlist.service;
 
 import com.google.inject.Inject;
 
+import java.util.ArrayList;
+import java.util.List;
+
 import de.lmu.playlist.domain.dao.PlaylistDao;
 import de.lmu.playlist.domain.entity.Playlist;
+import de.lmu.playlist.domain.entity.Song;
 
 public class PlaylistServiceImpl implements PlaylistService {
 
@@ -20,7 +24,32 @@ public class PlaylistServiceImpl implements PlaylistService {
     }
 
     @Override
-    public Playlist findPlaylist(String author) {
-        return playlistDao.findPlaylist(author);
+    public Playlist findPlaylist(String name) {
+        return playlistDao.findPlaylist(name);
+    }
+
+    @Override
+    public List<Playlist> findPlaylists(String genre, String artist) {
+        List<Playlist> playlists = playlistDao.findPlaylists(genre);
+
+        if (artist != null && !artist.isEmpty()) {
+            ArrayList<Playlist> list = new ArrayList<>();
+            for (Playlist playlist : playlists) {
+                for (Song song : playlist.getSongs()) {
+                    if (song.getArtist().contains(artist)) {
+                        list.add(playlist);
+                        break;
+                    }
+                }
+            }
+            return list;
+        }
+
+        return playlists;
+    }
+
+    @Override
+    public void cleanDB() {
+        playlistDao.drop();
     }
 }

@@ -2,6 +2,8 @@ package de.lmu.playlist.facade;
 
 import com.google.inject.Inject;
 
+import java.util.List;
+
 import de.lmu.playlist.domain.entity.Playlist;
 import de.lmu.playlist.service.PlaylistService;
 
@@ -25,7 +27,17 @@ public class PlaylistFacadeImpl implements PlaylistFacade {
     }
 
     @Override
-    public Playlist findPlaylistByName(String name) {
+    public Playlist findPlaylist(String name) {
         return playlistService.findPlaylist(name);
+    }
+
+    @Override
+    public List<Playlist> findPlaylists(String genre, String artist) {
+        return playlistService.findPlaylists(genre, artist);
+    }
+
+    @Override
+    public void clean() {
+        playlistService.cleanDB();
     }
 }

@@ -5,6 +5,13 @@ import com.google.inject.Singleton;
 import com.google.inject.servlet.ServletModule;
 import com.sun.jersey.guice.spi.container.servlet.GuiceContainer;
 
+import org.eclipse.jetty.servlet.DefaultServlet;
+
+import java.util.HashMap;
+
+import javax.ws.rs.ext.MessageBodyReader;
+import javax.ws.rs.ext.MessageBodyWriter;
+
 import de.lmu.playlist.domain.dao.PlaylistDao;
 import de.lmu.playlist.domain.dao.PlaylistDaoImpl;
 import de.lmu.playlist.facade.PlaylistFacade;
@@ -13,13 +20,6 @@ import de.lmu.playlist.service.MongoService;
 import de.lmu.playlist.service.MongoServiceImpl;
 import de.lmu.playlist.service.PlaylistService;
 import de.lmu.playlist.service.PlaylistServiceImpl;
-
-import org.eclipse.jetty.servlet.DefaultServlet;
-
-import javax.ws.rs.ext.MessageBodyReader;
-import javax.ws.rs.ext.MessageBodyWriter;
-
-import java.util.HashMap;
 
 public class PlaylistModule extends ServletModule {
 

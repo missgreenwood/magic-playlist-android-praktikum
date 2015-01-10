@@ -7,9 +7,13 @@ public class Playlist {
 
     public static final String NAME = "name";
 
+    public static final String GENRE = "genre";
+
     private String name;
 
     private Iterable<Song> songs;
+
+    private String genre;
 
     public Playlist() {
         // dummy constructor
@@ -29,5 +33,13 @@ public class Playlist {
 
     public void setSongs(Iterable<Song> songs) {
         this.songs = songs;
+    }
+
+    public String getGenre() {
+        return genre;
+    }
+
+    public void setGenre(String genre) {
+        this.genre = genre;
     }
 }

@@ -1,9 +1,17 @@
 package de.lmu.playlist.facade;
 
-import de.lmu.playlist.domain.entity.Playlist;
+import java.util.List;
 
-import javax.ws.rs.*;
+import javax.ws.rs.Consumes;
+import javax.ws.rs.DELETE;
+import javax.ws.rs.GET;
+import javax.ws.rs.POST;
+import javax.ws.rs.Path;
+import javax.ws.rs.Produces;
+import javax.ws.rs.QueryParam;
 import javax.ws.rs.core.MediaType;
+
+import de.lmu.playlist.domain.entity.Playlist;
 
 @Path("/playlist")
 public interface PlaylistFacade {
@@ -21,7 +29,16 @@ public interface PlaylistFacade {
     public void addPlaylist(Playlist playlist);
 
     @GET
+    @Path("/find/name")
+    @Produces(MediaType.APPLICATION_JSON)
+    public Playlist findPlaylist(@QueryParam("name") String name);
+
+    @GET
     @Path("/find")
     @Produces(MediaType.APPLICATION_JSON)
-    public Playlist findPlaylistByName(@QueryParam("name") String name);
+    public List<Playlist> findPlaylists(@QueryParam("genre") String genre, @QueryParam("artist") String artist);
+
+    @DELETE
+    @Path("/clean")
+    public void clean();
 }
