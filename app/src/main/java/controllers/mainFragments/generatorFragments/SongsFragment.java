@@ -55,7 +55,7 @@ public class SongsFragment extends Fragment {
             public boolean onKey(View v, int keyCode, KeyEvent event) {
                 if ((event.getAction() == KeyEvent.ACTION_DOWN) && (keyCode == KeyEvent.KEYCODE_ENTER)) {
                     // Display edited song in toast message
-                    enteredSong = editSong.getText().toString();
+                    enteredSong = editSong.getText().toString().trim();
                     Toast.makeText(getActivity(), enteredSong, Toast.LENGTH_LONG).show();
                     // Pass string enteredSong to GeneratorActivity
                     dataPasser.onSongPass(enteredSong);

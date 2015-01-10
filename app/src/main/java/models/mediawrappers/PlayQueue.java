@@ -103,10 +103,12 @@ public class PlayQueue {
             return currentSong;
         }
 
-        for (Song song : songs) {
+        if (songs != null) {
+            for (Song song : songs) {
 
-            if (song.getSongID() == songID)
-                return song;
+                if (song.getSongID() == songID)
+                    return song;
+            }
         }
 
         return null;
@@ -200,8 +202,15 @@ public class PlayQueue {
         // ArrayList<String> mediaWrappers = Settings.getInstance().getMediaWrappers();
         AbstractMediaWrapper abstractMediaWrapper = null;
 
-        if (!mediaWrappers.contains(song.getMediaWrapperType()))
-            song.setMediaWrapperType(mediaWrappers.get(0));
+        if (!mediaWrappers.contains(song.getMediaWrapperType())) {
+            if (mediaWrappers.size() > 0) {
+                song.setMediaWrapperType(mediaWrappers.get(0));
+            } else {
+                onSongNotAvailable(song.getSongID());
+                return;
+            }
+
+        }
 
         String mediaWrapperType = song.getMediaWrapperType();
 
@@ -253,8 +262,14 @@ public class PlayQueue {
      *
      */
     public void nextTrack() {
+        if (songs == null) {
+            return;
+        }
 
         counter++;
+        if (counter >= songs.size()) {
+            counter = 0;
+        }
         jumpToTrack(counter);
 
     }
@@ -265,7 +280,10 @@ public class PlayQueue {
      *
      */
     public void previousTrack() {
-
+        if (songs == null) {
+            return;
+        }
+        //TODO: why synchronized?? (andy)
         synchronized (lockObject) {
             counter--;
             if (counter < 0)
@@ -281,9 +299,11 @@ public class PlayQueue {
      *
      */
     public void randomTrack() {
-
+        if (songs == null) {
+            return;
+        }
         Random rand = new Random();
-        counter = rand.nextInt(songs.size());
+        counter = rand.nextInt(songs.size() - 1);
         jumpToTrack(counter);
 
     }
@@ -398,11 +418,11 @@ public class PlayQueue {
         // getCurrentSong().getMediaWrapper().play();
     }
 
-    public void onSongNotAvailable(int intExtra) {
+    public void onSongNotAvailable(int songId) {
 
-        Log.d(TAG, "intent received, try setting next wrapper for song with id " + intExtra);
+        Log.d(TAG, "intent received, try setting next wrapper for song with id " + songId);
 
-        Song song = getSongForID(intExtra);
+        Song song = getSongForID(songId);
 
         if (song != null) {
             if (trySettingNextWrapper(song)) {

@@ -3,14 +3,12 @@ package models.metadatawrappers;
 import android.util.Log;
 
 import models.apiwrappers.APIWrapper;
-import models.mediaModels.Song;
 
 import org.apache.http.NameValuePair;
 import org.apache.http.message.BasicNameValuePair;
 import org.json.JSONArray;
 import org.json.JSONObject;
 
-import java.lang.reflect.Array;
 import java.util.ArrayList;
 
 /**
@@ -131,9 +129,10 @@ public class LastfmMetadataWrapper extends AbstractMetadataWrapper {
         switch (callback) {
             case SIMILAR_ARTISTS_CALLBACK: {
                 String[] firstAttribs = {"similarartists", "artist"},
+                        globalAttribs = {"artist"},
                         getAttribs = {"mbid", "name", "match"};
-                String[][] artistsArray = convertJSONStringToArray(result, firstAttribs, getAttribs, null);
-                listener.onSimilarArtistsCallback(artistsArray);
+                String[][] artistsArray = convertJSONStringToArray(result, firstAttribs, getAttribs, globalAttribs);
+                listener.onSimilarArtistsCallback(globalAttribs[0], artistsArray);
                 break;
             }
             case TOP_TRACKS_CALLBACK: {
@@ -141,11 +140,13 @@ public class LastfmMetadataWrapper extends AbstractMetadataWrapper {
                         globalAttribs = {"artist"},
                         getAttribs = {"name"};
                 String[][] fetchedTacksArray = convertJSONStringToArray(result, firstAttribs, getAttribs, globalAttribs);
-                ArrayList<Song> songsArray = new ArrayList<>();
-                for (int i = 0; i < fetchedTacksArray.length; i++) {
-                    songsArray.add(new Song(globalAttribs[0], fetchedTacksArray[i][0]));
+                ArrayList<String> songNames = new ArrayList<>();
+                if (fetchedTacksArray != null) {
+                    for (int i = 0; i < fetchedTacksArray.length; i++) {
+                        songNames.add(fetchedTacksArray[i][0]);
+                    }
                 }
-                listener.onTopTracksCallback(globalAttribs[0], songsArray);
+                listener.onTopTracksCallback(globalAttribs[0], songNames);
                 break;
             }
             case TAG_ARTISTS_CALLBACK: {
@@ -153,7 +154,7 @@ public class LastfmMetadataWrapper extends AbstractMetadataWrapper {
                         globalAttribs = null,
                         getAttribs = {"mbid", "name"};
                 String[][] artistsArray = convertJSONStringToArray(result, firstAttribs, getAttribs, globalAttribs);
-                listener.onTagArtistsCallback(artistsArray);
+                listener.onGenreArtistsCallback(artistsArray);
                 break;
             }
         }

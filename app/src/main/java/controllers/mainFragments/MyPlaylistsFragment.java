@@ -18,8 +18,13 @@ import android.widget.LinearLayout;
 import android.widget.ListView;
 import android.widget.TextView;
 
+import java.lang.reflect.Array;
 import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.Comparator;
+import java.util.Iterator;
 import java.util.List;
+import java.util.TreeSet;
 
 import controllers.MainActivity;
 import controllers.mainFragments.generatorFragments.PlaylistFragment;
@@ -43,14 +48,30 @@ public class MyPlaylistsFragment extends ListFragment implements AdapterView.OnI
         ViewGroup rootView = (ViewGroup) inflater.inflate(R.layout.fragment_playlists, container, false);
         ((MainActivity)getActivity()).getSupportActionBar().setTitle("My Playlists");
 
+        TreeSet<Playlist> treeSet = new TreeSet<>(new Comparator<Playlist>() {
+            @Override
+            public int compare(Playlist lhs, Playlist rhs) {
+                return lhs.getName().toLowerCase().compareTo(rhs.getName().toLowerCase());
+            }
+        });
+
+        treeSet.addAll(PlaylistsManager.getInstance().getPlaylists());
+
+        ArrayList<Playlist> sortedPlaylists = new ArrayList<>();
+
+        Iterator<Playlist> it = treeSet.iterator();
+        while (it.hasNext()) {
+            sortedPlaylists.add(it.next());
+        }
+
         // Bind adapter to the ListFragment
         setListAdapter(
                 new PlaylistArrayAdapter(
                         getActivity(),
                         R.layout.rows,
                         R.id.txtview,
-                        PlaylistsManager.getInstance().getPlaylists()
-                )
+                        sortedPlaylists
+                        )
         );
         // Retain the ListFragment instance across Activity re-creation
         setRetainInstance(true);

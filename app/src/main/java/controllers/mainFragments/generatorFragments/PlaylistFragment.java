@@ -179,10 +179,12 @@ public class PlaylistFragment extends ListFragment implements
     public void onCannotInitializeSong(Song song) {
         int index = getSongIndex(song);
         TextView v = (TextView) getListView().getChildAt(index);
-        v.setEnabled(false);
-        v.setText(v.getText() + " (not found!)");
-        v.setTextColor(Color.rgb(100, 100, 100));
-        v.setPaintFlags(v.getPaintFlags() | Paint.STRIKE_THRU_TEXT_FLAG);
+        if (v != null) {
+            v.setEnabled(false);
+            v.setText(v.getText() + " (not found!)");
+            v.setTextColor(Color.rgb(100, 100, 100));
+            v.setPaintFlags(v.getPaintFlags() | Paint.STRIKE_THRU_TEXT_FLAG);
+        }
     }
 
     @Override

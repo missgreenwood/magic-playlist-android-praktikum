@@ -57,6 +57,15 @@ public class PlaylistsManager {
         observers.remove(listener);
     }
 
+    public boolean isPlaylistNameUnique(String playlistName) {
+        for (Playlist playlist : playlists) {
+            if (playlist.getName().equals(playlistName)) {
+                return false;
+            }
+        }
+        return true;
+    }
+
     public interface Listener {
         void onPlaylistsListChange();
     }

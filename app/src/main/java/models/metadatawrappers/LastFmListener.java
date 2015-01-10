@@ -10,10 +10,11 @@ import models.mediaModels.Song;
 public interface LastFmListener {
     /**
      * will be called when the similar artists api call finishes
-     * @param artists array [[String id, String name, String (parseable to double)fitting], ...]
+     * @param artist artists, which similarArtists are given
+     * @param similarArtists array [[String id, String name, String (parseable to double)fitting], ...]
      * */
-    public void onSimilarArtistsCallback(String[][] artists);
-    public void onTopTracksCallback(String artistName, ArrayList<Song> tracks);
+    public void onSimilarArtistsCallback(String artist, String[][] similarArtists);
+    public void onTopTracksCallback(String artistName, ArrayList<String> trackNames);
 
-    void onTagArtistsCallback(String[][] artistsArray);
+    void onGenreArtistsCallback(String[][] artistsArray);
 }
