@@ -36,7 +36,9 @@ public class PlaylistDaoImpl extends AbstractDao<Playlist> implements PlaylistDa
     @Override
     public List<Playlist> findPlaylists(String genre) {
         BasicDBObject dbObject = new BasicDBObject();
-        dbObject.append(Playlist.GENRE, genre);
+        if (genre != null && !genre.isEmpty()) {
+            dbObject.append(Playlist.GENRE, genre);
+        }
         return getDBCollection().find(dbObject).toArray();
     }
 

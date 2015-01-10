@@ -35,6 +35,9 @@ public class PlaylistServiceImpl implements PlaylistService {
         if (artist != null && !artist.isEmpty()) {
             ArrayList<Playlist> list = new ArrayList<>();
             for (Playlist playlist : playlists) {
+                if (playlist.getSongs() == null) {
+                    continue;
+                }
                 for (Song song : playlist.getSongs()) {
                     if (song.getArtist().contains(artist)) {
                         list.add(playlist);

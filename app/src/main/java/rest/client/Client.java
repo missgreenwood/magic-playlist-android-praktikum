@@ -3,6 +3,7 @@ package rest.client;
 import android.os.AsyncTask;
 
 import com.google.gson.Gson;
+import com.google.gson.reflect.TypeToken;
 
 import org.apache.http.HttpResponse;
 import org.apache.http.HttpStatus;
@@ -17,6 +18,9 @@ import org.apache.http.protocol.HTTP;
 
 import java.io.ByteArrayOutputStream;
 import java.io.IOException;
+import java.lang.reflect.Type;
+import java.util.ArrayList;
+import java.util.List;
 
 import models.mediaModels.Playlist;
 
@@ -68,7 +72,7 @@ public class Client {
     }
 
     public void findPlaylistByName(final String name) {
-        AsyncTask asyncTask = new AsyncTask<String, Void, String>() {
+        new AsyncTask<String, Void, String>() {
 
             @Override
             protected String doInBackground(String... uri) {
@@ -106,7 +110,52 @@ public class Client {
         }.execute();
     }
 
-    public void findPlaylistCallback(Playlist playlist) {
+    public void findPlaylistsByGenreAndArtist(final String genre, final String artist) {
+        new AsyncTask<String, Void, String>() {
 
+            @Override
+            protected String doInBackground(String... uri) {
+                HttpResponse response;
+                String responseString = null;
+                try {
+                    String url = String.format(ClientConstants.FIND_PLAYLISTS_URL, genre, artist);
+                    HttpGet httpGet = new HttpGet(url);
+                    httpGet.setHeader("Accept", "application/json");
+                    response = client.execute(httpGet);
+                    StatusLine statusLine = response.getStatusLine();
+                    if (statusLine.getStatusCode() == HttpStatus.SC_OK) {
+                        ByteArrayOutputStream out = new ByteArrayOutputStream();
+                        response.getEntity().writeTo(out);
+                        out.close();
+                        responseString = out.toString();
+                    } else {
+                        //Closes the connection.
+                        response.getEntity().getContent().close();
+                        throw new IOException(statusLine.getReasonPhrase());
+                    }
+                } catch (ClientProtocolException e) {
+                    //TODO Handle problems...
+                } catch (IOException e) {
+                    //TODO Handle problems...
+                }
+                return responseString;
+            }
+
+            @Override
+            protected void onPostExecute(String result) {
+                Type type = new TypeToken<ArrayList<Playlist>>() {}.getType();
+                List<Playlist> playlists = gson.fromJson(result.toString(), type);
+                findPlaylistsCallback(playlists);
+            }
+        }.execute();
+    }
+
+    public void findPlaylistCallback(Playlist playlist) {
+        // TODO
+    }
+
+    public void findPlaylistsCallback(List<Playlist> playlists) {
+        // TODO
+        playlists.size();
     }
 }
