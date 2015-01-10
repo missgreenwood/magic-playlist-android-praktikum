@@ -1,0 +1,40 @@
+<?xml version="1.0" encoding="utf-8"?>
+    <!-- @author judith -->
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:orientation="horizontal"
+    android:layout_width="fill_parent"
+    android:layout_height="wrap_content"
+    android:padding="6dp">
+    <CheckBox
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_gravity="center_vertical"
+        android:checkMark="?android:attr/listChoiceIndicatorMultiple"
+        android:id="@+id/checkbox" />
+    <TextView
+        android:id="@+id/wrapper_name"
+        android:layout_width="0dp"
+        android:layout_height="wrap_content"
+        android:layout_gravity="center_vertical"
+        android:layout_weight="1"
+        android:ellipsize="end"
+        android:paddingLeft="6dp"
+        android:paddingRight="6dp"
+        android:textAppearance="?android:attr/textAppearanceMedium" />
+    <Button
+        android:id="@+id/upBtn"
+        android:text="@string/Up"
+        android:layout_width="wrap_content"
+        android:layout_gravity="center_vertical"
+        android:layout_height="wrap_content"
+        style="@style/priorityBtn">
+    </Button>
+    <Button
+        android:id="@+id/downBtn"
+        android:text="@string/down"
+        android:layout_width="wrap_content"
+        android:layout_gravity="center_vertical"
+        android:layout_height="wrap_content"
+        style="@style/priorityBtn">
+    </Button>
+</LinearLayout>
