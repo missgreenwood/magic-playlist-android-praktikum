@@ -176,7 +176,7 @@ public class MainActivity extends ActionBarActivity implements
 
     @Override
     protected void onStop() {
-        unregisterReceiver(broadcastReceiver);
+        // unregisterReceiver(broadcastReceiver);
         super.onStop();
     }
 
