@@ -19,7 +19,7 @@ public class PlaylistDaoImpl extends AbstractDao<Playlist> implements PlaylistDa
 
     @Override
     protected void ensureIndices() {
-        getDBCollection().ensureIndex(Playlist.NAME);
+        getDBCollection().ensureIndex(new BasicDBObject(Playlist.NAME, 1), new BasicDBObject("unique", true));
         getDBCollection().ensureIndex(Playlist.GENRE);
     }
 
@@ -40,6 +40,11 @@ public class PlaylistDaoImpl extends AbstractDao<Playlist> implements PlaylistDa
             dbObject.append(Playlist.GENRE, genre);
         }
         return getDBCollection().find(dbObject).toArray();
+    }
+
+    @Override
+    public void update(Playlist playlist) {
+        getDBCollection().update(DBQuery.is(Playlist.NAME, playlist.getName()), playlist);
     }
 
     public void drop() {

@@ -31,6 +31,13 @@ public interface PlaylistService {
     List<Playlist> findPlaylists(String genre, String artist);
 
     /**
+     * Increments the Playlist's like count and persists that change.
+     *
+     * @param playlist the playlist to like.
+     */
+    void likePlaylist(Playlist playlist);
+
+    /**
      * Proceed with caution.
      */
     void cleanDB();

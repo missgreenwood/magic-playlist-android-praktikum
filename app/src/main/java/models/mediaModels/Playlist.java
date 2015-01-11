@@ -18,6 +18,7 @@ public class Playlist {
 
     private ArrayList<Song> songs;
     private String name;
+    private int likes;
     private String genre;
 
     public Playlist() {
@@ -82,6 +83,14 @@ public class Playlist {
         } else {
             Log.e("ERROR", "could not change Playlistname, due being unable to rename Playlistfile. Rights?");
         }
+    }
+
+    public int getLikes() {
+        return likes;
+    }
+
+    public void setLikes(int likes) {
+        this.likes = likes;
     }
 
     private void notifyChange() {

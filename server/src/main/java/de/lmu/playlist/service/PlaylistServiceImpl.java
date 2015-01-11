@@ -52,6 +52,12 @@ public class PlaylistServiceImpl implements PlaylistService {
     }
 
     @Override
+    public void likePlaylist(Playlist playlist) {
+        playlist.setLikes(playlist.getLikes() + 1);
+        playlistDao.update(playlist);
+    }
+
+    @Override
     public void cleanDB() {
         playlistDao.drop();
     }

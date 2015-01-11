@@ -11,6 +11,8 @@ public class Playlist {
 
     private String name;
 
+    private int likes;
+
     private Iterable<Song> songs;
 
     private String genre;
@@ -25,6 +27,14 @@ public class Playlist {
 
     public void setName(String name) {
         this.name = name;
+    }
+
+    public int getLikes() {
+        return likes;
+    }
+
+    public void setLikes(int likes) {
+        this.likes = likes;
     }
 
     public Iterable<Song> getSongs() {

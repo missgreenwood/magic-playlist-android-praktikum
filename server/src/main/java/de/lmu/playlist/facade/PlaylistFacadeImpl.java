@@ -37,6 +37,11 @@ public class PlaylistFacadeImpl implements PlaylistFacade {
     }
 
     @Override
+    public void likePlaylist(Playlist playlist) {
+        playlistService.likePlaylist(playlist);
+    }
+
+    @Override
     public void clean() {
         playlistService.cleanDB();
     }
