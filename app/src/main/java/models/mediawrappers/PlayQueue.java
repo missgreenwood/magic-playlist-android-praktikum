@@ -321,7 +321,10 @@ public class PlayQueue {
         Song currentSong = getCurrentSong();
 
         if (currentSong != null) {
-            currentSong.getMediaWrapper().stopPlayer();
+            AbstractMediaWrapper wrapper = currentSong.getMediaWrapper();
+            if (wrapper != null) {
+                wrapper.stopPlayer();
+            }
         }
 
         if (songs == null) {
