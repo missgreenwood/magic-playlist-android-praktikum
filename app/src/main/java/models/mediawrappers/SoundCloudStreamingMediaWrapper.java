@@ -1,6 +1,8 @@
 package models.mediawrappers;
 
 import android.content.Context;
+import android.os.AsyncTask;
+import android.os.Build;
 import android.os.Bundle;
 import android.util.JsonReader;
 import android.util.Log;
@@ -8,7 +10,9 @@ import android.util.Log;
 import models.apiwrappers.APIWrapper;
 import models.mediaModels.Song;
 
+import org.apache.http.Header;
 import org.apache.http.NameValuePair;
+import org.apache.http.message.BasicHeader;
 import org.apache.http.message.BasicNameValuePair;
 import org.json.JSONArray;
 import org.json.JSONException;
@@ -16,6 +20,8 @@ import org.json.JSONObject;
 
 import java.util.ArrayList;
 import java.util.List;
+
+import com.loopj.android.http.*;
 
 /**
  * Created by charlotte on 05.12.14.
@@ -130,12 +136,35 @@ public class SoundCloudStreamingMediaWrapper extends RemoteFileStreamingMediaWra
 
         //APIWrapper apiWrapper=new APIWrapper();
         //String jsonArrayString = apiWrapper.getJSONCall(url, APIWrapper.GET);
-
+        /*
         APIWrapper asyncHTTP = new APIWrapper(this, DEFAULT_CALLBACK, APIWrapper.GET_METHOD);
-        asyncHTTP.execute(url);
+        if(Build.VERSION.SDK_INT >= Build.VERSION_CODES.HONEYCOMB)
+            asyncHTTP.executeOnExecutor(AsyncTask.THREAD_POOL_EXECUTOR, url);
+        else
+            asyncHTTP.execute(url);
 
-
+        */
         //return playpath;
+
+
+        AsyncHttpClient asyncHttpClient = new AsyncHttpClient();
+        Header[] headers = {new BasicHeader("Content-type", "application/json")};
+        asyncHttpClient.get(getContext(), url, headers, null, new TextHttpResponseHandler() {
+            @Override
+            public void onFailure(int i, Header[] headers, String s, Throwable throwable) {
+                processWebCallResult(null, DEFAULT_CALLBACK, null);
+
+            }
+
+            @Override
+            public void onSuccess(int i, Header[] headers, String s) {
+                Log.d(TAG, "success! " + s);
+                processWebCallResult(s, DEFAULT_CALLBACK, null);
+            }
+
+
+        });
+
     }
 
     @Override
