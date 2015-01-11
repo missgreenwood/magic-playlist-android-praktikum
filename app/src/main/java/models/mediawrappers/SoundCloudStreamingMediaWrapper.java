@@ -152,7 +152,7 @@ public class SoundCloudStreamingMediaWrapper extends RemoteFileStreamingMediaWra
         asyncHttpClient.get(getContext(), url, headers, null, new TextHttpResponseHandler() {
             @Override
             public void onFailure(int i, Header[] headers, String s, Throwable throwable) {
-                processWebCallResult(null, DEFAULT_CALLBACK, null);
+                processWebCallResult("", DEFAULT_CALLBACK, null);
 
             }
 
