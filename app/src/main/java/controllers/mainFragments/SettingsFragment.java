@@ -1,10 +1,8 @@
 package controllers.mainFragments;
 
 import android.content.Context;
-import android.database.DataSetObserver;
 import android.os.Bundle;
 import android.support.v4.app.ListFragment;
-import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.View.OnClickListener;
@@ -19,7 +17,6 @@ import android.widget.TextView;
 import android.widget.Toast;
 
 import java.util.ArrayList;
-import java.util.Arrays;
 import java.util.List;
 
 import controllers.MainActivity;
@@ -111,8 +108,10 @@ public class SettingsFragment extends ListFragment {
             if (position != ListView.INVALID_POSITION) {
                 if (isChecked) {
                     Settings.getInstance().activateWrapper(allMediaWrappers.get(position));
+                    Toast.makeText(getActivity(), allMediaWrappers.get(position).toString() + " activated!", Toast.LENGTH_LONG).show();
                 } else {
                     Settings.getInstance().deactivateWrapper(allMediaWrappers.get(position));
+                    Toast.makeText(getActivity(), allMediaWrappers.get(position).toString() + " deactivated!", Toast.LENGTH_LONG).show();
                 }
             }
         }
