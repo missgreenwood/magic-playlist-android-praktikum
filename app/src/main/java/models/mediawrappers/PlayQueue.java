@@ -67,7 +67,7 @@ public class PlayQueue {
         if (songs.size() > 0) {
             initializePlaylist(true);
             Song currentSong = getCurrentSong();
-            if (currentSong != null) {
+            if (currentSong != null && currentSong.getMediaWrapper() != null) {
                 currentSong.getMediaWrapper().stopPlayer();
             }
             counter = 0;
