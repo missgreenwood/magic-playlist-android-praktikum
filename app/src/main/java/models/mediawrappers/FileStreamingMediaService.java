@@ -139,6 +139,7 @@ public class FileStreamingMediaService extends Service implements MediaPlayer.On
 
 
         }
+
         return START_NOT_STICKY; //TODO: sinnvoller return-Wert
     }
 
@@ -182,6 +183,22 @@ public class FileStreamingMediaService extends Service implements MediaPlayer.On
         //this.stopSelf();
 
         this.stopSelf();
+
+        /* evil hack! */
+
+
+        if (PlayQueue.getInstance() != null) {
+
+            Log.d(TAG, "PlayQueue still visible!");
+
+            if (PlayQueue.getInstance().isAutoPilotMode()) {
+                Log.d(TAG, "application running in background! trying to play next song");
+
+
+                PlayQueue.getInstance().onTrackFinished();
+
+            }
+        }
     }
 
     public void onDestroy() {
