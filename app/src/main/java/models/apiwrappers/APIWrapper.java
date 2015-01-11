@@ -23,6 +23,7 @@ import java.util.List;
  * Created by charlotte on 05.12.14.
  * @author charlotte
  *
+ * @deprecated
  * This class can be used to make asynchronous web (API) calls over HTTP GET and HTTP POST
  */
 
