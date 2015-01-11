@@ -21,7 +21,7 @@ public class BrowserFragment extends android.support.v4.app.Fragment implements
         View.OnClickListener {
     private GenresListFragment genresFragment;
     private ArtistsFragment artistsFragment;
-    private SearchFragment searchFragment;
+    private OtherPlaylistsFragment otherPlaylistsFragment;
     private String genre;
     private String artist;
 
@@ -100,10 +100,3 @@ public class BrowserFragment extends android.support.v4.app.Fragment implements
         }
     }
 }
-/* View v = new View();
-        v.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-
-            }
-        }); */
