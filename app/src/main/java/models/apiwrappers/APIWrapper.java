@@ -1,6 +1,7 @@
 package models.apiwrappers;
 
 import android.os.AsyncTask;
+import android.os.Bundle;
 import android.util.Log;
 
 import org.apache.http.HttpEntity;
@@ -32,14 +33,22 @@ public class APIWrapper extends AsyncTask<String, Void, String> {
     public static final String GET_METHOD = "get_method";
     public static final String POST_METHOD = "post_method";
     private static final String TAG = "main.java.models.apiwrappers.APIWrapper";
+    protected Bundle data;
     private CallbackInterface parent;
     private String callback;
     private String method;
 
-    public APIWrapper(CallbackInterface parent, String callback, String method) {
+    public APIWrapper(CallbackInterface parent, String callback, String method, Bundle data) {
         this.parent = parent;
         this.callback = callback;
         this.method = method;
+        this.data = data;
+    }
+    public APIWrapper (CallbackInterface parent, String callback, String method) {
+        this.parent = parent;
+        this.callback = callback;
+        this.method = method;
+        this.data = null;
     }
 
     public static String encodeURL(String baseUrl, List<NameValuePair> params) {
@@ -93,7 +102,7 @@ public class APIWrapper extends AsyncTask<String, Void, String> {
         }*/
 
 
-        parent.processWebCallResult(response, callback);
+        parent.processWebCallResult(response, callback, data);
 
     }
 

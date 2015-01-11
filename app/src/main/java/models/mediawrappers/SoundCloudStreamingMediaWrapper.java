@@ -1,6 +1,7 @@
 package models.mediawrappers;
 
 import android.content.Context;
+import android.os.Bundle;
 import android.util.JsonReader;
 import android.util.Log;
 
@@ -43,7 +44,7 @@ public class SoundCloudStreamingMediaWrapper extends RemoteFileStreamingMediaWra
     }
 
     @Override
-    public void processWebCallResult(String result, String callback) {
+    public void processWebCallResult(String result, String callback, Bundle data) {
 
 
         BasicNameValuePair clientIDPair = new BasicNameValuePair(SOUNDCLOUD_CLIENT_ID_STRING, SOUNDCLOUD_CLIENT_ID);
