@@ -1,6 +1,7 @@
 package models.mediawrappers;
 
 import android.content.Context;
+import android.os.Bundle;
 
 import models.apiwrappers.CallbackInterface;
 import models.mediaModels.Song;
@@ -26,6 +27,6 @@ public abstract class RemoteFileStreamingMediaWrapper extends FileStreamingMedia
 
 
     @Override
-    public abstract void processWebCallResult(String result, String callback);
+    public abstract void processWebCallResult(String result, String callback, Bundle data);
 
 }

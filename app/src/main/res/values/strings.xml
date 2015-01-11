@@ -28,5 +28,6 @@
     <string name="hello_blank_fragment">Hello blank fragment</string>
     <string name="Up">Up</string>
     <string name="down">Down</string>
+    <string name="songs_count_limit_text">Songs count</string>
 
 </resources>
