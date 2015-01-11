@@ -2,6 +2,7 @@ package models.mediawrappers;
 
 import android.content.Context;
 import android.content.Intent;
+import android.os.Bundle;
 import android.util.Log;
 
 import models.apiwrappers.APIWrapper;
@@ -201,7 +202,7 @@ public class SpotifyMediaWrapper extends RemoteFileStreamingMediaWrapper impleme
     }
 
     @Override
-    public void processWebCallResult(String result, String callback) {
+    public void processWebCallResult(String result, String callback, Bundle data) {
 
 
         String uri = "";

@@ -8,7 +8,9 @@ import java.lang.reflect.Array;
 import java.util.ArrayList;
 import java.util.HashMap;
 
+import models.mediaModels.Playlist;
 import models.mediaModels.Song;
+import models.playlist.PlaylistsManager;
 
 /**
  * Created by TheDaAndy on 07.01.2015.
@@ -103,6 +105,7 @@ public class Settings {
             mediaWrappers.set(prio, upperWrapper);
         }
         saveSettings();
+        resetPlaylists();
     }
 
     public void decreaseWrapperPriority(String wrapper) {
@@ -113,11 +116,13 @@ public class Settings {
             mediaWrappers.set(prio, upperWrapper);
         }
         saveSettings();
+        resetPlaylists();
     }
 
     public void deactivateWrapper(String wrapper) {
         usedMediaWrappers.remove(wrapper);
         saveSettings();
+        resetPlaylists();
     }
 
     public void activateWrapper(String wrapper) {
@@ -125,6 +130,17 @@ public class Settings {
             usedMediaWrappers.add(wrapper);
         }
         saveSettings();
+        resetPlaylists();
+    }
+
+    private void resetPlaylists()
+    {
+        for (Playlist playlist : PlaylistsManager.getInstance().getPlaylists()) {
+            for (Song song : playlist.getSongsList()) {
+                song.setMediaWrapper(null);
+                song.setNotPlayable(false);
+            }
+        }
     }
 
     public boolean isWrapperActive(String wrapper) {
