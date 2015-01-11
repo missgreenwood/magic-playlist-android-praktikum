@@ -164,19 +164,21 @@ public class MainActivity extends ActionBarActivity implements
         });
 
         PlayQueue.getInstance().setMediaWrappers(Settings.getInstance().getMediaWrappers());
-
+        PlayQueue.getInstance().setAutoPilotMode(false);
         super.onStart();
     }
 
     @Override
     public void onResume() {
+        PlayQueue.getInstance().setAutoPilotMode(false);
         super.onResume();
         this.setTitle("Magic Playlist");
     }
 
     @Override
     protected void onStop() {
-        // unregisterReceiver(broadcastReceiver);
+        PlayQueue.getInstance().setAutoPilotMode(true);
+        unregisterReceiver(broadcastReceiver);
         super.onStop();
     }
 
