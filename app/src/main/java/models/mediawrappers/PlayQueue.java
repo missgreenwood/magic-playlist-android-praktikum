@@ -42,6 +42,7 @@ public class PlayQueue {
     private ArrayList<String> mediaWrappers;
     private Playlist currentPlaylist;
     private ArrayList<Listener> observers;
+    private boolean autoPilotMode = false;
 
     /**
      * This class should be used to create a playlist/queue with a list of songs.
@@ -52,9 +53,16 @@ public class PlayQueue {
         setState(STATE_IDLE);
     }
 
-    public static PlayQueue getInstance()
-    {
+    public static PlayQueue getInstance() {
         return instance;
+    }
+
+    public boolean isAutoPilotMode() {
+        return autoPilotMode;
+    }
+
+    public void setAutoPilotMode(boolean autoPilotMode) {
+        this.autoPilotMode = autoPilotMode;
     }
 
     public void setContext(Context context) {
@@ -390,6 +398,8 @@ public class PlayQueue {
 
 
     public void onTrackFinished() {
+        Log.d(TAG, "on track finished called");
+
         if (songs != null && counter < songs.size())
             nextTrack();
     }
