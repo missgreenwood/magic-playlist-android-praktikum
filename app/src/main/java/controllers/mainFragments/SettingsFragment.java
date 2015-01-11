@@ -30,9 +30,6 @@ public class SettingsFragment extends ListFragment {
     private Settings settings;
     private ArrayList<String> usedMediaWrappers;
     private ArrayList<String> allMediaWrappers;
-//    private String[] all;
-//    private String[] used;
-//    private boolean[] wrapperStates;
     public SettingsFragment() {
 
     }
@@ -44,30 +41,12 @@ public class SettingsFragment extends ListFragment {
         settings = Settings.getInstance();
         usedMediaWrappers = settings.getMediaWrappers();
         allMediaWrappers = settings.getMediaWrappers(true);
-        //why use arrays, when you can use arrayLists? See description in SettingsAdapter :)
-//        all = allMediaWrappers.toArray(new String[allMediaWrappers.size()]);
-//        used = usedMediaWrappers.toArray(new String[usedMediaWrappers.size()]);
         // Bind adapter to the ListFragment
         setListAdapter( new SettingsAdapter(getActivity(),R.layout.rows2,R.id.wrapper_name,allMediaWrappers));
         // Retain the ListFragment instance across Activity re-creation
         setRetainInstance(true);
         return rootView;
     }
-
-   /* // Handle Item check event
-   public void onListItemClick(ListView l, View view, int position, long id) {
-       String selectedWrapper = all[position];
-        if (settings.isWrapperActive(selectedWrapper)) {
-            // Remove deselected wrapper from the list of selected wrappers
-            settings.deactivateWrapper(selectedWrapper);
-            Toast.makeText(getActivity(), selectedWrapper + " deactivated!", Toast.LENGTH_LONG).show();
-        }
-        /* else {
-            // Add selected wrapper to the list of selected wrappers
-            settings.activateWrapper(selectedWrapper);
-            Toast.makeText(getActivity(), selectedWrapper + " activated!", Toast.LENGTH_LONG).show();
-        }
-    } */
 
     private OnClickListener priorityDownListener = new OnClickListener() {
         @Override
@@ -107,9 +86,11 @@ public class SettingsFragment extends ListFragment {
             final int position = getListView().getPositionForView(buttonView);
             if (position != ListView.INVALID_POSITION) {
                 if (isChecked) {
+                    // Activate selected wrapper
                     Settings.getInstance().activateWrapper(allMediaWrappers.get(position));
                     Toast.makeText(getActivity(), allMediaWrappers.get(position).toString() + " activated!", Toast.LENGTH_LONG).show();
                 } else {
+                    // Deactivate selected wrapper
                     Settings.getInstance().deactivateWrapper(allMediaWrappers.get(position));
                     Toast.makeText(getActivity(), allMediaWrappers.get(position).toString() + " deactivated!", Toast.LENGTH_LONG).show();
                 }
