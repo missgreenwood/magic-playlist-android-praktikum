@@ -91,6 +91,7 @@ public class PlayQueue {
         for (Song song : songs) {
 
             song.setMediaWrapper(null);
+            song.setNotPlayable(false);
         }
 
     }
