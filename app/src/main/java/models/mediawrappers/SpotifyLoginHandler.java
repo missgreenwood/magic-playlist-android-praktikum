@@ -12,6 +12,7 @@ import com.spotify.sdk.android.authentication.AuthenticationResponse;
 import com.spotify.sdk.android.authentication.SpotifyAuthentication;
 
 import android.net.Uri;
+import android.os.Bundle;
 import android.util.Log;
 
 import org.apache.http.NameValuePair;
@@ -112,7 +113,7 @@ public class SpotifyLoginHandler implements CallbackInterface {
     }
 
     @Override
-    public void processWebCallResult(String result, String callback) {
+    public void processWebCallResult(String result, String callback, Bundle data) {
 
 
         if (callback.equals(SPOTIFY_TOKENS_CALLBACK)) {

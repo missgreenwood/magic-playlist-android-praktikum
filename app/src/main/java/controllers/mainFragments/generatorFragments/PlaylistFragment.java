@@ -66,7 +66,6 @@ public class PlaylistFragment extends ListFragment implements
                 android.R.layout.simple_list_item_1, android.R.id.text1, playlist.getSongsList(true)));
 
         PlayQueue.getInstance().addObserver(this);
-
     }
 
     private void markAsCurrentlyPlaying(int index) {

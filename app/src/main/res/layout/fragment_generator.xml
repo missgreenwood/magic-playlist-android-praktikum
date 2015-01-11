@@ -22,6 +22,14 @@
         android:layout_height="wrap_content"
         android:layout_weight=".7"
         android:orientation="vertical">
+
+        <Button
+            android:id="@+id/songsCountLimitBtn"
+            android:text="@string/songs_count_limit_text"
+            android:layout_width="fill_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="20dp"
+            style="@style/btnStyleOrange" />
         <Button
             android:id="@+id/genresBtn"
             android:text="@string/genres"

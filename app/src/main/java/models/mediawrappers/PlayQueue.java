@@ -42,6 +42,7 @@ public class PlayQueue {
     private ArrayList<String> mediaWrappers;
     private Playlist currentPlaylist;
     private ArrayList<Listener> observers;
+    private boolean autoPilotMode = false;
 
     /**
      * This class should be used to create a playlist/queue with a list of songs.
@@ -52,9 +53,16 @@ public class PlayQueue {
         setState(STATE_IDLE);
     }
 
-    public static PlayQueue getInstance()
-    {
+    public static PlayQueue getInstance() {
         return instance;
+    }
+
+    public boolean isAutoPilotMode() {
+        return autoPilotMode;
+    }
+
+    public void setAutoPilotMode(boolean autoPilotMode) {
+        this.autoPilotMode = autoPilotMode;
     }
 
     public void setContext(Context context) {
@@ -66,10 +74,7 @@ public class PlayQueue {
         songs = playlist.getSongsList(true);
         if (songs.size() > 0) {
             initializePlaylist(true);
-            Song currentSong = getCurrentSong();
-            if (currentSong != null) {
-                currentSong.getMediaWrapper().stopPlayer();
-            }
+            stopCurrentSong();
             counter = 0;
             setCurrentSong(songs.get(counter));
         } else {
@@ -91,6 +96,7 @@ public class PlayQueue {
         for (Song song : songs) {
 
             song.setMediaWrapper(null);
+            song.setNotPlayable(false);
         }
 
     }
@@ -178,13 +184,14 @@ public class PlayQueue {
     private void playSongIntern() {
         if (currentSong != null) {
             Log.d(TAG, "playing song: " + currentSong.toString());
-            if (currentSong.getMediaWrapper() != null) {
-                String playpath = currentSong.getMediaWrapper().getPlayPath();
+            AbstractMediaWrapper wrapper = currentSong.getMediaWrapper();
+            if (wrapper != null) {
+                String playpath = wrapper.getPlayPath();
                 Log.d(TAG, "playpath: " + playpath);
                 if ((playpath != null) && (!playpath.equals(""))) {
                     Log.d(TAG, "now we can play the current song: " + currentSong);
                     setState(STATE_ALREADY_PlAYING);
-                    currentSong.getMediaWrapper().play();
+                    wrapper.play();
                     notifyNewSongPlaying(currentSong);
                 } else setState(STATE_WAITING);
             } else setState(STATE_WAITING);
@@ -318,11 +325,7 @@ public class PlayQueue {
 
         Log.d(TAG, "is jumping to " + index);
 
-        Song currentSong = getCurrentSong();
-
-        if (currentSong != null) {
-            currentSong.getMediaWrapper().stopPlayer();
-        }
+        stopCurrentSong();
 
         if (songs == null) {
             Log.e("ERROR", "no songs list given...");
@@ -395,6 +398,8 @@ public class PlayQueue {
 
 
     public void onTrackFinished() {
+        Log.d(TAG, "on track finished called");
+
         if (songs != null && counter < songs.size())
             nextTrack();
     }
@@ -439,7 +444,8 @@ public class PlayQueue {
         }
     }
 
-    public void playSingleSong(Song song) {
+    private void stopCurrentSong()
+    {
         Song currentSong = getCurrentSong();
         if (currentSong != null) {
             AbstractMediaWrapper wrapper = currentSong.getMediaWrapper();
@@ -447,6 +453,10 @@ public class PlayQueue {
                 wrapper.stopPlayer();
             }
         }
+    }
+
+    public void playSingleSong(Song song) {
+        stopCurrentSong();
         initializeSong(song);
         setCurrentSong(song);
         playSongIntern();

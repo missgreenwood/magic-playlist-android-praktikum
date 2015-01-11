@@ -18,6 +18,7 @@ import com.spotify.sdk.android.playback.Config;
 
 import java.util.ArrayList;
 
+import controllers.mainFragments.BrowserFragment;
 import controllers.mainFragments.GeneratorFragment;
 import controllers.mainFragments.MyPlaylistsFragment;
 import controllers.mainFragments.SettingsFragment;
@@ -43,7 +44,7 @@ public class MainActivity extends ActionBarActivity implements
     private MyPlaylistsFragment playlistsListFragment;
     private GeneratorFragment generatorFragment;
     private SettingsFragment settingsFragment;
-
+    private BrowserFragment browserFragment;
 //    public ArrayList<Song> getSongs() {
 //        return songs;
 //    }
@@ -117,8 +118,9 @@ public class MainActivity extends ActionBarActivity implements
             this.openPlaylistGenerator();
         } else if (view == settings) {
             this.openSettings();
-        } /* else if (view == otherPlaylists) {
-            this.openPlaylistBrowser(); */
+        } else if (view == otherPlaylists) {
+            this.openPlaylistBrowser();
+        }
     }
 
     @Override
@@ -162,18 +164,20 @@ public class MainActivity extends ActionBarActivity implements
         });
 
         PlayQueue.getInstance().setMediaWrappers(Settings.getInstance().getMediaWrappers());
-
+        PlayQueue.getInstance().setAutoPilotMode(false);
         super.onStart();
     }
 
     @Override
     public void onResume() {
+        PlayQueue.getInstance().setAutoPilotMode(false);
         super.onResume();
         this.setTitle("Magic Playlist");
     }
 
     @Override
     protected void onStop() {
+        PlayQueue.getInstance().setAutoPilotMode(true);
         unregisterReceiver(broadcastReceiver);
         super.onStop();
     }
@@ -211,6 +215,16 @@ public class MainActivity extends ActionBarActivity implements
         }
     }
 
+    public void openPlaylistBrowser() {
+        browserFragment = (BrowserFragment) getSupportFragmentManager().findFragmentByTag("browserFragment");
+        if (browserFragment == null) {
+            browserFragment = new BrowserFragment();
+            FragmentTransaction transact = getSupportFragmentManager().beginTransaction();
+            transact.replace(R.id.mainViewGroup, browserFragment, "browserFragment");
+            transact.addToBackStack(null);
+            transact.commit();
+        }
+    }
 
     @Override
     protected void onNewIntent(Intent intent) {

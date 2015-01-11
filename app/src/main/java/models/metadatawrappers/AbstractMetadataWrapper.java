@@ -1,5 +1,7 @@
 package models.metadatawrappers;
 
+import android.os.Bundle;
+
 import models.apiwrappers.CallbackInterface;
 
 /**
@@ -12,5 +14,5 @@ public abstract class AbstractMetadataWrapper implements CallbackInterface {
 
 
     @Override
-    public abstract void processWebCallResult(String result, String callback);
+    public abstract void processWebCallResult(String result, String callback, Bundle data);
 }
