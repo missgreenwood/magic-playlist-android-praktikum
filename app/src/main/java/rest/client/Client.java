@@ -26,8 +26,18 @@ import models.mediaModels.Playlist;
 
 public class Client {
 
+    private final static Client instance = new Client();
+
+    public static Client getInstance () {
+        return instance;
+    }
+
+    private Client(){} //not accessable
+
     private final Gson gson = new Gson();
     private final HttpClient client = new DefaultHttpClient();
+
+    private ArrayList<Listener> observers;
 
     public void addPlaylist(final Playlist playlist) {
         new AsyncTask<String, Void, String>() {
@@ -151,11 +161,39 @@ public class Client {
     }
 
     public void findPlaylistCallback(Playlist playlist) {
-        // TODO
+        if (observers == null) {
+            return;
+        }
+        for (Listener observer : observers) {
+            observer.onFindPlaylistCallback(playlist);
+        }
     }
 
     public void findPlaylistsCallback(List<Playlist> playlists) {
-        // TODO
-        playlists.size();
+        if (observers == null) {
+            return;
+        }
+        for (Listener observer : observers) {
+            observer.onFindPlaylistsCallback(playlists);
+        }
+    }
+
+    public void addObserver(Listener observer) {
+        if(observers == null) {
+            observers = new ArrayList<>();
+        }
+        observers.add(observer);
+    }
+
+    public void removeObserver(Listener observer) {
+        if(observers == null) {
+            return;
+        }
+        observers.remove(observer);
+    }
+
+    public interface Listener {
+        void onFindPlaylistCallback(Playlist playlist);
+        void onFindPlaylistsCallback(List<Playlist> playlists);
     }
 }

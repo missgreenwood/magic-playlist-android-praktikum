@@ -22,8 +22,8 @@ public class Settings {
 
     private Listener listener;
 
+    private ArrayList<String> usedMediaWrappers;
     private ArrayList<String> mediaWrappers;
-    private HashMap<String, Boolean> mediaWrappersState;
     private SharedPreferences preferences;
 
     private Settings() {
@@ -35,14 +35,12 @@ public class Settings {
 
     public ArrayList<String> getMediaWrappers(boolean inclusiveInactive)
     {
-        ArrayList<String> usedMediaWrappers = new ArrayList<>();
-        for (int i = 0; i < mediaWrappers.size(); i++) {
-            if (mediaWrappersState.get(mediaWrappers.get(i)) || inclusiveInactive) {
-                usedMediaWrappers.add(mediaWrappers.get(i));
-            }
-        }
         Log.d("SETTINGS", "usedMediaWrappers: " + usedMediaWrappers);
-        return usedMediaWrappers;
+        if (inclusiveInactive) {
+            return mediaWrappers;
+        } else {
+            return usedMediaWrappers;
+        }
     }
 
     public void setOnMediaWrapperListChangeListener(Listener listener) {
@@ -52,14 +50,19 @@ public class Settings {
     public void loadSettings(SharedPreferences preferences)
     {
         ArrayList<String> defWrapperList = getDefaultMediaWrappersList();
-        mediaWrappersState = new HashMap<>();
+        usedMediaWrappers = new ArrayList<>();
+
+        //you can't allocate a ArrayList size, so we have to use a normal Array first
         String[] wrappers = new String[defWrapperList.size()];
         for (int i = 0; i < defWrapperList.size(); i++) {
             String wrapper = defWrapperList.get(i);
             //add to index, which represents the priority of the wrapper
             wrappers[preferences.getInt(wrapper, i)] = wrapper;
-            mediaWrappersState.put(wrapper, preferences.getBoolean(wrapper + "_bool", true));
+            if (preferences.getBoolean(wrapper + "_bool", true)) {
+                usedMediaWrappers.add(wrapper);
+            }
         }
+        //now we can init the ArrayList with the right order
         mediaWrappers = new ArrayList<>();
         for (String wrapper : wrappers) {
             mediaWrappers.add(wrapper);
@@ -86,7 +89,7 @@ public class Settings {
         for (int i = 0; i < mediaWrappers.size(); i++) {
             String wrapper = mediaWrappers.get(i);
             editor.putInt(wrapper, i);
-            editor.putBoolean(wrapper + "_bool", mediaWrappersState.get(wrapper));
+            editor.putBoolean(wrapper + "_bool", isWrapperActive(wrapper));
         }
         editor.apply();
         listener.onMediaWrapperListChange(getMediaWrappers());
@@ -113,17 +116,19 @@ public class Settings {
     }
 
     public void deactivateWrapper(String wrapper) {
-        mediaWrappersState.put(wrapper, false);
+        usedMediaWrappers.remove(wrapper);
         saveSettings();
     }
 
     public void activateWrapper(String wrapper) {
-        mediaWrappersState.put(wrapper, true);
+        if (!usedMediaWrappers.contains(wrapper)) {
+            usedMediaWrappers.add(wrapper);
+        }
         saveSettings();
     }
 
     public boolean isWrapperActive(String wrapper) {
-        return mediaWrappersState.get(wrapper);
+        return usedMediaWrappers.contains(wrapper);
     }
 
     public interface Listener {

@@ -1,8 +1,10 @@
 package controllers.mainFragments;
 
 import android.content.Context;
+import android.database.DataSetObserver;
 import android.os.Bundle;
 import android.support.v4.app.ListFragment;
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.View.OnClickListener;
@@ -31,9 +33,9 @@ public class SettingsFragment extends ListFragment {
     private Settings settings;
     private ArrayList<String> usedMediaWrappers;
     private ArrayList<String> allMediaWrappers;
-    private String[] all;
-    private String[] used;
-    private boolean[] wrapperStates;
+//    private String[] all;
+//    private String[] used;
+//    private boolean[] wrapperStates;
     public SettingsFragment() {
 
     }
@@ -45,8 +47,9 @@ public class SettingsFragment extends ListFragment {
         settings = Settings.getInstance();
         usedMediaWrappers = settings.getMediaWrappers();
         allMediaWrappers = settings.getMediaWrappers(true);
-        all = allMediaWrappers.toArray(new String[allMediaWrappers.size()]);
-        used = usedMediaWrappers.toArray(new String[usedMediaWrappers.size()]);
+        //why use arrays, when you can use arrayLists? See description in SettingsAdapter :)
+//        all = allMediaWrappers.toArray(new String[allMediaWrappers.size()]);
+//        used = usedMediaWrappers.toArray(new String[usedMediaWrappers.size()]);
         // Bind adapter to the ListFragment
         setListAdapter( new SettingsAdapter(getActivity(),R.layout.rows2,R.id.wrapper_name,allMediaWrappers));
         // Retain the ListFragment instance across Activity re-creation
@@ -73,11 +76,14 @@ public class SettingsFragment extends ListFragment {
         @Override
         public void onClick(View v) {
             final int position = getListView().getPositionForView(v);
-            String selectedWrapper = all[position];
-            if (position != ListView.INVALID_POSITION) {
-                // Downgrade selected wrapper
-                settings.decreaseWrapperPriority(selectedWrapper);
-                Toast.makeText(getActivity(), selectedWrapper + " downgraded!", Toast.LENGTH_LONG).show();
+            if (position < allMediaWrappers.size()) {
+                String selectedWrapper = allMediaWrappers.get(position);
+                if (position != ListView.INVALID_POSITION) {
+                    // Downgrade selected wrapper
+                    settings.decreaseWrapperPriority(selectedWrapper);
+                    ((SettingsAdapter)getListAdapter()).notifyDataSetChanged();
+                    Toast.makeText(getActivity(), selectedWrapper + " downgraded!", Toast.LENGTH_LONG).show();
+                }
             }
         }
     };
@@ -86,11 +92,14 @@ public class SettingsFragment extends ListFragment {
         @Override
         public void onClick(View v) {
             final int position = getListView().getPositionForView(v);
-            String selectedWrapper = all[position];
-            if (position != ListView.INVALID_POSITION) {
-                // Upgrade selected wrapper
-                settings.increaseWrapperPriority(selectedWrapper);
-                Toast.makeText(getActivity(), selectedWrapper + " upgraded!", Toast.LENGTH_LONG).show();
+            if (position < allMediaWrappers.size()) {
+                String selectedWrapper = allMediaWrappers.get(position);
+                if (position != ListView.INVALID_POSITION) {
+                    // Upgrade selected wrapper
+                    settings.increaseWrapperPriority(selectedWrapper);
+                    ((SettingsAdapter) getListAdapter()).notifyDataSetChanged();
+                    Toast.makeText(getActivity(), selectedWrapper + " upgraded!", Toast.LENGTH_LONG).show();
+                }
             }
         }
     };
@@ -98,9 +107,14 @@ public class SettingsFragment extends ListFragment {
     private OnCheckedChangeListener wrapperCheckedChangeListener = new OnCheckedChangeListener() {
         @Override
         public void onCheckedChanged(CompoundButton buttonView, boolean isChecked) {
-            /* final int position = getListView().getPositionForView(buttonView);
-            if (position != ListView.INVALID_POSITION && wrapperStates[position]) {
-            } */
+            final int position = getListView().getPositionForView(buttonView);
+            if (position != ListView.INVALID_POSITION) {
+                if (isChecked) {
+                    Settings.getInstance().activateWrapper(allMediaWrappers.get(position));
+                } else {
+                    Settings.getInstance().deactivateWrapper(allMediaWrappers.get(position));
+                }
+            }
         }
     };
 
@@ -129,7 +143,23 @@ public class SettingsFragment extends ListFragment {
                 holder.wrapper_name = (TextView) convertView.findViewById(R.id.wrapper_name);
                 holder.up_button = (Button) convertView.findViewById(R.id.upBtn);
                 holder.down_button = (Button) convertView.findViewById(R.id.downBtn);
+
+                //initialvalue should be set before Listener, otherwise unneeded actions are called
+                //also I removed  "all[position]" because the arrayAdapter should work with the given
+                //list at initialisation. This is important at this position, because when the List
+                //changes (priorityChange) you can recognize it here :) (andy)
+                if (usedMediaWrappers.contains(this.getItem(position))) {
+                    holder.checkbox.setChecked(true);
+                }
+
                 holder.checkbox.setOnCheckedChangeListener(wrapperCheckedChangeListener);
+                final CheckBox checkBox = holder.checkbox;
+                holder.wrapper_name.setOnClickListener(new OnClickListener() {
+                    @Override
+                    public void onClick(View v) {
+                        checkBox.performClick();
+                    }
+                });
                 holder.up_button.setOnClickListener(priorityUpListener);
                 holder.down_button.setOnClickListener(priorityDownListener);
                 convertView.setTag(holder);
@@ -137,10 +167,9 @@ public class SettingsFragment extends ListFragment {
             else {
                 holder = (SettingsViewHolder) convertView.getTag();
             }
-            if (Arrays.asList(used).contains(all[position])) {
-                holder.checkbox.setChecked(true);
-                }
-            holder.wrapper_name.setText(all[position]);
+
+            //see longer description
+            holder.wrapper_name.setText(this.getItem(position));
             return convertView;
         }
     }
