@@ -1,9 +1,13 @@
 package de.lmu.playlist.facade;
 
+import com.google.inject.Guice;
 import com.google.inject.Inject;
+import com.google.inject.Injector;
+import com.mongodb.MongoException;
 
 import java.util.List;
 
+import de.lmu.playlist.PlaylistModule;
 import de.lmu.playlist.domain.entity.Playlist;
 import de.lmu.playlist.service.PlaylistService;
 
@@ -23,7 +27,12 @@ public class PlaylistFacadeImpl implements PlaylistFacade {
 
     @Override
     public void addPlaylist(Playlist playlist) {
-        playlistService.addPlaylist(playlist);
+        try {
+            playlistService.addPlaylist(playlist);
+        } catch (MongoException.DuplicateKey duplicateKey) {
+            // this exception occurs when we try to add a playlist with an already existing name.
+            // our current strategy: ignore it! 
+        }
     }
 
     @Override
@@ -44,5 +53,14 @@ public class PlaylistFacadeImpl implements PlaylistFacade {
     @Override
     public void clean() {
         playlistService.cleanDB();
+    }
+
+    public static void main(String[] arg) {
+        Injector injector = Guice.createInjector(new PlaylistModule());
+        PlaylistFacade playlistFacade = injector.getInstance(PlaylistFacade.class);
+        Playlist playlist = new Playlist();
+        playlist.setName("test");
+        playlistFacade.addPlaylist(playlist);
+        playlistFacade.addPlaylist(playlist);
     }
 }
