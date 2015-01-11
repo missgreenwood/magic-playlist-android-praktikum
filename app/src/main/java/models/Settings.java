@@ -134,6 +134,8 @@ public class Settings {
 
     private void resetPlaylists()
     {
+
+        Log.d("", "resetplaylists called");
         for (Playlist playlist : PlaylistsManager.getInstance().getPlaylists()) {
 
 
@@ -145,11 +147,16 @@ public class Settings {
 
         }
 
-        // PlayQueue.getInstance().pausePlayer();
         PlayQueue.getInstance().initializePlaylist(true);
+        PlayQueue.getInstance().pausePlayer();
+        PlayQueue.getInstance().setState(PlayQueue.STATE_IDLE);
 
-        Log.d("", "current song in resetPlaylists: " + PlayQueue.getInstance().getCurrentSong());
 
+    }
+
+    public void confirmWrapperChanges() {
+        saveSettings();
+        resetPlaylists();
 
     }
 
