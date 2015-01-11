@@ -70,6 +70,8 @@ public class PlayQueue {
     }
 
     public void importPlaylist(Playlist playlist) {
+        Log.d(TAG, "import playlist called!");
+
         currentPlaylist = playlist;
         songs = playlist.getSongsList(true);
         if (songs.size() > 0) {
@@ -145,6 +147,9 @@ public class PlayQueue {
     }
 
     public void setCurrentSong(Song currentSong) {
+
+        Log.d(TAG, "set current song: " + currentSong);
+
         this.currentSong = currentSong;
     }
 
@@ -248,7 +253,7 @@ public class PlayQueue {
     /**
      * @param overwrite Will overwrite existing media wrappers if true
      */
-    private void initializePlaylist(boolean overwrite) {
+    public void initializePlaylist(boolean overwrite) {
 
 
         for (Song song : songs) {
@@ -260,6 +265,8 @@ public class PlayQueue {
 
         }
 
+        Log.d(TAG, "current song in initializePlaylist: " + getCurrentSong());
+
 
     }
 
@@ -269,6 +276,9 @@ public class PlayQueue {
      *
      */
     public void nextTrack() {
+
+        Log.v(TAG, "next track called");
+
         if (songs == null) {
             return;
         }
@@ -287,6 +297,9 @@ public class PlayQueue {
      *
      */
     public void previousTrack() {
+
+        Log.v(TAG, "previous track called");
+
         if (songs == null) {
             return;
         }
@@ -323,7 +336,13 @@ public class PlayQueue {
      */
     public void jumpToTrack(int index) {
 
-        Log.d(TAG, "is jumping to " + index);
+
+        StackTraceElement[] stacktrace = Thread.currentThread().getStackTrace();
+        StackTraceElement e = stacktrace[2];//maybe this number needs to be corrected
+        String methodName = e.getMethodName();
+
+
+        Log.d(TAG, "is jumping to " + index + " method was called by: " + methodName);
 
         stopCurrentSong();
 
@@ -411,7 +430,7 @@ public class PlayQueue {
         Song song = getSongForID(songID);
 
         if (song != null) {
-            Log.d(TAG, "state at onSongAvailable: " + getState());
+            Log.d(TAG, "state at onSongAvailable: " + getState() + " currentSong: " + getCurrentSong() + " song: " + song);
 
             if (getState() == STATE_WAITING && song == getCurrentSong()) {
                 Log.d(TAG, "state is waiting and song is current song...");
@@ -435,6 +454,7 @@ public class PlayQueue {
             } else {
                 Log.e(TAG, "could not find wrapper for song: " + song);
                 if (song == currentSong) {
+                    //TODO: should this be here?
                     nextTrack();
                 }
                 song.setNotPlayable(true);
