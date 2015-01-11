@@ -10,6 +10,7 @@ import java.util.HashMap;
 
 import models.mediaModels.Playlist;
 import models.mediaModels.Song;
+import models.mediawrappers.PlayQueue;
 import models.playlist.PlaylistsManager;
 
 /**
@@ -17,18 +18,16 @@ import models.playlist.PlaylistsManager;
  */
 public class Settings {
     private static Settings instance = new Settings();
-
-    public static Settings getInstance() {
-        return instance;
-    }
-
     private Listener listener;
-
     private ArrayList<String> usedMediaWrappers;
     private ArrayList<String> mediaWrappers;
     private SharedPreferences preferences;
 
     private Settings() {
+    }
+
+    public static Settings getInstance() {
+        return instance;
     }
 
     public ArrayList<String> getMediaWrappers() {
@@ -136,11 +135,22 @@ public class Settings {
     private void resetPlaylists()
     {
         for (Playlist playlist : PlaylistsManager.getInstance().getPlaylists()) {
+
+
             for (Song song : playlist.getSongsList()) {
-                song.setMediaWrapper(null);
+                // song.setMediaWrapper(null);
                 song.setNotPlayable(false);
             }
+
+
         }
+
+        // PlayQueue.getInstance().pausePlayer();
+        PlayQueue.getInstance().initializePlaylist(true);
+
+        Log.d("", "current song in resetPlaylists: " + PlayQueue.getInstance().getCurrentSong());
+
+
     }
 
     public boolean isWrapperActive(String wrapper) {
