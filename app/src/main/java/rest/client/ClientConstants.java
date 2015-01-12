@@ -2,7 +2,7 @@ package rest.client;
 
 public class ClientConstants {
 
-    public final static String BASE_URL = "http://141.84.213.249:22/playlist";
+    public final static String BASE_URL = "http://141.84.213.249:5050/playlist";
 
     public final static String ADD_PLAYLIST_URL = BASE_URL + "/add";
 
