@@ -13,10 +13,18 @@
         tools:context=".GeneratorActivity"
         android:background="#B3B3B3B3">
         <EditText
-            android:id="@+id/editSong"
+            android:id="@+id/searchInput"
             android:layout_width="match_parent"
             android:layout_height="wrap_content">
             <requestFocus />
         </EditText>
+        <ListView
+            android:id="@id/android:list"
+            android:layout_width="match_parent"
+            android:layout_height="0dp"
+            android:layout_weight="0.9"
+            android:drawSelectorOnTop="false"
+            android:longClickable="true">
+        </ListView>
     </LinearLayout>
 </FrameLayout>

@@ -25,8 +25,8 @@ import controllers.mainFragments.SettingsFragment;
 import models.Settings;
 import models.mediawrappers.FileStreamingMediaService;
 import models.mediawrappers.PlayQueue;
+import models.playlist.LocalSongsManager;
 import models.mediawrappers.SpotifyLoginHandler;
-
 import rest.client.Client;
 import tests.R;
 
@@ -178,6 +178,8 @@ public class MainActivity extends ActionBarActivity implements
         PlayQueue.getInstance().setAutoPilotMode(false);
 
         Client.getInstance().setContext(getApplicationContext());
+
+        LocalSongsManager.getInstance().setContext(getApplicationContext());
         super.onStart();
     }
 

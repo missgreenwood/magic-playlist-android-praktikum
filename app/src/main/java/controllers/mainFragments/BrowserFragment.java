@@ -7,10 +7,13 @@ import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 
+import java.util.ArrayList;
+
 import controllers.MainActivity;
 import controllers.mainFragments.browserFragments.playlistFragment.BrowserPlaylistFragment;
 import controllers.mainFragments.generatorFragments.ArtistsFragment;
 import controllers.mainFragments.generatorFragments.GenresListFragment;
+import controllers.mainFragments.generatorFragments.SingleArtistFragment;
 import tests.R;
 
 /**
@@ -18,10 +21,10 @@ import tests.R;
  */
 public class BrowserFragment extends android.support.v4.app.Fragment implements
         GenresListFragment.OnGenrePass,
-        ArtistsFragment.OnArtistPass,
+        SingleArtistFragment.Listener,
         View.OnClickListener {
     private GenresListFragment genresFragment;
-    private ArtistsFragment artistsFragment;
+    private SingleArtistFragment artistsFragment;
     private BrowserPlaylistFragment browserPlaylistFragment;
     private String genre;
     private String artist;
@@ -57,11 +60,6 @@ public class BrowserFragment extends android.support.v4.app.Fragment implements
         this.genre = data;
     }
 
-    @Override
-    public void onArtistPass(String data) {
-        this.artist = data;
-    }
-
     public void searchGenreClicked(View view) {
 
         genresFragment = (GenresListFragment)getActivity().getSupportFragmentManager().findFragmentByTag("genresSearchFragment");
@@ -76,9 +74,9 @@ public class BrowserFragment extends android.support.v4.app.Fragment implements
     }
 
     public void searchArtistClicked(View view) {
-        artistsFragment = (ArtistsFragment)getActivity().getSupportFragmentManager().findFragmentByTag("artistSearchFragment");
-        if (artistsFragment==null) {
-            artistsFragment = new ArtistsFragment();
+        artistsFragment = (SingleArtistFragment)getActivity().getSupportFragmentManager().findFragmentByTag("artistSearchFragment");
+        if (artistsFragment == null) {
+            artistsFragment = new SingleArtistFragment();
             artistsFragment.setListener(this);
             FragmentTransaction transact = getActivity().getSupportFragmentManager().beginTransaction();
             transact.add(R.id.browserMainViewGroup,artistsFragment, "artistSearchFragment");
@@ -113,5 +111,10 @@ public class BrowserFragment extends android.support.v4.app.Fragment implements
                 startSearchClicked(v);
                 break;
         }
+    }
+
+    @Override
+    public void onSingleArtistSelection(String artist) {
+        this.artist = artist;
     }
 }
