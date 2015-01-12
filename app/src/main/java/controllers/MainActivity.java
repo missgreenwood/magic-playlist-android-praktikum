@@ -25,12 +25,9 @@ import controllers.mainFragments.SettingsFragment;
 import models.Settings;
 import models.mediawrappers.FileStreamingMediaService;
 import models.mediawrappers.PlayQueue;
-<<<<<<< HEAD
 import models.mediawrappers.SpotifyLoginHandler;
-import models.mediawrappers.SpotifyMediaWrapper;
-=======
+
 import rest.client.Client;
->>>>>>> d425c6a34ce8e283e61ff79c8bc4a4749c3e396a
 import tests.R;
 
 /**
