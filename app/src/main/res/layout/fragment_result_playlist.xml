@@ -19,13 +19,28 @@
             android:drawSelectorOnTop="false"
             android:longClickable="true">
         </ListView>
-        <Button
-            android:id="@+id/starBtn"
-            android:text="@string/star"
-            android:layout_width="wrap_content"
-            android:layout_gravity="right"
+        <LinearLayout
+            android:layout_width="fill_parent"
             android:layout_height="wrap_content"
-            style="@style/priorityBtn">
-        </Button>
+            android:orientation="horizontal"
+            style="@android:style/ButtonBar">
+            <Button
+                android:id="@+id/starBtn"
+                android:text="@string/star"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_weight="1"
+                style="@style/priorityBtn">
+            </Button>
+            <Button
+                android:id="@+id/saveBtn"
+                android:text="@string/save"
+                android:layout_toLeftOf="@id/starBtn"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_weight="1"
+                style="@style/priorityBtn">
+            </Button>
+        </LinearLayout>
     </LinearLayout>
 </FrameLayout>
