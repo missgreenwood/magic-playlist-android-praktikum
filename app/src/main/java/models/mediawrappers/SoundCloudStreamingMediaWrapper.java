@@ -107,7 +107,6 @@ public class SoundCloudStreamingMediaWrapper extends RemoteFileStreamingMediaWra
             // playState = false;
         } catch (JSONException e) {
            Log.e(TAG, "error while process webcall with callback: " + callback + " with message: " + e.getMessage());
-           Thread.dumpStack();
         }
     }
 

@@ -5,6 +5,7 @@ import android.app.AlertDialog;
 import android.content.DialogInterface;
 import android.graphics.Color;
 import android.os.Bundle;
+import android.support.v4.app.Fragment;
 import android.support.v4.app.FragmentTransaction;
 import android.util.Log;
 import android.view.LayoutInflater;
@@ -13,33 +14,31 @@ import android.view.ViewGroup;
 import android.widget.EditText;
 import android.widget.NumberPicker;
 
+import java.util.ArrayList;
+
 import controllers.MainActivity;
 import controllers.mainFragments.generatorFragments.ArtistsFragment;
 import controllers.mainFragments.generatorFragments.GenresListFragment;
 import controllers.mainFragments.generatorFragments.SongsFragment;
 import controllers.mainFragments.generatorFragments.playlistFragment.GeneratorPlaylistFragment;
+import models.mediaModels.Song;
 import models.playlist.PlaylistsManager;
 import tests.R;
 
 /**
  * created by Andreas 06.01.2015
  */
-public class GeneratorFragment extends android.support.v4.app.Fragment implements
+public class GeneratorFragment extends Fragment implements
         GenresListFragment.OnGenrePass,
-        ArtistsFragment.OnArtistPass,
-        SongsFragment.OnSongPass,
-        View.OnClickListener {
+        ArtistsFragment.Listener,
+        SongsFragment.Listener,
+        View.OnClickListener
+{
 
-
-    private GenresListFragment genresListFragment;
-    private ArtistsFragment artistsFragment;
-    private SongsFragment songsFragment;
-    private GeneratorPlaylistFragment playlistFragment;
-
-    private String artist;
-    private String songname;
     private String genre;
     private int songsCountLimit = 20;
+    private ArrayList<Song> initSongs;
+    private ArrayList<String> initArtists;
 
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
@@ -65,9 +64,9 @@ public class GeneratorFragment extends android.support.v4.app.Fragment implement
 
     public void startGeneratorClicked(View view)
     {
-        if ((songname == null || songname.isEmpty()) &&
-            (artist == null || artist.isEmpty()) &&
-            (genre == null || genre.isEmpty())
+        if ((initArtists == null || initArtists.size() == 0) &&
+            (genre == null || genre.isEmpty()) &&
+            (initSongs == null || initSongs.size() == 0)
         ) {
             AlertDialog.Builder setArtistInfo = new AlertDialog.Builder(getActivity());
             setArtistInfo.setTitle("No initial info given!");
@@ -115,61 +114,55 @@ public class GeneratorFragment extends android.support.v4.app.Fragment implement
     }
 
     private void createGeneratorView(String playlistName) {
-
-        Bundle args = new Bundle();
-        args.putString("playlistName", playlistName);
-        args.putString("artist", artist);
-        args.putString("genre", genre);
-        args.putString("songname", songname);
-        args.putInt("songsCountLimit", songsCountLimit);
-
-        playlistFragment = (GeneratorPlaylistFragment)getActivity().getSupportFragmentManager().findFragmentByTag("generatorPlaylistFragment");
+        GeneratorPlaylistFragment playlistFragment = (GeneratorPlaylistFragment)getActivity().getSupportFragmentManager().findFragmentByTag("generatorPlaylistFragment");
         if (playlistFragment==null) {
             playlistFragment = new GeneratorPlaylistFragment();
             FragmentTransaction transact = getActivity().getSupportFragmentManager().beginTransaction();
-            transact.add(R.id.generatorMainViewGroup,playlistFragment,"generatorPlaylistFragment");
-//            transact.addToBackStack(null); //not needed, because generation is completed now
+            transact.replace(R.id.mainViewGroup, playlistFragment, "generatorPlaylistFragment");
+            transact.addToBackStack(null);
             transact.commit();
         }
-        playlistFragment.setGeneratorData(args);
-
+        playlistFragment.setGeneratorData(genre, songsCountLimit, initArtists, playlistName);
+        playlistFragment.setInitSongs(initSongs);
     }
 
     public void genresClicked(View view) {
 
-        genresListFragment = (GenresListFragment)getActivity().getSupportFragmentManager().findFragmentByTag("genresListFragment");
+        GenresListFragment genresListFragment = (GenresListFragment)getActivity().getSupportFragmentManager().findFragmentByTag("genresListFragment");
         if (genresListFragment==null) {
             genresListFragment = new GenresListFragment();
             genresListFragment.setListener(this);
             FragmentTransaction transact = getActivity().getSupportFragmentManager().beginTransaction();
-            transact.add(R.id.generatorMainViewGroup,genresListFragment,"genresListFragment");
+            transact.replace(R.id.mainViewGroup, genresListFragment, "genresListFragment");
             transact.addToBackStack(null);
             transact.commit();
         }
     }
 
     public void artistsClicked(View view) {
-        artistsFragment = (ArtistsFragment)getActivity().getSupportFragmentManager().findFragmentByTag("artistsFragment");
+        ArtistsFragment artistsFragment = (ArtistsFragment)getActivity().getSupportFragmentManager().findFragmentByTag("artistsFragment");
         if (artistsFragment==null) {
             artistsFragment = new ArtistsFragment();
             artistsFragment.setListener(this);
             FragmentTransaction transact = getActivity().getSupportFragmentManager().beginTransaction();
-            transact.add(R.id.generatorMainViewGroup, artistsFragment, "artistsFragment");
+            transact.replace(R.id.mainViewGroup, artistsFragment, "artistsFragment");
             transact.addToBackStack(null);
             transact.commit();
         }
+        artistsFragment.setSelectedArtists(initArtists);
     }
 
     public void songsClicked(View view) {
-        songsFragment = (SongsFragment) getActivity().getSupportFragmentManager().findFragmentByTag("songsFragment");
+        SongsFragment songsFragment = (SongsFragment) getActivity().getSupportFragmentManager().findFragmentByTag("songsFragment");
         if (songsFragment==null) {
             songsFragment = new SongsFragment();
             songsFragment.setListener(this);
             FragmentTransaction transact = getActivity().getSupportFragmentManager().beginTransaction();
-            transact.add(R.id.generatorMainViewGroup, songsFragment, "songsFragment");
+            transact.replace(R.id.mainViewGroup, songsFragment, "songsFragment");
             transact.addToBackStack(null);
             transact.commit();
         }
+        songsFragment.setSelectedSongs(initSongs);
     }
 
     private void songsCountClicked(View v) {
@@ -199,16 +192,6 @@ public class GeneratorFragment extends android.support.v4.app.Fragment implement
     }
 
     @Override
-    public void onArtistPass(String data) {
-        this.artist = data;
-    }
-
-    @Override
-    public void onSongPass(String data) {
-        this.songname = data;
-    }
-
-    @Override
     public void onClick(View v) {
         switch (v.getId()) {
             case R.id.songsCountLimitBtn:
@@ -227,5 +210,15 @@ public class GeneratorFragment extends android.support.v4.app.Fragment implement
                 startGeneratorClicked(v);
                 break;
         }
+    }
+
+    @Override
+    public void onSongsSelection(ArrayList<Song> songs) {
+        this.initSongs = songs;
+    }
+
+    @Override
+    public void onArtistsSelection(ArrayList<String> artists) {
+        this.initArtists = artists;
     }
 }

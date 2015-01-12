@@ -173,7 +173,10 @@ public class PlaylistFragment extends ListFragment implements
 
     @Override
     public void onPlaylistChange() {
-        ((SongArrayAdapter)getListAdapter()).notifyDataSetChanged();
+        SongArrayAdapter adapter = (SongArrayAdapter)getListAdapter();
+        if (adapter != null) {
+            adapter.notifyDataSetChanged();
+        }
     }
 
     @Override

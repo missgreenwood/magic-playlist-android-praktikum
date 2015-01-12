@@ -1,73 +1,125 @@
 package controllers.mainFragments.generatorFragments;
 
-
+import android.app.Activity;
+import android.graphics.Color;
 import android.os.Bundle;
-import android.support.v4.app.Fragment;
-import android.view.KeyEvent;
+import android.support.v4.app.ListFragment;
+import android.text.Editable;
+import android.text.TextWatcher;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.ArrayAdapter;
 import android.widget.EditText;
-import android.widget.Toast;
+import android.widget.ListView;
+import android.widget.TextView;
 
-import controllers.MainActivity;
+import java.util.ArrayList;
+
+import models.mediaModels.Song;
+
+import models.playlist.LocalSongsManager;
 import tests.R;
 
-/**
- * Created by judith on 31.12.14.
- */
-public class SongsFragment extends Fragment {
+public class SongsFragment extends ListFragment {
 
-    private OnSongPass dataPasser;
-    private EditText editSong;
-    private String enteredSong;
+    private Listener listener;
+    private ArrayList<Song> songs = new ArrayList<>();
+    private ArrayList<Song> selectedSongs = new ArrayList<>();
 
     public SongsFragment() {
-        // Required empty public constructor
-    }
-
-    public void setListener(OnSongPass dataPasser) {
-        this.dataPasser = dataPasser;
     }
 
     @Override
-    public View onCreateView(LayoutInflater inflater, ViewGroup container,
-                             Bundle savedInstanceState) {
-        // Inflate the layout for this fragment
-        View view = inflater.inflate(R.layout.fragment_songs, container, false);
-        ((MainActivity)getActivity()).getSupportActionBar().setTitle("Songs");
-        // Get edittext component
-        editSong = (EditText) view.findViewById(R.id.editSong);
-        addKeyListener();
-        // Add key listener to keep track of user input
-        return view;
+    public void onCreate(Bundle savedInstanceState) {
+        super.onCreate(savedInstanceState);
+
+        songs.addAll(LocalSongsManager.getInstance().getAllTracks());
+        setListAdapter(new SongArrayAdapter(getActivity(),
+                android.R.layout.simple_list_item_1, android.R.id.text1, songs));
+    }
+
+    @Override
+    public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
+        View v = inflater.inflate(R.layout.fragment_songs, container, false);
+        final EditText searchInput = (EditText)v.findViewById(R.id.searchInput);
+        searchInput.addTextChangedListener(new TextWatcher() {
+            @Override public void beforeTextChanged(CharSequence s, int start, int count, int after) {}
+
+            @Override public void afterTextChanged(Editable s) {
+                songs.clear();
+                songs.addAll(LocalSongsManager.getInstance().getFilterTracks(searchInput.getText().toString()));
+                ((SongArrayAdapter)getListAdapter()).notifyDataSetChanged();
+            }
+
+            @Override
+            public void onTextChanged(CharSequence s, int start, int before, int count) {}
+        });
+        return v;
+    }
+
+    public void setListener(Listener listener) {
+        this.listener = listener;
     }
 
     @Override
     public void onDetach() {
         super.onDetach();
-        dataPasser = null;
+        listener.onSongsSelection(selectedSongs);
+        listener = null;
     }
 
-    public void addKeyListener() {
-        editSong.setOnKeyListener(new View.OnKeyListener() {
-            @Override
-            public boolean onKey(View v, int keyCode, KeyEvent event) {
-                if ((event.getAction() == KeyEvent.ACTION_DOWN) && (keyCode == KeyEvent.KEYCODE_ENTER)) {
-                    // Display edited song in toast message
-                    enteredSong = editSong.getText().toString().trim();
-                    Toast.makeText(getActivity(), enteredSong, Toast.LENGTH_LONG).show();
-                    // Pass string enteredSong to GeneratorActivity
-                    dataPasser.onSongPass(enteredSong);
-                    return true;
-                }
-                return false;
+
+    @Override
+    public void onListItemClick(ListView l, View v, int position, long id) {
+        super.onListItemClick(l, v, position, id);
+        Song song = songs.get(position);
+        if (selectedSongs.contains(song)) {
+            selectedSongs.remove(song);
+        } else {
+            selectedSongs.add(song);
+        }
+        ((SongArrayAdapter)getListAdapter()).notifyDataSetChanged();
+    }
+
+    public void setSelectedSongs(ArrayList<Song> selectedSongs) {
+        if (selectedSongs != null) {
+            this.selectedSongs = selectedSongs;
+            SongArrayAdapter adapter = (SongArrayAdapter)getListAdapter();
+            if (adapter != null) {
+                adapter.notifyDataSetChanged();
             }
-        });
+        }
     }
 
-    // Declare interface to pass string entered song to GeneratorActivity
-    public interface OnSongPass {
-        public void onSongPass(String data);
+    public interface Listener {
+        void onSongsSelection(ArrayList<Song> songs);
+    }
+
+    private class SongArrayAdapter extends ArrayAdapter<Song> {
+
+        public SongArrayAdapter(Activity activity, int rows, int text1, ArrayList<Song> songs) {
+            super(activity, rows, text1, songs);
+        }
+
+        @Override
+        public View getView(int position, View convertView, ViewGroup parent) {
+            TextView view = (TextView) convertView;
+            if (convertView == null) {
+                view = new TextView(getContext());
+            }
+            Song song = getItem(position);
+            if (song != null) {
+                view.setText(song.getSongname());
+            } else {
+                view.setText("error");
+            }
+            if (selectedSongs.contains(song)) {
+                view.setBackgroundColor(Color.argb(100, 100, 100, 100));
+            } else {
+                view.setBackgroundColor(Color.TRANSPARENT);
+            }
+            return view;
+        }
     }
 }

@@ -10,6 +10,7 @@ import android.util.Log;
 import android.view.View;
 import android.widget.Toast;
 
+import java.util.ArrayList;
 import java.util.List;
 
 import controllers.MainActivity;
@@ -33,6 +34,7 @@ public class GeneratorPlaylistFragment extends PlaylistFragment implements
     private PlaylistGenerator generator;
     private ProgressDialog loadingDialog;
     private boolean uploading = false;
+    private boolean destroying = false;
 
     @Override
     public void onCreate(Bundle savedInstanceState) {
@@ -45,9 +47,9 @@ public class GeneratorPlaylistFragment extends PlaylistFragment implements
         ((MainActivity)getActivity()).getSupportActionBar().setTitle(generator.getPlaylist().getName());
     }
 
-    public void setGeneratorData(Bundle args) {
-        generator = new PlaylistGenerator(this, args.getString("genre"), args.getInt("songsCountLimit"), new Song(args.getString("artist"), args.getString("songname")));
-        setPlaylist(generator.createNewPlaylist(args.getString("playlistName")));
+    public void setGeneratorData(String genre, int songsCountLimit, ArrayList<String> artists, String playlistName) {
+        generator = new PlaylistGenerator(this, genre, songsCountLimit, artists);
+        setPlaylist(generator.createNewPlaylist(playlistName));
     }
 
     @Override
@@ -55,11 +57,12 @@ public class GeneratorPlaylistFragment extends PlaylistFragment implements
         super.onViewCreated(view, savedInstanceState);
         setLoading(true);
         generator.setContext(getActivity().getApplicationContext());
-        generator.startGeneration();
+        generator.generatePlaylist();
     }
 
     @Override
     public void onDestroy() {
+        destroying = true;
         generator.finishGeneration();
         generator = null;
         loadingDialog = null;
@@ -99,11 +102,16 @@ public class GeneratorPlaylistFragment extends PlaylistFragment implements
 
     @Override
     public void generationFinished(final Playlist playlist) {
-        final GeneratorPlaylistFragment _this = this;
 
-        setLoading(false);
         PlaylistsManager.getInstance().addPlaylist(playlist);
         Toast.makeText(getActivity().getApplicationContext(), "Playlist \"" + playlist.getName() + "\" successfully created!", Toast.LENGTH_SHORT).show();
+
+        if (destroying) {
+            return;
+        }
+
+        setLoading(false);
+        final GeneratorPlaylistFragment _this = this;
 
         AlertDialog.Builder uploadDialog = new AlertDialog.Builder(getActivity());
         uploadDialog.setTitle("Upload playlist?");
@@ -142,6 +150,10 @@ public class GeneratorPlaylistFragment extends PlaylistFragment implements
             Toast.makeText(getActivity().getApplicationContext(), "Error while uploading playlist \"" + generator.getPlaylist().getName() + "\"!", Toast.LENGTH_SHORT).show();
             loadingDialog.dismiss();
         }
+    }
+
+    public void setInitSongs(ArrayList<Song> initSongs) {
+        generator.setInitSongs(initSongs);
     }
 
 //    private void showSongSuggestion(final Song song) {

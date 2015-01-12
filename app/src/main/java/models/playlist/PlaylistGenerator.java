@@ -24,6 +24,7 @@ public class PlaylistGenerator implements LastFmListener {
     /** this error should never come alone, there will always be another error before... */
     private static final int ERROR_NO_NEXT_SONG_FOUND = 3;
     private static final float STANDARD_ARTIST_FITTING = 1;
+    private final ArrayList<String> initArtists;
 
     private Listener listener;
 
@@ -41,49 +42,54 @@ public class PlaylistGenerator implements LastFmListener {
     private int songsCountLimit = 20;
     private boolean waiting;
     private boolean finished = false;
+    private boolean noSongFound = false;
 
 
-
-
-    public PlaylistGenerator(Listener listener, String genre, int songsCountLimit, Song initSong) {
+    public PlaylistGenerator(Listener listener, String genre, int songsCountLimit, ArrayList<String> initArtists) {
         this.listener = listener;
         lfm = new LastfmMetadataWrapper(this);
         playlist = new Playlist();
 
         if (genre != null && !genre.isEmpty()) {
             playlist.setGenre(genre);
-            genreCallsCount++;
-            lfm.findGenreArtists(genre, 20);
         }
 
         this.songsCountLimit = songsCountLimit;
 
-        if (initSong != null) {
-            String artistName = initSong.getArtist();
-            lastSong = new SongInfo(artistName, initSong.getSongname());
-            if (artistName != null && !artistName.isEmpty()) {
-                ArtistInfo newArtist = getArtistInfo(artistName);
-                newArtist.setPriority(3);
-                findSimilarArtists(newArtist);
-                artistsPriority.put(artistName, newArtist);
-            }
-        }
+        this.initArtists = initArtists;
     }
-
-
 
     public void setContext (Context context) {
         lfm.setContext(context);
     }
 
-    public void startGeneration() {
+    public void generatePlaylist()
+    {
+        String genre = playlist.getGenre();
+        if (genre != null && !genre.isEmpty()) {
+            genreCallsCount++;
+            lfm.findGenreArtists(genre, 20);
+        }
+
+        for (Song song : playlist.getSongsList()) {
+            initializeSong(song);
+        }
+        if (initArtists != null) {
+            for(String artist : initArtists) {
+                findSimilarArtists(getArtistInfo(artist));
+            }
+        }
+        startGeneration();
+    }
+
+    private void startGeneration() {
         while (getRequestsCount() == 0) {
             if (finished || playlist.getSongsList().size() == songsCountLimit) {
                 finishGeneration();
                 return;
             }
             //if no next sound found, prevent endlessloop...
-            if (lastSong == null) {
+            if (noSongFound) {
                 listener.callbackError(ERROR_NO_NEXT_SONG_FOUND);
                 finishGeneration();
                 return;
@@ -91,6 +97,8 @@ public class PlaylistGenerator implements LastFmListener {
             SongInfo song = getNextSong(false);
             if (song != null) {
                 playlist.addSong(new Song(song.getArtistName(), song.getTrackName()));
+            } else {
+                noSongFound = true;
             }
         }
         waiting = true; //whenever all callbacks have been finished, and waiting is true, startGeneration is called again
@@ -112,6 +120,13 @@ public class PlaylistGenerator implements LastFmListener {
         return playlist = new Playlist(name);
     }
 
+    public void setInitSongs(ArrayList<Song> initSongs) {
+        if (initSongs != null) {
+            for (Song song : initSongs) {
+                playlist.addSong(song);
+            }
+        }
+    }
 
 
 
@@ -232,6 +247,19 @@ public class PlaylistGenerator implements LastFmListener {
         }
     }
 
+    private void initializeSong(Song initSong) {
+        if (initSong != null) {
+            String artistName = initSong.getArtist();
+            lastSong = new SongInfo(artistName, initSong.getSongname());
+            if (artistName != null && !artistName.isEmpty()) {
+                ArtistInfo newArtist = getArtistInfo(artistName);
+                newArtist.changePriority(0.5f);
+                findSimilarArtists(newArtist);
+                artistsPriority.put(artistName, newArtist);
+            }
+        }
+    }
+
 
 
 
@@ -306,10 +334,6 @@ public class PlaylistGenerator implements LastFmListener {
         }
         callbackFinished();
     }
-
-
-
-
 
     public interface Listener {
         void callbackError(int errorStatus);
