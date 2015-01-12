@@ -255,18 +255,19 @@ public class PlayQueue {
      */
     public void initializePlaylist(boolean overwrite) {
 
+        if (songs != null) {
+            for (Song song : songs) {
 
-        for (Song song : songs) {
+                Log.d(TAG, "initialize song: " + song.toString());
 
-            Log.d(TAG, "initialize song: " + song.toString());
+                if (overwrite || (song.getMediaWrapper() == null))
+                    initializeSong(song);
 
-            if (overwrite || (song.getMediaWrapper() == null))
-                initializeSong(song);
+            }
 
         }
 
         Log.d(TAG, "current song in initializePlaylist: " + getCurrentSong());
-
 
     }
 
