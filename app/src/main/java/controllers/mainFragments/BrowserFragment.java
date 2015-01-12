@@ -8,7 +8,7 @@ import android.view.View;
 import android.view.ViewGroup;
 
 import controllers.MainActivity;
-import controllers.mainFragments.browserFragments.BrowserPlaylistFragment;
+import controllers.mainFragments.browserFragments.playlistFragment.BrowserPlaylistFragment;
 import controllers.mainFragments.generatorFragments.ArtistsFragment;
 import controllers.mainFragments.generatorFragments.GenresListFragment;
 import tests.R;
