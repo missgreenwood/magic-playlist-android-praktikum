@@ -23,7 +23,6 @@ import controllers.mainFragments.GeneratorFragment;
 import controllers.mainFragments.MyPlaylistsFragment;
 import controllers.mainFragments.SettingsFragment;
 import models.Settings;
-import models.mediaModels.Song;
 import models.mediawrappers.FileStreamingMediaService;
 import models.mediawrappers.PlayQueue;
 import models.mediawrappers.SpotifyLoginHandler;
@@ -48,7 +47,6 @@ public class MainActivity extends ActionBarActivity implements
     private GeneratorFragment generatorFragment;
     private SettingsFragment settingsFragment;
     private BrowserFragment browserFragment;
-    private SpotifyMediaWrapper spotifyMediaWrapper;
 //    public ArrayList<Song> getSongs() {
 //        return songs;
 //    }
@@ -137,11 +135,13 @@ public class MainActivity extends ActionBarActivity implements
         this.registerReceiver(broadcastReceiver, intentFilter);
         this.setTitle("Magic Playlist");
 
-
+/*
         SpotifyLoginHandler spotifyLoginHandler = SpotifyLoginHandler.getInstance();
         spotifyLoginHandler.setContext(this);
         spotifyLoginHandler.openAuthWindow();
 
+
+*/
 
 //        Song strokes = new Song("The Strokes", "Last Nite");
 //        Song random = new Song("Caribou", "Melody Day");
