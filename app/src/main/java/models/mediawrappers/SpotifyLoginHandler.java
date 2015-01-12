@@ -33,12 +33,10 @@ public class SpotifyLoginHandler implements CallbackInterface {
 
     public static final String TAG = "main.java.models.mediawrappers.SpotifyLoginHandler";
 
-    public static final String CLIENT_ID = "605ac27c70444b499869422e93a492f8";
     public static final String CLIENT_ID_STRING = "client_id";
     public static final String CLIENT_SECRET = "96a24ef105804182bab5f8e8f8e115be";
     public static final String CLIENT_SECRET_STRING = "client_secret";
-    public static final String RESPONSE_TYPE_CODE = "code";
-    public static final String REDIRECT_URI = "my-first-android-app-login://callback";
+
     public static final String REDIRECT_URI_STRING = "redirect_uri";
     public static final String SPOTIFY_TOKENS_CALLBACK = "spotify_tokens_callback";
     public static final String TOKEN_BASE_URL = "https://accounts.spotify.com/api/token";
@@ -63,10 +61,6 @@ public class SpotifyLoginHandler implements CallbackInterface {
     }
 
 
-    public void openAuthWindow() {
-        SpotifyAuthentication.openAuthWindow(CLIENT_ID, RESPONSE_TYPE_CODE, REDIRECT_URI, new String[]{"user-read-private", "streaming"}, null, context);
-
-    }
 
 
     /* after the intent... Uri uri = intent.getData();*/
@@ -82,9 +76,9 @@ public class SpotifyLoginHandler implements CallbackInterface {
 
 
         BasicNameValuePair grantTypePair = new BasicNameValuePair(GRANT_TYPE_STRING, GRANT_TYPE_AUTHORIZATION_CODE);
-        BasicNameValuePair trackTypePair = new BasicNameValuePair(CODE_STRING, authorizationCode);
-        BasicNameValuePair redirectPair = new BasicNameValuePair(REDIRECT_URI_STRING, REDIRECT_URI);
-        BasicNameValuePair clientIdPair = new BasicNameValuePair(CLIENT_ID_STRING, CLIENT_ID);
+     //  BasicNameValuePair trackTypePair = new BasicNameValuePair(CODE_STRING, authorizationCode);
+      //  BasicNameValuePair redirectPair = new BasicNameValuePair(REDIRECT_URI_STRING, REDIRECT_URI);
+     //   BasicNameValuePair clientIdPair = new BasicNameValuePair(CLIENT_ID_STRING, CLIENT_ID);
         BasicNameValuePair clientSecretPair = new BasicNameValuePair(CLIENT_SECRET_STRING, CLIENT_SECRET);
 
         //  BasicNameValuePair clientIDPair = new BasicNameValuePair(SOUNDCLOUD_CLIENT_ID_STRING, SOUNDCLOUD_CLIENT_ID);
@@ -92,9 +86,9 @@ public class SpotifyLoginHandler implements CallbackInterface {
 
         ArrayList<NameValuePair> params = new ArrayList<NameValuePair>();
         params.add(grantTypePair);
-        params.add(trackTypePair);
-        params.add(redirectPair);
-        params.add(clientIdPair);
+     //   params.add(trackTypePair);
+      //  params.add(redirectPair);
+      //  params.add(clientIdPair);
         params.add(clientSecretPair);
 
         url = APIWrapper.encodeURL(url, params);
@@ -121,6 +115,12 @@ public class SpotifyLoginHandler implements CallbackInterface {
 
         }
 
+
+    }
+
+
+    public void openAuthWindow() {
+      //  SpotifyAuthentication.openAuthWindow(CLIENT_ID, RESPONSE_TYPE_CODE, REDIRECT_URI, new String[]{"user-read-private", "streaming"}, null, context);
 
     }
 }
