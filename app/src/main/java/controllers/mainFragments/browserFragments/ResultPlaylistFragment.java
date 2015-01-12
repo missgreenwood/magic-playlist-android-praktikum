@@ -1,6 +1,7 @@
 package controllers.mainFragments.browserFragments;
 
 import android.os.Bundle;
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -8,6 +9,8 @@ import android.widget.Button;
 import android.widget.Toast;
 
 import controllers.mainFragments.generatorFragments.PlaylistFragment;
+import models.mediaModels.Playlist;
+import rest.client.Client;
 import tests.R;
 
 /**
@@ -15,6 +18,9 @@ import tests.R;
  */
 public class ResultPlaylistFragment extends PlaylistFragment {
     private Button starButton;
+    private int id;
+    private String playlist_name;
+    private Playlist playlist;
 
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
@@ -24,10 +30,21 @@ public class ResultPlaylistFragment extends PlaylistFragment {
             @Override
             public void onClick(View v) {
                 Toast.makeText(getActivity(), "You just liked this playlist!", Toast.LENGTH_LONG).show();
+                Client.getInstance().likePlaylist(playlist);
             }
         });
         return v;
     }
+
+    public void setLikeData(Bundle args) {
+        Log.d("", "Liked playlist object: " + args.getParcelable("playlist"));
+        this.playlist = args.getParcelable("playlist");
+        if (playlist instanceof Playlist) {
+            Log.d("", "Playlist has correct datatype!");
+        }
+        else {
+            Log.d("", "Playlist datatype is incorrect!");
+        }
+        this.playlist_name = args.getString("playlist_name");
+    }
 }
-// TODO: access rating button correctly
-// TODO: implement functionality for rating button
