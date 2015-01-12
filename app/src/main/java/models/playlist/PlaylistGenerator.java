@@ -1,6 +1,7 @@
 package models.playlist;
 
 import android.content.Context;
+import android.util.Log;
 
 import java.util.ArrayList;
 import java.util.Comparator;
@@ -24,7 +25,9 @@ public class PlaylistGenerator implements LastFmListener {
     /** this error should never come alone, there will always be another error before... */
     private static final int ERROR_NO_NEXT_SONG_FOUND = 3;
     private static final float STANDARD_ARTIST_FITTING = 1;
+
     private final ArrayList<String> initArtists;
+    private String initGenre;
 
     private Listener listener;
 
@@ -48,14 +51,9 @@ public class PlaylistGenerator implements LastFmListener {
     public PlaylistGenerator(Listener listener, String genre, int songsCountLimit, ArrayList<String> initArtists) {
         this.listener = listener;
         lfm = new LastfmMetadataWrapper(this);
-        playlist = new Playlist();
 
-        if (genre != null && !genre.isEmpty()) {
-            playlist.setGenre(genre);
-        }
-
+        initGenre = genre;
         this.songsCountLimit = songsCountLimit;
-
         this.initArtists = initArtists;
     }
 
@@ -65,10 +63,9 @@ public class PlaylistGenerator implements LastFmListener {
 
     public void generatePlaylist()
     {
-        String genre = playlist.getGenre();
-        if (genre != null && !genre.isEmpty()) {
+        if (initGenre != null && !initGenre.isEmpty()) {
             genreCallsCount++;
-            lfm.findGenreArtists(genre, 20);
+            lfm.findGenreArtists(initGenre, 20);
         }
 
         for (Song song : playlist.getSongsList()) {

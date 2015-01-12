@@ -13,6 +13,7 @@ import javax.ws.rs.QueryParam;
 import javax.ws.rs.core.MediaType;
 
 import de.lmu.playlist.domain.entity.Playlist;
+import de.lmu.playlist.domain.entity.SpotifyToken;
 
 @Path("/playlist")
 public interface PlaylistFacade {
@@ -50,11 +51,12 @@ public interface PlaylistFacade {
 
     @GET
     @Path("/spotify/get_tokens")
-    public void getTokens(@QueryParam("auth_code") String authCode);
+    @Produces(MediaType.APPLICATION_JSON)
+    public SpotifyToken getTokens(@QueryParam("auth_code") String authCode);
 
     @GET
     @Path("/spotify/refresh_token")
     @Produces(MediaType.APPLICATION_JSON)
-    public void refreshToken(@QueryParam("refresh_token") String refreshToken);
+    public SpotifyToken refreshToken(@QueryParam("refresh_token") String refreshToken);
     // BasicNameValuePair authCodePair = new BasicNameValuePair("refresh_token", refreshToken);
 }
