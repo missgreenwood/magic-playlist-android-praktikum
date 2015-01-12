@@ -8,14 +8,19 @@ import android.app.Activity;
 import android.content.Context;
 
 
+import com.loopj.android.http.AsyncHttpClient;
+import com.loopj.android.http.TextHttpResponseHandler;
 import com.spotify.sdk.android.authentication.AuthenticationResponse;
 import com.spotify.sdk.android.authentication.SpotifyAuthentication;
 
+import android.content.SharedPreferences;
 import android.net.Uri;
 import android.os.Bundle;
 import android.util.Log;
 
+import org.apache.http.Header;
 import org.apache.http.NameValuePair;
+import org.apache.http.message.BasicHeader;
 import org.apache.http.message.BasicNameValuePair;
 
 import java.util.ArrayList;
@@ -28,28 +33,36 @@ import models.apiwrappers.CallbackInterface;
  *
  * @author charlotte
  */
-public class SpotifyLoginHandler implements CallbackInterface {
+public class SpotifyLoginHandler {
 
 
     public static final String TAG = "main.java.models.mediawrappers.SpotifyLoginHandler";
 
-    public static final String CLIENT_ID_STRING = "client_id";
-    public static final String CLIENT_SECRET = "96a24ef105804182bab5f8e8f8e115be";
-    public static final String CLIENT_SECRET_STRING = "client_secret";
-
-    public static final String REDIRECT_URI_STRING = "redirect_uri";
-    public static final String SPOTIFY_TOKENS_CALLBACK = "spotify_tokens_callback";
-    public static final String TOKEN_BASE_URL = "https://accounts.spotify.com/api/token";
-    public static final String GRANT_TYPE_STRING = "grant_type";
-    public static final String GRANT_TYPE_AUTHORIZATION_CODE = "authorization_code";
-
+    public static final String CLIENT_ID = "605ac27c70444b499869422e93a492f8";
+    public static final String RESPONSE_TYPE_CODE = "code";
+    public static final String REDIRECT_URI = "my-first-android-app-login://callback";
+    public static final SpotifyLoginHandler instance = new SpotifyLoginHandler();
     public static final String CODE_STRING = "code";
-
+    private static final String SPOTIFY_SHARED_PREF_STRING = "spotify-shared-preferences";
+    private static final String SPOTIFY_REFRESH_TOKEN_STRING = "spotify-refresh-token";
+    private static final String SPOTIFY_TOKENS_CALLBACK = "spotify-tokens-callback";
+    private static final String SPOTIFY_ACCESS_TOKEN_CALLBACK = "spotify-access-token-callback";
     Activity context;
+    private SharedPreferences preferences;
 
+    public SpotifyLoginHandler() {
+
+    }
 
     public SpotifyLoginHandler(Activity context) {
         this.context = context;
+
+        preferences = context.getSharedPreferences(SPOTIFY_SHARED_PREF_STRING, 0);
+
+    }
+
+    public static SpotifyLoginHandler getInstance() {
+        return instance;
     }
 
     public Activity getContext() {
@@ -60,67 +73,131 @@ public class SpotifyLoginHandler implements CallbackInterface {
         this.context = context;
     }
 
+    public void openAuthWindow() {
 
+        Log.d("", "open auth window");
+        SpotifyAuthentication.openAuthWindow(CLIENT_ID, RESPONSE_TYPE_CODE, REDIRECT_URI, new String[]{"user-read-private", "streaming"}, null, (Activity) context);
 
-
-    /* after the intent... Uri uri = intent.getData();*/
-    public String getAuthorizationCode(Uri uri) {
-        AuthenticationResponse response = SpotifyAuthentication.parseOauthResponse(uri);
-        return response.getCode();
     }
 
-    //TODO: nicht als Parameter
-    public void requestAccessAndRefreshTokens(String authorizationCode) {
-        APIWrapper apiWrapper = new APIWrapper(this, SPOTIFY_TOKENS_CALLBACK, APIWrapper.POST_METHOD);
-        String url = TOKEN_BASE_URL;
+
+    public void saveRefreshToken(String refreshToken) {
+
+        SharedPreferences.Editor editor = preferences.edit();
+        editor.putString(SPOTIFY_REFRESH_TOKEN_STRING, refreshToken);
+        // Commit the edits!
+        editor.commit();
+    }
 
 
-        BasicNameValuePair grantTypePair = new BasicNameValuePair(GRANT_TYPE_STRING, GRANT_TYPE_AUTHORIZATION_CODE);
-     //  BasicNameValuePair trackTypePair = new BasicNameValuePair(CODE_STRING, authorizationCode);
-      //  BasicNameValuePair redirectPair = new BasicNameValuePair(REDIRECT_URI_STRING, REDIRECT_URI);
-     //   BasicNameValuePair clientIdPair = new BasicNameValuePair(CLIENT_ID_STRING, CLIENT_ID);
-        BasicNameValuePair clientSecretPair = new BasicNameValuePair(CLIENT_SECRET_STRING, CLIENT_SECRET);
+    public String retrieveRefreshToken() {
 
-        //  BasicNameValuePair clientIDPair = new BasicNameValuePair(SOUNDCLOUD_CLIENT_ID_STRING, SOUNDCLOUD_CLIENT_ID);
+        return preferences.getString(SPOTIFY_REFRESH_TOKEN_STRING, null);
+    }
 
 
+    public void getNewAccessToken(String refreshToken) {
+
+        BasicNameValuePair authCodePair = new BasicNameValuePair("refresh_token", refreshToken);
         ArrayList<NameValuePair> params = new ArrayList<NameValuePair>();
-        params.add(grantTypePair);
-     //   params.add(trackTypePair);
-      //  params.add(redirectPair);
-      //  params.add(clientIdPair);
-        params.add(clientSecretPair);
+        params.add(authCodePair);
 
+        String url = "http://141.84.213.249:5050/playlist/spotify/refresh_token";
         url = APIWrapper.encodeURL(url, params);
 
-        Log.d(TAG, "spotify url: " + url);
 
-        //APIWrapper apiWrapper=new APIWrapper();
-        //String jsonArrayString = apiWrapper.getJSONCall(url, APIWrapper.GET);
+        AsyncHttpClient asyncHttpClient = new AsyncHttpClient();
+        Header[] headers = {new BasicHeader("Content-type", "application/json")};
+        asyncHttpClient.get(getContext(), url, headers, null, new TextHttpResponseHandler() {
+            @Override
+            public void onFailure(int i, Header[] headers, String s, Throwable throwable) {
+                Log.d(TAG, "back result is: " + s);
+                //processWebCallResult("", DEFAULT_CALLBACK, null);
 
-        apiWrapper.execute(url);
+            }
+
+            @Override
+            public void onSuccess(int i, Header[] headers, String s) {
+                Log.d(TAG, "success! " + s);
+                //  processWebCallResult(s, SPOTIFY_ACCESS_TOKEN_CALLBACK, null);
+                //  Log.d(TAG, "back result is: "+s);
+            }
 
 
-        //  https://api.spotify.com/v1/search?q=title:paranoid+artist:radiohead&type=track
+        });
 
 
     }
 
-    @Override
-    public void processWebCallResult(String result, String callback, Bundle data) {
+
+    public boolean hasSpotifyRequestToken() {
+        String refreshToken = retrieveRefreshToken();
+        return (refreshToken != null && !(refreshToken.equals("")));
+
+    }
 
 
-        if (callback.equals(SPOTIFY_TOKENS_CALLBACK)) {
+    public void startSpotifyLogin() {
+        //TODO: Abfrage nach Access Token?
+        if (hasSpotifyRequestToken()) {
+            getNewAccessToken(retrieveRefreshToken());
 
+        } else {
+
+            openAuthWindow();
 
         }
 
+    }
+
+
+    public void getAccessAndRefreshToken(String authCode) {
+
+
+        BasicNameValuePair authCodePair = new BasicNameValuePair("auth_code", authCode);
+        ArrayList<NameValuePair> params = new ArrayList<NameValuePair>();
+        params.add(authCodePair);
+
+        String url = "http://141.84.213.249:5050/playlist/spotify/get_tokens";
+        url = APIWrapper.encodeURL(url, params);
+
+        Log.d(TAG, url);
+
+        //APIWrapper apiWrapper=new APIWrapper();
+        //String jsonArrayString = apiWrapper.getJSONCall(url, APIWrapper.GET);
+        /*
+        APIWrapper asyncHTTP = new APIWrapper(this, DEFAULT_CALLBACK, APIWrapper.GET_METHOD);
+        if(Build.VERSION.SDK_INT >= Build.VERSION_CODES.HONEYCOMB)
+            asyncHTTP.executeOnExecutor(AsyncTask.THREAD_POOL_EXECUTOR, url);
+        else
+            asyncHTTP.execute(url);
+
+        */
+        //return playpath;
+
+
+        AsyncHttpClient asyncHttpClient = new AsyncHttpClient();
+        Header[] headers = {new BasicHeader("Content-type", "application/json")};
+        asyncHttpClient.get(getContext(), url, headers, null, new TextHttpResponseHandler() {
+            @Override
+            public void onFailure(int i, Header[] headers, String s, Throwable throwable) {
+                Log.d(TAG, "back result is: " + s);
+                //processWebCallResult("", DEFAULT_CALLBACK, null);
+
+            }
+
+            @Override
+            public void onSuccess(int i, Header[] headers, String s) {
+                Log.d(TAG, "success! " + s);
+                //  processWebCallResult(s, SPOTIFY_TOKENS_CALLBACK, null);
+                //  Log.d(TAG, "back result is: "+s);
+            }
+
+
+        });
+
 
     }
 
 
-    public void openAuthWindow() {
-      //  SpotifyAuthentication.openAuthWindow(CLIENT_ID, RESPONSE_TYPE_CODE, REDIRECT_URI, new String[]{"user-read-private", "streaming"}, null, context);
-
-    }
 }
