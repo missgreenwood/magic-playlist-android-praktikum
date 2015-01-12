@@ -7,6 +7,8 @@ import com.mongodb.MongoException;
 
 import java.util.List;
 
+import javax.ws.rs.QueryParam;
+
 import de.lmu.playlist.PlaylistModule;
 import de.lmu.playlist.domain.entity.Playlist;
 import de.lmu.playlist.service.PlaylistService;
@@ -55,12 +57,13 @@ public class PlaylistFacadeImpl implements PlaylistFacade {
         playlistService.cleanDB();
     }
 
-    public static void main(String[] arg) {
-        Injector injector = Guice.createInjector(new PlaylistModule());
-        PlaylistFacade playlistFacade = injector.getInstance(PlaylistFacade.class);
-        Playlist playlist = new Playlist();
-        playlist.setName("test");
-        playlistFacade.addPlaylist(playlist);
-        playlistFacade.addPlaylist(playlist);
+    @Override
+    public void getTokens(@QueryParam("auth_code") String authCode) {
+        
+    }
+
+    @Override
+    public void refreshToken(@QueryParam("refresh_token") String refreshToken) {
+
     }
 }

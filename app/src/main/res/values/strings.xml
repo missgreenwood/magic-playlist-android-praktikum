@@ -1,7 +1,6 @@
 <?xml version="1.0" encoding="utf-8"?>
 <!-- @author judith -->
 <resources>
-
     <string name="app_name">Magic Playlist</string>
     <string name="hello_world">Hello world!</string>
     <string name="action_settings">Settings</string>
@@ -30,5 +29,6 @@
     <string name="down">Down</string>
     <string name="songs_count_limit_text">Songs count</string>
     <string name="search">Start search!</string>
-
+    <string name="star">Star this playlist!</string>
+    <string name="upload">Upload this playlist?</string>
 </resources>

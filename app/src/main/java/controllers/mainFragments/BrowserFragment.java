@@ -8,6 +8,7 @@ import android.view.View;
 import android.view.ViewGroup;
 
 import controllers.MainActivity;
+import controllers.mainFragments.browserFragments.playlistFragment.BrowserPlaylistFragment;
 import controllers.mainFragments.generatorFragments.ArtistsFragment;
 import controllers.mainFragments.generatorFragments.GenresListFragment;
 import tests.R;
@@ -21,7 +22,7 @@ public class BrowserFragment extends android.support.v4.app.Fragment implements
         View.OnClickListener {
     private GenresListFragment genresFragment;
     private ArtistsFragment artistsFragment;
-    private OtherPlaylistsFragment otherPlaylistsFragment;
+    private BrowserPlaylistFragment browserPlaylistFragment;
     private String genre;
     private String artist;
 
@@ -36,6 +37,20 @@ public class BrowserFragment extends android.support.v4.app.Fragment implements
         return view;
     }
 
+    private void createSearchView() {
+        Bundle args = new Bundle();
+        args.putString("artist", artist);
+        args.putString("genre", genre);
+        browserPlaylistFragment = (BrowserPlaylistFragment)getActivity().getSupportFragmentManager().findFragmentByTag("browserPlaylistFragment");
+        if (browserPlaylistFragment==null) {
+            browserPlaylistFragment = new BrowserPlaylistFragment();
+            FragmentTransaction transact = getActivity().getSupportFragmentManager().beginTransaction();
+            transact.add(R.id.browserMainViewGroup,browserPlaylistFragment,"browserPlaylistFragment");
+            transact.addToBackStack(null);
+            transact.commit();
+        }
+        browserPlaylistFragment.setSearchData(args);
+    }
 
     @Override
     public void onGenrePass(String data) {
@@ -82,8 +97,8 @@ public class BrowserFragment extends android.support.v4.app.Fragment implements
             setArtistInfo.create().show();
             return;
         }
+        createSearchView();
     }
-
 
     @Override
     public void onClick(View v) {

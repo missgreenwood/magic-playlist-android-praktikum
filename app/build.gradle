@@ -36,4 +36,5 @@ dependencies {
     compile 'com.spotify.sdk:spotifysdk:1.0.0-beta6@aar'
     compile 'com.google.code.gson:gson:2.2.4'
     // NOTE: Version must match!
+    compile files('libs/android-async-http-1.4.6.jar')
 }

@@ -80,6 +80,7 @@ public class PlaylistFileHandler {
             HashMap<Integer, Song> songs = new HashMap<>();
             while ((line = reader.readLine()) != null) {
                 int i = line.indexOf('=');
+//                Log.d()
                 int songNumber;
 
                 if (i == -1) {
@@ -122,6 +123,7 @@ public class PlaylistFileHandler {
                         break;
                 }
             }
+
             //TODO: check time effort for sorting...
             SortedSet<Integer> keys = new TreeSet<>(songs.keySet());
             for (int key : keys) {

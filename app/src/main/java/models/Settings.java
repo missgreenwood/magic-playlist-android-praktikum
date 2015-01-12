@@ -137,14 +137,7 @@ public class Settings {
 
         Log.d("", "resetplaylists called");
         for (Playlist playlist : PlaylistsManager.getInstance().getPlaylists()) {
-
-
-            for (Song song : playlist.getSongsList()) {
-                // song.setMediaWrapper(null);
-                song.setNotPlayable(false);
-            }
-
-
+            playlist.resetInitialization();
         }
 
         PlayQueue.getInstance().initializePlaylist(true);
@@ -157,7 +150,6 @@ public class Settings {
     public void confirmWrapperChanges() {
         saveSettings();
         resetPlaylists();
-
     }
 
     public boolean isWrapperActive(String wrapper) {

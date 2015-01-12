@@ -47,4 +47,14 @@ public interface PlaylistFacade {
     @DELETE
     @Path("/clean")
     public void clean();
+
+    @GET
+    @Path("/spotify/get_tokens")
+    public void getTokens(@QueryParam("auth_code") String authCode);
+
+    @GET
+    @Path("/spotify/refresh_token")
+    @Produces(MediaType.APPLICATION_JSON)
+    public void refreshToken(@QueryParam("refresh_token") String refreshToken);
+    // BasicNameValuePair authCodePair = new BasicNameValuePair("refresh_token", refreshToken);
 }

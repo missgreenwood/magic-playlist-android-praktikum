@@ -56,9 +56,12 @@ public class ArtistsFragment extends Fragment {
                 if((event.getAction() == KeyEvent.ACTION_DOWN) && (keyCode == KeyEvent.KEYCODE_ENTER)) {
                     // Display edited artist in toast message
                     editedArtist = editArtist.getText().toString().trim();
-                    Toast.makeText(getActivity(), editedArtist, Toast.LENGTH_LONG).show();
+                    Toast.makeText(getActivity(), editedArtist, Toast.LENGTH_SHORT).show();
+
                     // Pass string editedArtist to GeneratorActivity
-                    dataPasser.onArtistPass(editedArtist);
+                    if (dataPasser != null) {
+                        dataPasser.onArtistPass(editedArtist);
+                    }
                     return true;
                 }
                 return false;
