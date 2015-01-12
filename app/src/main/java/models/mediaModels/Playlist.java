@@ -14,7 +14,7 @@ public class Playlist {
     //TODO save in DB
     private static int uniqueId = 0;
 
-    private ArrayList<Listener> observers;
+    private transient ArrayList<Listener> observers;
 
     private ArrayList<Song> songs;
     private String name;

@@ -240,7 +240,7 @@ public class LastfmMetadataWrapper extends AbstractMetadataWrapper {
                 }
             }
         } catch (Exception e) {
-            Log.e("ERROR while converting element with attribs JSONString to JSONObject", "message: " + e.getMessage());
+            Log.e("LastfmMetadataWrapper", "ERROR while converting element with attribs JSONString to JSONObject. Message: \"" + e.getMessage() + "\"  json: " + jsonString);
         }
         return arrayValues;
     }

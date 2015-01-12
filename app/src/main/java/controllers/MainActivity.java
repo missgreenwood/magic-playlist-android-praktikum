@@ -25,6 +25,7 @@ import controllers.mainFragments.SettingsFragment;
 import models.Settings;
 import models.mediawrappers.FileStreamingMediaService;
 import models.mediawrappers.PlayQueue;
+import rest.client.Client;
 import tests.R;
 
 /**
@@ -165,6 +166,8 @@ public class MainActivity extends ActionBarActivity implements
 
         PlayQueue.getInstance().setMediaWrappers(Settings.getInstance().getMediaWrappers());
         PlayQueue.getInstance().setAutoPilotMode(false);
+
+        Client.getInstance().setContext(getApplicationContext());
         super.onStart();
     }
 

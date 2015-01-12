@@ -1,7 +1,6 @@
 package models.playlist;
 
 import android.content.Context;
-import android.util.Log;
 
 import java.util.ArrayList;
 import java.util.Comparator;
@@ -22,13 +21,14 @@ public class PlaylistGenerator implements LastFmListener {
     private static final int ERROR_NO_ARTIST_FOUND = 0;
     private static final int ERROR_NO_TRACK_FOUND = 1;
     private static final int ERROR_GENRE_NOT_FOUND = 2;
-    private static final String TAG = "main.java.models.playlist.PlaylistGenerator";
+    /** this error should never come alone, there will always be another error before... */
+    private static final int ERROR_NO_NEXT_SONG_FOUND = 3;
     private static final float STANDARD_ARTIST_FITTING = 1;
 
     private Listener listener;
 
     private Playlist playlist;
-    private Song lastSong;
+    private SongInfo lastSong;
 
     private int similarArtistsCallsCount = 0;
     private int topTracksCallsCount = 0;
@@ -38,74 +38,117 @@ public class PlaylistGenerator implements LastFmListener {
 
     /** artists data cache, feeded with responsedata of lastfm*/
     private HashMap<String, ArtistInfo> artistsPriority = new HashMap<>();
-    private int songCountLimit = 20;
+    private int songsCountLimit = 20;
     private boolean waiting;
     private boolean finished = false;
 
-    public PlaylistGenerator(Listener listener) {
+
+
+
+    public PlaylistGenerator(Listener listener, String genre, int songsCountLimit, Song initSong) {
         this.listener = listener;
         lfm = new LastfmMetadataWrapper(this);
         playlist = new Playlist();
+
+        if (genre != null && !genre.isEmpty()) {
+            playlist.setGenre(genre);
+            genreCallsCount++;
+            lfm.findGenreArtists(genre, 20);
+        }
+
+        this.songsCountLimit = songsCountLimit;
+
+        if (initSong != null) {
+            String artistName = initSong.getArtist();
+            lastSong = new SongInfo(artistName, initSong.getSongname());
+            if (artistName != null && !artistName.isEmpty()) {
+                ArtistInfo newArtist = getArtistInfo(artistName);
+                newArtist.setPriority(3);
+                findSimilarArtists(newArtist);
+                artistsPriority.put(artistName, newArtist);
+            }
+        }
     }
+
+
 
     public void setContext (Context context) {
         lfm.setContext(context);
     }
 
     public void startGeneration() {
-
         while (getRequestsCount() == 0) {
-            if (finished || playlist.getSongsList().size() == songCountLimit) {
-                finished = true;
-                listener.generationFinished(playlist);
+            if (finished || playlist.getSongsList().size() == songsCountLimit) {
+                finishGeneration();
                 return;
             }
-            Song song = getNextSong(false);
+            //if no next sound found, prevent endlessloop...
+            if (lastSong == null) {
+                listener.callbackError(ERROR_NO_NEXT_SONG_FOUND);
+                finishGeneration();
+                return;
+            }
+            SongInfo song = getNextSong(false);
             if (song != null) {
-                playlist.addSong(song);
-
+                playlist.addSong(new Song(song.getArtistName(), song.getTrackName()));
             }
         }
         waiting = true; //whenever all callbacks have been finished, and waiting is true, startGeneration is called again
     }
 
+    public void finishGeneration()
+    {
+        if (!finished) {
+            finished = true;
+            listener.generationFinished(playlist);
+        }
+    }
+
+    public Playlist getPlaylist() {
+        return playlist;
+    }
+
+    public Playlist createNewPlaylist(String name) {
+        return playlist = new Playlist(name);
+    }
+
+
+
+
+
     /**
      * if old given song is not accepted, increase tryCounter else use new Song to get next song
      * when call finishes, onSimilarArtistsCallback is called
      */
-    public Song getNextSong(boolean songTaken) {
+    private SongInfo getNextSong(boolean songTaken) {
 
-        Song fittingSong = getFittingSong();
-        if (fittingSong == null) {
-            return null;
+        if (lastSong != null) {
+            setUpLastArtist(songTaken, getArtistInfo(lastSong.getArtistName()));
         }
 
-        ArtistInfo artist = getArtistInfo(fittingSong.getArtist());
-        setUpLastArtist(songTaken, artist);
-        if (!artist.getSimilarArtistsCalled()) {
-            artist.setSimilarArtistsCalled(true);
-            similarArtistsCallsCount++;
-            lfm.findSimilarArtists(artist.getName(), 10);
+        SongInfo fittingSong = getFittingSong();
+        if (fittingSong != null) {
+            ArtistInfo artist = getArtistInfo(fittingSong.getArtistName());
+            findSimilarArtists(artist);
         }
+
         return lastSong = fittingSong;
     }
 
     /** changes priority of last suggested artist */
     private void setUpLastArtist(boolean songTaken, ArtistInfo artist) {
-        if (lastSong != null) {
-            float priorityChange;
-            if (songTaken) {
-                priorityChange = 0.3f;
-            } else {
-                priorityChange = -0.3f;
-            }
-            artist.changePriority(priorityChange);
+        float priorityChange;
+        if (songTaken) {
+            priorityChange = 0.3f;
+        } else {
+            priorityChange = -0.3f;
         }
+        artist.changePriority(priorityChange);
     }
 
     /** the heart of generation, select the fitting song out of the sorted DataModel*/
     //TODO: get in some randomness here, so artists with lower prio get a chance
-    private Song getFittingSong()
+    private SongInfo getFittingSong()
     {
         TreeSet<ArtistInfo> artists = getBestArtists();
         Iterator<ArtistInfo> it = artists.descendingIterator();
@@ -121,14 +164,86 @@ public class PlaylistGenerator implements LastFmListener {
         return null;
     }
 
+    private TreeSet<ArtistInfo> getBestArtists()
+    {
+        TreeSet<ArtistInfo> treeSet = new TreeSet<>(new Comparator<ArtistInfo>() {
+            @Override
+            public int compare(ArtistInfo lhs, ArtistInfo rhs) {
+                return Float.compare(lhs.getPriority(), rhs.getPriority());
+            }
+        });
+        treeSet.addAll(artistsPriority.values());
+        return treeSet;
+    }
+
+    private int getRequestsCount()
+    {
+        return similarArtistsCallsCount + topTracksCallsCount + genreCallsCount;
+    }
+
+    private void callbackFinished()
+    {
+        if (getRequestsCount() == 0 && waiting) {
+            waiting = false;
+            startGeneration();
+        }
+    }
+
+    private synchronized ArtistInfo getArtistInfo(String artistName) {
+        ArtistInfo artistInfo = artistsPriority.get(artistName);
+        if (artistInfo == null) {
+            artistInfo = new ArtistInfo(artistName, STANDARD_ARTIST_FITTING);
+            artistsPriority.put(artistName, artistInfo);
+            findTopTracks(artistInfo);
+        }
+        return artistInfo;
+    }
+
+    /**never returns null, if no artist exists, a new one is created
+     * @param requestedArtist artistName that was called in request
+     * @param responseArtist artistName that came back from server response
+     * */
+    private synchronized ArtistInfo getArtistInfo (String requestedArtist, String responseArtist) {
+        ArtistInfo artistInfo = artistsPriority.get(requestedArtist);
+        if (artistInfo != null) {
+            if (requestedArtist != responseArtist) {
+                artistInfo.setName(responseArtist);
+                artistsPriority.put(responseArtist, artistsPriority.remove(requestedArtist));
+            }
+        } else {
+            artistInfo = getArtistInfo(requestedArtist);
+        }
+        return artistInfo;
+    }
+
+    private synchronized void findSimilarArtists(ArtistInfo artist) {
+        if (!artist.getSimilarArtistsCalled()) {
+            artist.setSimilarArtistsCalled(true);
+            similarArtistsCallsCount++;
+            lfm.findSimilarArtists(artist.getName(), 10);
+        }
+    }
+
+    private synchronized void findTopTracks(ArtistInfo artist) {
+        if (!artist.isTopTracksCalled()) {
+            artist.setTopTracksCalled(true);
+            topTracksCallsCount++;
+            lfm.findTopTracks(artist.getName(), 5);
+        }
+    }
+
+
+
+
     @Override
-    public void onSimilarArtistsCallback(String calledArtist, String returnedArtist, String[][] similarArtists) {
+    public synchronized void onSimilarArtistsCallback(String calledArtist, String returnedArtist, String[][] similarArtists) {
         similarArtistsCallsCount--;
         if (finished) {
             return;
         }
         if (similarArtists == null || similarArtists.length == 0) {
             listener.callbackError(ERROR_NO_ARTIST_FOUND);
+            callbackFinished();
             return;
         }
 
@@ -150,13 +265,14 @@ public class PlaylistGenerator implements LastFmListener {
     }
 
     @Override
-    public void onTopTracksCallback(String calledArtist, String returnedArtist, ArrayList<String> trackNames) {
+    public synchronized void onTopTracksCallback(String calledArtist, String returnedArtist, ArrayList<String> trackNames) {
         topTracksCallsCount--;
         if (finished) {
             return;
         }
         if (trackNames == null || trackNames.size() == 0) {
             listener.callbackError(ERROR_NO_TRACK_FOUND);
+            callbackFinished();
             return;
         }
 
@@ -174,133 +290,43 @@ public class PlaylistGenerator implements LastFmListener {
     }
 
     @Override
-    public void onGenreArtistsCallback(String[][] artists) {
+    public synchronized void onGenreArtistsCallback(String[][] artists) {
         genreCallsCount--;
         if (finished) {
             return;
         }
         if (artists == null || artists.length == 0) {
+            callbackFinished();
             listener.callbackError(ERROR_GENRE_NOT_FOUND);
             return;
         }
         for (String[] artistArray : artists) {
             String artistName = artistArray[1];
-            ArtistInfo artist = getArtistInfo(artistName);
-            topTracksCallsCount++;
-            lfm.findTopTracks(artistName, 5);
-            artistsPriority.put(artistName, artist);
+            getArtistInfo(artistName);
         }
+        callbackFinished();
     }
 
-    private ArtistInfo getArtistInfo(String artistName) {
-        return getArtistInfo(artistName, artistName);
-    }
 
-    /**never returns null, if no artist exists, a new one is created
-     * @param requestedArtist artistName that was called in request
-     * @param responseArtist artistName that came back from server response
-     * */
-    private synchronized ArtistInfo getArtistInfo (String requestedArtist, String responseArtist) {
-        ArtistInfo artistInfo = artistsPriority.get(requestedArtist);
-        if (artistInfo != null) {
-            if (requestedArtist != responseArtist) {
-                artistInfo.setName(responseArtist);
-                artistsPriority.put(responseArtist, artistsPriority.remove(requestedArtist));
-            }
-        } else {
-            artistInfo = artistsPriority.get(responseArtist);
-            if (artistInfo == null) {
-                artistInfo = new ArtistInfo(null, responseArtist, STANDARD_ARTIST_FITTING);
-                artistsPriority.put(responseArtist, artistInfo);
-                topTracksCallsCount++;
-                lfm.findTopTracks(responseArtist, 5);
-            }
-        }
-        return artistInfo;
-    }
 
-    public void addSongToPlaylist(Song song) {
-        playlist.addSong(song);
-    }
 
-    public Playlist getPlaylist() {
-        return playlist;
-    }
-
-    public Playlist createNewPlaylist(String name) {
-        return playlist = new Playlist(name);
-    }
-
-    public void setGenre(String genre) {
-        if (genre != null && !genre.isEmpty()) {
-            playlist.setGenre(genre);
-            genreCallsCount++;
-            lfm.findGenreArtists(genre, 20);
-        }
-    }
-
-    public void setInitSong(Song initSong) {
-        if (initSong != null) {
-            lastSong = initSong;
-            String artistName = lastSong.getArtist();
-            if (artistName != null && !artistName.isEmpty()) {
-                artistsPriority.put(artistName, new ArtistInfo(null, artistName, 3));
-                similarArtistsCallsCount++;
-                lfm.findSimilarArtists(artistName, 5);
-                topTracksCallsCount++;
-                lfm.findTopTracks(artistName, 5);
-            }
-        }
-    }
-
-    private TreeSet<ArtistInfo> getBestArtists()
-    {
-        TreeSet<ArtistInfo> treeSet = new TreeSet<>(new Comparator<ArtistInfo>() {
-            @Override
-            public int compare(ArtistInfo lhs, ArtistInfo rhs) {
-
-                return Float.compare(lhs.getPriority(), rhs.getPriority());
-            }
-        });
-        treeSet.addAll(artistsPriority.values());
-        return treeSet;
-    }
-
-    public int getRequestsCount()
-    {
-        return similarArtistsCallsCount + topTracksCallsCount + genreCallsCount;
-    }
-
-    private void callbackFinished()
-    {
-        if (getRequestsCount() == 0 && waiting) {
-            waiting = false;
-            startGeneration();
-        }
-    }
-
-    public void setSongCountLimit(int songCountLimit) {
-        this.songCountLimit = songCountLimit;
-    }
 
     public interface Listener {
         void callbackError(int errorStatus);
-
         void generationFinished(Playlist playlist);
     }
 
     /** only for saving important call responses for artists */
     private class ArtistInfo {
-        private String lstFmId;
         private String name;
         private ArrayList<SongInfo> topTracks = new ArrayList<>();
         private ArrayList<ArtistInfo> similarArtists;
         private boolean similarArtistsCalled = false;
         private float priority = 0;
+        private boolean topTracksCalled;
 
-        public ArtistInfo(String artistId, String artistName, float fitting) {
+        public ArtistInfo(String artistName, float fitting) {
             name = artistName;
-            lstFmId = artistId;
             priority = fitting;
         }
 
@@ -353,21 +379,28 @@ public class PlaylistGenerator implements LastFmListener {
             similarArtists.add(artist);
         }
 
-        public ArrayList<ArtistInfo> getSimilarArtists() {
-            return similarArtists;
-        }
-
         @Override
         public String toString() {
             return "artistName: \"" + name + "\" Prio: " + priority;
         }
+
+        public void setTopTracksCalled(boolean topTracksCalled) {
+            this.topTracksCalled = topTracksCalled;
+        }
+
+        public boolean isTopTracksCalled() {
+            return topTracksCalled;
+        }
     }
 
-    private class SongInfo extends Song {
+    private class SongInfo {
         private boolean isChecked = false;
+        private String artistName;
+        private String trackName;
 
         public SongInfo(String artistName, String trackName) {
-            super(artistName, trackName);
+            this.artistName = artistName;
+            this.trackName = trackName;
         }
 
         public boolean isChecked() {
@@ -376,6 +409,14 @@ public class PlaylistGenerator implements LastFmListener {
 
         public void setChecked(boolean isChecked) {
             this.isChecked = isChecked;
+        }
+
+        public String getArtistName() {
+            return artistName;
+        }
+
+        public String getTrackName() {
+            return trackName;
         }
     }
 }

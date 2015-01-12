@@ -177,8 +177,9 @@ public class GeneratorFragment extends android.support.v4.app.Fragment implement
         countDialog.setTitle("How many songs shall be generated?");
 
         final NumberPicker nmbrPickr = new NumberPicker(countDialog.getContext());
-        nmbrPickr.setMinValue(0);
+        nmbrPickr.setMinValue(1);
         nmbrPickr.setMaxValue(9999);
+        nmbrPickr.setWrapSelectorWheel(false);
         nmbrPickr.setValue(songsCountLimit);
 
         countDialog.setView(nmbrPickr);

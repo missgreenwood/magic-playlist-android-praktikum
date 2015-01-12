@@ -31,8 +31,8 @@ import tests.R;
  * Created by judith on 11.01.15.
  */
 public class BrowserPlaylistFragment extends ListFragment implements
-        PlaylistsManager.Listener,
-        Client.Listener {
+        PlaylistsManager.Listener
+{
     private Client client;
     private ArrayList<Playlist> searchResults;
 
@@ -54,7 +54,7 @@ public class BrowserPlaylistFragment extends ListFragment implements
         ((MainActivity)getActivity()).getSupportActionBar().setTitle("Search Results");
         client = Client.getInstance();
         manager = PlaylistsManager.getInstance();
-        client.addObserver(this);
+//        client.addObserver(this);
         manager.addObserver(this);
         searchResults = new ArrayList<>();
 
@@ -104,7 +104,7 @@ public class BrowserPlaylistFragment extends ListFragment implements
         this.artist = args.getString("artist");
     }
 
-    @Override
+//    @Override
     public void onFindPlaylistCallback(Playlist playlist) {
 
     }
@@ -120,7 +120,7 @@ public class BrowserPlaylistFragment extends ListFragment implements
         }
     }
 
-    @Override
+//    @Override
     public void onFindPlaylistsCallback(List<Playlist> playlists) {
         // remove comment when server is fully working
         /* setLoading(false);

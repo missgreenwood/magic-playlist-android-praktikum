@@ -22,9 +22,9 @@ public class Song {
     private static int currentSongID = 0;
     private String artist;
     private String songname;
-    private AbstractMediaWrapper mediaWrapper;
-    private String wrapperType;
-    private boolean notPlayable = false;
+    private transient AbstractMediaWrapper mediaWrapper;
+    private transient String wrapperType;
+    private transient boolean notPlayable = false;
     private int songID;
     private int length = -1;
 
