@@ -11,15 +11,20 @@ import javax.ws.rs.QueryParam;
 
 import de.lmu.playlist.PlaylistModule;
 import de.lmu.playlist.domain.entity.Playlist;
+import de.lmu.playlist.domain.entity.SpotifyToken;
 import de.lmu.playlist.service.PlaylistService;
+import de.lmu.playlist.service.SpotifyService;
 
 public class PlaylistFacadeImpl implements PlaylistFacade {
 
     private final PlaylistService playlistService;
 
+    private final SpotifyService spotifyService;
+
     @Inject
-    public PlaylistFacadeImpl(final PlaylistService playlistService) {
+    public PlaylistFacadeImpl(final PlaylistService playlistService, final SpotifyService spotifyService) {
         this.playlistService = playlistService;
+        this.spotifyService = spotifyService;
     }
 
     @Override
@@ -58,12 +63,12 @@ public class PlaylistFacadeImpl implements PlaylistFacade {
     }
 
     @Override
-    public void getTokens(@QueryParam("auth_code") String authCode) {
-        
+    public SpotifyToken getTokens(@QueryParam("auth_code") String authCode) {
+        return spotifyService.obtainToken(authCode);
     }
 
     @Override
-    public void refreshToken(@QueryParam("refresh_token") String refreshToken) {
-
+    public SpotifyToken refreshToken(@QueryParam("refresh_token") String refreshToken) {
+        return spotifyService.refreshTokenPair(refreshToken);
     }
 }
