@@ -36,12 +36,14 @@ public class BrowserPlaylistFragment extends ListFragment implements
     private Client client;
     private ArrayList<Playlist> searchResults;
 
-    // test, remove before deploy
+    // test, remove before when server is fully working
     private ArrayList<Playlist> testLists;
 
     private ResultPlaylistFragment resultsFragment;
     private String artist;
     private String genre;
+    private String name;
+    private Playlist playlist;
     private PlaylistsManager manager;
     private ProgressDialog loadingDialog;
     public BrowserPlaylistFragment() {
@@ -143,6 +145,11 @@ public class BrowserPlaylistFragment extends ListFragment implements
     }
 
     public void playlistClicked(int playlistId) {
+        Bundle args = new Bundle();
+        args.putParcelable("playlist", (Playlist)getListAdapter().getItem(playlistId));
+        playlist = (Playlist)getListAdapter().getItem(playlistId);
+        name = playlist.getName();
+        args.putString("playlist_name", name);
         resultsFragment = (ResultPlaylistFragment) getActivity().getSupportFragmentManager().findFragmentByTag("ResultPlaylistFragment");
         if (resultsFragment == null) {
             resultsFragment = new ResultPlaylistFragment();
@@ -152,6 +159,7 @@ public class BrowserPlaylistFragment extends ListFragment implements
             transact.commit();
         }
         resultsFragment.setPlaylist((Playlist)getListAdapter().getItem(playlistId));
+        resultsFragment.setLikeData(args);
     }
 
     private class PlaylistArrayAdapter extends ArrayAdapter<Playlist> {
@@ -167,10 +175,8 @@ public class BrowserPlaylistFragment extends ListFragment implements
             return view;
         }
     }
-
 }
 
-// TODO: Fix playlist upload
-// TODO: Substitute test functions
+// TODO: Substitute test functions for playlist upload and display
 
 
