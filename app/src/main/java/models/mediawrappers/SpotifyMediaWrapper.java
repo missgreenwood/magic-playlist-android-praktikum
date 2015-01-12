@@ -2,12 +2,16 @@ package models.mediawrappers;
 
 import android.content.Context;
 import android.content.Intent;
+import android.os.AsyncTask;
+import android.os.Build;
 import android.os.Bundle;
 import android.util.Log;
 
 import models.apiwrappers.APIWrapper;
 import models.mediaModels.Song;
 
+import com.loopj.android.http.AsyncHttpClient;
+import com.loopj.android.http.TextHttpResponseHandler;
 import com.spotify.sdk.android.Spotify;
 import com.spotify.sdk.android.playback.Config;
 import com.spotify.sdk.android.playback.ConnectionStateCallback;
@@ -15,7 +19,9 @@ import com.spotify.sdk.android.playback.Player;
 import com.spotify.sdk.android.playback.PlayerNotificationCallback;
 import com.spotify.sdk.android.playback.PlayerState;
 
+import org.apache.http.Header;
 import org.apache.http.NameValuePair;
+import org.apache.http.message.BasicHeader;
 import org.apache.http.message.BasicNameValuePair;
 import org.json.JSONArray;
 import org.json.JSONException;
@@ -131,8 +137,37 @@ public class SpotifyMediaWrapper extends RemoteFileStreamingMediaWrapper impleme
         //APIWrapper apiWrapper=new APIWrapper();
         //String jsonArrayString = apiWrapper.getJSONCall(url, APIWrapper.GET);
 
-        APIWrapper asyncHTTP = new APIWrapper(this, DEFAULT_CALLBACK, APIWrapper.GET_METHOD);
-        asyncHTTP.execute(url);
+        // APIWrapper asyncHTTP = new APIWrapper(this, DEFAULT_CALLBACK, APIWrapper.GET_METHOD);
+        // asyncHTTP.execute(url);
+
+
+        /*
+        if(Build.VERSION.SDK_INT >= Build.VERSION_CODES.HONEYCOMB)
+            asyncHTTP.executeOnExecutor(AsyncTask.THREAD_POOL_EXECUTOR, url);
+        else
+            asyncHTTP.execute(url);
+
+
+        */
+        AsyncHttpClient asyncHttpClient = new AsyncHttpClient();
+        Header[] headers = {new BasicHeader("Content-type", "application/json")};
+        asyncHttpClient.get(getContext(), url, headers, null, new TextHttpResponseHandler() {
+            @Override
+            public void onFailure(int i, Header[] headers, String s, Throwable throwable) {
+                Log.e(TAG, "onFailture ");
+                processWebCallResult("", DEFAULT_CALLBACK, null);
+
+            }
+
+            @Override
+            public void onSuccess(int i, Header[] headers, String s) {
+                Log.d(TAG, "success! " + s);
+                processWebCallResult(s, DEFAULT_CALLBACK, null);
+            }
+
+
+        });
+
 
 
         //  https://api.spotify.com/v1/search?q=title:paranoid+artist:radiohead&type=track
