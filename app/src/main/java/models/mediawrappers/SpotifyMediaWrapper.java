@@ -1,9 +1,9 @@
 package models.mediawrappers;
 
+import android.app.Activity;
 import android.content.Context;
 import android.content.Intent;
-import android.os.AsyncTask;
-import android.os.Build;
+import android.content.SharedPreferences;
 import android.os.Bundle;
 import android.util.Log;
 
@@ -13,6 +13,7 @@ import models.mediaModels.Song;
 import com.loopj.android.http.AsyncHttpClient;
 import com.loopj.android.http.TextHttpResponseHandler;
 import com.spotify.sdk.android.Spotify;
+import com.spotify.sdk.android.authentication.SpotifyAuthentication;
 import com.spotify.sdk.android.playback.Config;
 import com.spotify.sdk.android.playback.ConnectionStateCallback;
 import com.spotify.sdk.android.playback.Player;
@@ -38,7 +39,7 @@ public class SpotifyMediaWrapper extends RemoteFileStreamingMediaWrapper impleme
 
 
     public static final String TAG = "main.java.models.mediawrappers.SpotifyMediaWrapper";
-
+    public static final String CLIENT_ID = "605ac27c70444b499869422e93a492f8";
     public static String SPOTIFY_SEARCH_URL = "https://api.spotify.com/v1/search";
     public static String TYPE_TRACK_STRING = "type";
     // public int counter;
@@ -49,10 +50,13 @@ public class SpotifyMediaWrapper extends RemoteFileStreamingMediaWrapper impleme
     // private  Context context;
     private Spotify spotify;
     private Player mPlayer;
+    private SharedPreferences preferences;
 
 
     public SpotifyMediaWrapper(Context context, Song songsTemp) {
         super(context, songsTemp);
+        //  openAuthWindow();
+        //  preferences = context.getSharedPreferences(SPOTIFY_SHARED_PREF_STRING, 0);
         // this.context=context;
         //  setSong(songsTemp);
 
@@ -71,7 +75,7 @@ public class SpotifyMediaWrapper extends RemoteFileStreamingMediaWrapper impleme
         String accessToken = "BQAikzApJ-5PxbXEEnou32JJeeCdNsY5BBGI2WnDt7C82jCEImuIR7XZgzR9SSiDRMsLnhodWU78sQkJ7AhMPOs5m-g3kgY3QCKUHdHouFjvG0DIa4zwmmkwXGFNDtXsXgotCfOefvFha9tb0xc4SONKC4Z0MoV-5hhN3F4";
 
 
-        Config spotifyConfig = new Config(context, accessToken, SpotifyLoginHandler.CLIENT_ID);
+        Config spotifyConfig = new Config(context, accessToken, CLIENT_ID);
 
 
         Log.d(TAG, "spotify play, config: " + (spotifyConfig == null));
@@ -137,8 +141,8 @@ public class SpotifyMediaWrapper extends RemoteFileStreamingMediaWrapper impleme
         //APIWrapper apiWrapper=new APIWrapper();
         //String jsonArrayString = apiWrapper.getJSONCall(url, APIWrapper.GET);
 
-        // APIWrapper asyncHTTP = new APIWrapper(this, DEFAULT_CALLBACK, APIWrapper.GET_METHOD);
-        // asyncHTTP.execute(url);
+        APIWrapper asyncHTTP = new APIWrapper(this, DEFAULT_CALLBACK, APIWrapper.GET_METHOD);
+        asyncHTTP.execute(url);
 
 
         /*
@@ -239,6 +243,28 @@ public class SpotifyMediaWrapper extends RemoteFileStreamingMediaWrapper impleme
     @Override
     public void processWebCallResult(String result, String callback, Bundle data) {
 
+        /*
+        if (callback.equals(SPOTIFY_TOKENS_CALLBACK)) {
+
+
+            //TODO: get access and refreseh tokens
+
+
+        }
+
+
+        else if (callback.equals(SPOTIFY_ACCESS_TOKEN_CALLBACK))
+        {
+
+
+            //TODO: get new access token for refresh token
+
+            String refreshToken="";
+            saveRefreshToken(refreshToken);
+        }
+
+        else {
+        */
 
         String uri = "";
         try {
@@ -285,5 +311,147 @@ public class SpotifyMediaWrapper extends RemoteFileStreamingMediaWrapper impleme
         //    Intent intent=new Intent();
         //  intent.setAction(PlayQueue.SONG_AVAILABLE);
 //        context.sendBroadcast(intent);
+        //  }
     }
+
+    /*
+    public void openAuthWindow() {
+
+        Log.d("", "open auth window");
+        SpotifyAuthentication.openAuthWindow(CLIENT_ID, RESPONSE_TYPE_CODE, REDIRECT_URI, new String[]{"user-read-private", "streaming"}, null, (Activity)context);
+
+    }
+
+
+    public void saveRefreshToken(String refreshToken) {
+
+        SharedPreferences.Editor editor = preferences.edit();
+        editor.putString(SPOTIFY_REFRESH_TOKEN_STRING, refreshToken);
+        // Commit the edits!
+        editor.commit();
+    }
+
+
+    public String retrieveRefreshToken() {
+
+        return preferences.getString(SPOTIFY_REFRESH_TOKEN_STRING, null);
+    }
+
+
+    public void getNewAccessToken(String refreshToken)
+    {
+
+        BasicNameValuePair authCodePair = new BasicNameValuePair("refresh_token", refreshToken);
+        ArrayList<NameValuePair> params = new ArrayList<NameValuePair>();
+        params.add(authCodePair);
+
+        String url="http://141.84.213.249:5050/playlist/spotify/refresh_token";
+        url = APIWrapper.encodeURL(url, params);
+
+
+
+        AsyncHttpClient asyncHttpClient = new AsyncHttpClient();
+        Header[] headers = {new BasicHeader("Content-type", "application/json")};
+        asyncHttpClient.get(getContext(), url, headers, null, new TextHttpResponseHandler() {
+            @Override
+            public void onFailure(int i, Header[] headers, String s, Throwable throwable) {
+                Log.d(TAG, "back result is: "+s);
+                //processWebCallResult("", DEFAULT_CALLBACK, null);
+
+            }
+
+            @Override
+            public void onSuccess(int i, Header[] headers, String s) {
+                Log.d(TAG, "success! " + s);
+                processWebCallResult(s, SPOTIFY_ACCESS_TOKEN_CALLBACK, null);
+                //  Log.d(TAG, "back result is: "+s);
+            }
+
+
+        });
+
+
+
+
+    }
+
+
+    public boolean hasSpotifyRequestToken()
+    {
+        String refreshToken = retrieveRefreshToken();
+        return (refreshToken!=null && !(refreshToken.equals("")));
+
+    }
+
+
+    public void startSpotifyLogin()
+    {
+        //TODO: Abfrage nach Access Token?
+        if (hasSpotifyRequestToken())
+        {
+            getNewAccessToken(retrieveRefreshToken());
+
+        }
+
+        else {
+
+            openAuthWindow();
+
+        }
+
+    }
+
+
+   public void getAccessAndRefreshToken(String authCode)
+   {
+
+
+
+
+       BasicNameValuePair authCodePair = new BasicNameValuePair("auth_code", authCode);
+       ArrayList<NameValuePair> params = new ArrayList<NameValuePair>();
+       params.add(authCodePair);
+
+        String url="http://141.84.213.249:5050/playlist/spotify/get_tokens";
+      url = APIWrapper.encodeURL(url, params);
+
+       Log.d(TAG, url);
+
+       //APIWrapper apiWrapper=new APIWrapper();
+       //String jsonArrayString = apiWrapper.getJSONCall(url, APIWrapper.GET);
+        /*
+        APIWrapper asyncHTTP = new APIWrapper(this, DEFAULT_CALLBACK, APIWrapper.GET_METHOD);
+        if(Build.VERSION.SDK_INT >= Build.VERSION_CODES.HONEYCOMB)
+            asyncHTTP.executeOnExecutor(AsyncTask.THREAD_POOL_EXECUTOR, url);
+        else
+            asyncHTTP.execute(url);
+
+        */
+    //return playpath;
+
+/*
+       AsyncHttpClient asyncHttpClient = new AsyncHttpClient();
+       Header[] headers = {new BasicHeader("Content-type", "application/json")};
+       asyncHttpClient.get(getContext(), url, headers, null, new TextHttpResponseHandler() {
+           @Override
+           public void onFailure(int i, Header[] headers, String s, Throwable throwable) {
+               Log.d(TAG, "back result is: "+s);
+               //processWebCallResult("", DEFAULT_CALLBACK, null);
+
+           }
+
+           @Override
+           public void onSuccess(int i, Header[] headers, String s) {
+               Log.d(TAG, "success! " + s);
+               processWebCallResult(s, SPOTIFY_TOKENS_CALLBACK, null);
+             //  Log.d(TAG, "back result is: "+s);
+           }
+
+
+       });
+
+
+
+
+   }*/
 }

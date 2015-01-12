@@ -25,6 +25,8 @@ import controllers.mainFragments.SettingsFragment;
 import models.Settings;
 import models.mediawrappers.FileStreamingMediaService;
 import models.mediawrappers.PlayQueue;
+import models.mediawrappers.SpotifyLoginHandler;
+
 import rest.client.Client;
 import tests.R;
 
@@ -134,6 +136,14 @@ public class MainActivity extends ActionBarActivity implements
         this.registerReceiver(broadcastReceiver, intentFilter);
         this.setTitle("Magic Playlist");
 
+/*
+        SpotifyLoginHandler spotifyLoginHandler = SpotifyLoginHandler.getInstance();
+        spotifyLoginHandler.setContext(this);
+        spotifyLoginHandler.openAuthWindow();
+
+
+*/
+
 //        Song strokes = new Song("The Strokes", "Last Nite");
 //        Song random = new Song("Caribou", "Melody Day");
 //        Song random2 = new Song("The Strokes", "Reptilia");
@@ -233,20 +243,36 @@ public class MainActivity extends ActionBarActivity implements
     protected void onNewIntent(Intent intent) {
         super.onNewIntent(intent);
 
-        Uri uri = intent.getData();
-        //TODO: intent filter oder sowas
-        Log.d("", "spotify auth received");
 
-        if (uri != null) {
-            Log.d("", "spotify auth received, uri not null");
 
-            AuthenticationResponse response = SpotifyAuthentication.parseOauthResponse(uri);
-            //  Config playerConfig = new Config(this, response.getAccessToken(), SpotifyMediaWrapper.CLIENT_ID);
-            //  setSpotifyConfig(playerConfig);
 
-            Log.d("", "irgendwas config: " + getSpotifyConfig().oauthToken);
+        if (intent.getAction().equals("android.intent.action.VIEW")) {
 
+            Uri uri = intent.getData();
+            Log.d("TAG", "action: "+intent.getAction());
+            //TODO: intent filter oder sowas
+            Log.d("", "spotify auth received");
+
+          if (uri!=null) {
+              Log.d("", "spotify auth received, uri not null");
+
+              AuthenticationResponse response = SpotifyAuthentication.parseOauthResponse(uri);
+              String authorizationCode = response.getCode();
+              Log.d("", "authorization code: " + authorizationCode);
+
+              //  Config playerConfig = new Config(this, response.getAccessToken(), SpotifyMediaWrapper.CLIENT_ID);
+              //  setSpotifyConfig(playerConfig);
+
+//
+              SpotifyLoginHandler.getInstance().getAccessAndRefreshToken(authorizationCode);
+
+
+          }
 
         }
+
+
     }
+
+
 }

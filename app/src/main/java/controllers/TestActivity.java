@@ -16,6 +16,7 @@ import models.mediaModels.Playlist;
 import models.mediaModels.Song;
 import models.mediawrappers.FileStreamingMediaService;
 import models.mediawrappers.PlayQueue;
+import models.mediawrappers.SpotifyMediaWrapper;
 import tests.R;
 
 import com.spotify.sdk.android.authentication.AuthenticationResponse;
@@ -154,7 +155,7 @@ public class TestActivity extends ActionBarActivity implements View.OnClickListe
         broadcastReceiver = new MyBroadcastReceiver();
         this.registerReceiver(broadcastReceiver, intentFilter);
 
-
+/*
         Song strokes = new Song("The Strokes", "Last Nite");
         Song random = new Song("Caribou", "Melody Day");
         Song random2 = new Song("The Strokes", "Reptilia");
@@ -175,8 +176,7 @@ public class TestActivity extends ActionBarActivity implements View.OnClickListe
         set to false if you don't want media wrappers to be overwritten if they are not null
          */
 
-        PlayQueue.getInstance().playSongs(true);
-
+        //PlayQueue.getInstance().playSongs(true);
 
 
         super.onStart();
@@ -205,6 +205,7 @@ public class TestActivity extends ActionBarActivity implements View.OnClickListe
 
 
         Uri uri = intent.getData();
+        Log.d("TAG", "action: " + intent.getAction());
         //TODO: intent filter oder sowas
         Log.d("", "spotify auth received");
 
@@ -212,11 +213,13 @@ public class TestActivity extends ActionBarActivity implements View.OnClickListe
             Log.d("", "spotify auth received, uri not null");
 
             AuthenticationResponse response = SpotifyAuthentication.parseOauthResponse(uri);
+            String authorizationCode = response.getCode();
+            Log.d("", "authorization code: " + authorizationCode);
+
             //  Config playerConfig = new Config(this, response.getAccessToken(), SpotifyMediaWrapper.CLIENT_ID);
             //  setSpotifyConfig(playerConfig);
 
-            Log.d("", "irgendwas config: " + getSpotifyConfig().oauthToken);
-
+//
 
         }
 
