@@ -177,6 +177,6 @@ public class BrowserPlaylistFragment extends ListFragment implements
     }
 }
 
-// TODO: Substitute test functions for playlist upload and display
+// TODO: Substitute test functions for playlist display
 
 
