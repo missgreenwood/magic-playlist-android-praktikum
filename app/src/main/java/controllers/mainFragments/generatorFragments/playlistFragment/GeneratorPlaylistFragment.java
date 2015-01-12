@@ -77,7 +77,7 @@ public class GeneratorPlaylistFragment extends PlaylistFragment implements Playl
     public void generationFinished(Playlist playlist) {
         setLoading(false);
         PlaylistsManager.getInstance().addPlaylist(playlist);
-        Toast.makeText(getActivity().getApplicationContext(), "Playlist \"" + playlist.getName() + "\" successfully created!", Toast.LENGTH_SHORT);
+        Toast.makeText(getActivity().getApplicationContext(), "Playlist \"" + playlist.getName() + "\" successfully created!", Toast.LENGTH_SHORT).show();
     }
 
 //    private void showSongSuggestion(final Song song) {
