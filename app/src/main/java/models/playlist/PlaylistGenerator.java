@@ -1,5 +1,6 @@
 package models.playlist;
 
+import android.content.Context;
 import android.util.Log;
 
 import java.util.ArrayList;
@@ -47,21 +48,25 @@ public class PlaylistGenerator implements LastFmListener {
         playlist = new Playlist();
     }
 
-    public void startGeneration() {
-        if (finished || playlist.getSongsList().size() >= songCountLimit) {
-            finished = true;
-            listener.generationFinished(playlist);
-        }
-        Song song = getNextSong(false);
-        if (song != null) {
-            playlist.addSong(song);
+    public void setContext (Context context) {
+        lfm.setContext(context);
+    }
 
+    public void startGeneration() {
+
+        while (getRequestsCount() == 0) {
+            if (finished || playlist.getSongsList().size() == songCountLimit) {
+                finished = true;
+                listener.generationFinished(playlist);
+                return;
+            }
+            Song song = getNextSong(false);
+            if (song != null) {
+                playlist.addSong(song);
+
+            }
         }
-        if (getRequestsCount() == 0) {
-            startGeneration();
-        } else {
-            waiting = true;
-        }
+        waiting = true; //whenever all callbacks have been finished, and waiting is true, startGeneration is called again
     }
 
     /**
@@ -82,7 +87,6 @@ public class PlaylistGenerator implements LastFmListener {
             similarArtistsCallsCount++;
             lfm.findSimilarArtists(artist.getName(), 10);
         }
-        Log.v(TAG, artistsPriority.toString());
         return lastSong = fittingSong;
     }
 
@@ -156,9 +160,7 @@ public class PlaylistGenerator implements LastFmListener {
             return;
         }
 
-        Log.d(TAG, "calledArtist: \"" + calledArtist + "\" returnedArtist: \"" + returnedArtist + "\" list: " + artistsPriority);
         ArtistInfo calledArtistInfo = getArtistInfo(calledArtist, returnedArtist);
-        Log.d(TAG, "PRIO: " + artistsPriority);
 
         if (calledArtistInfo.getTopTracks().size() == 0) {
             ArrayList<SongInfo> songInfos = new ArrayList<>();

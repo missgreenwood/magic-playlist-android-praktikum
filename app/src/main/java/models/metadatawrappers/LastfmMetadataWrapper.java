@@ -1,11 +1,17 @@
 package models.metadatawrappers;
 
+import android.content.Context;
 import android.os.Bundle;
 import android.util.Log;
 
+import com.loopj.android.http.AsyncHttpClient;
+import com.loopj.android.http.TextHttpResponseHandler;
+
 import models.apiwrappers.APIWrapper;
 
+import org.apache.http.Header;
 import org.apache.http.NameValuePair;
+import org.apache.http.message.BasicHeader;
 import org.apache.http.message.BasicNameValuePair;
 import org.json.JSONArray;
 import org.json.JSONObject;
@@ -44,6 +50,8 @@ public class LastfmMetadataWrapper extends AbstractMetadataWrapper {
 
     private LastFmListener listener = null;
 
+    private Context context = null;
+
     public LastfmMetadataWrapper(LastFmListener listener) {
         this.listener = listener;
     }
@@ -71,8 +79,10 @@ public class LastfmMetadataWrapper extends AbstractMetadataWrapper {
         Bundle data = new Bundle();
         data.putString("artist", artist);
 
-        APIWrapper asyncHTTP = new APIWrapper(this, SIMILAR_ARTISTS_CALLBACK, APIWrapper.GET_METHOD, data);
-        asyncHTTP.execute(url);
+//        APIWrapper asyncHTTP = new APIWrapper(this, SIMILAR_ARTISTS_CALLBACK, APIWrapper.GET_METHOD, data);
+//        asyncHTTP.execute(url);
+
+        makeCall(url, SIMILAR_ARTISTS_CALLBACK, data);
 
         return url;
     }
@@ -97,11 +107,12 @@ public class LastfmMetadataWrapper extends AbstractMetadataWrapper {
 
         url = APIWrapper.encodeURL(url, params);
 
-        Bundle data = new Bundle();
+        final Bundle data = new Bundle();
         data.putString("artist", artist);
 
-        APIWrapper asyncHTTP = new APIWrapper(this, TOP_TRACKS_CALLBACK, APIWrapper.POST_METHOD, data);
-        asyncHTTP.execute(url);
+//        APIWrapper asyncHTTP = new APIWrapper(this, TOP_TRACKS_CALLBACK, APIWrapper.POST_METHOD, data);
+//        asyncHTTP.execute(url);
+        makeCall(url, TOP_TRACKS_CALLBACK, data);
     }
 
     public void findGenreArtists(String genre, int limit) {
@@ -124,8 +135,23 @@ public class LastfmMetadataWrapper extends AbstractMetadataWrapper {
 
         url = APIWrapper.encodeURL(url, params);
 
-        APIWrapper asyncHTTP = new APIWrapper(this, TAG_ARTISTS_CALLBACK, APIWrapper.POST_METHOD);
-        asyncHTTP.execute(url);
+        makeCall(url, TAG_ARTISTS_CALLBACK, null);
+    }
+
+    private void makeCall(String url, final String callback, final Bundle data) {
+        AsyncHttpClient asyncHttpClient = new AsyncHttpClient();
+        Header[] headers = {new BasicHeader("Content-type", "application/json")};
+        asyncHttpClient.get(context, url, headers, null, new TextHttpResponseHandler() {
+            @Override
+            public void onFailure(int i, Header[] headers, String s, Throwable throwable) {
+                processWebCallResult("", callback, data);
+
+            }
+            @Override
+            public void onSuccess(int i, Header[] headers, String s) {
+                processWebCallResult(s, callback, data);
+            }
+        });
     }
 
     @Override
@@ -217,5 +243,9 @@ public class LastfmMetadataWrapper extends AbstractMetadataWrapper {
             Log.e("ERROR while converting element with attribs JSONString to JSONObject", "message: " + e.getMessage());
         }
         return arrayValues;
+    }
+
+    public void setContext(Context context) {
+        this.context = context;
     }
 }

@@ -65,7 +65,11 @@ public class Playlist {
     }
 
     public ArrayList<Song> getSongsList(boolean directAccess) {
-        return songs;
+        if (directAccess) {
+            return songs;
+        } else {
+            return getSongsList();
+        }
     }
 
     public ArrayList<Song> getSongsList() {
@@ -91,6 +95,17 @@ public class Playlist {
 
     public void setLikes(int likes) {
         this.likes = likes;
+    }
+
+    public void resetInitialization()
+    {
+        if (songs != null) {
+            for (Song song : getSongsList()) {
+                // song.setMediaWrapper(null);
+                song.setNotPlayable(false);
+            }
+            notifyChange();
+        }
     }
 
     private void notifyChange() {
