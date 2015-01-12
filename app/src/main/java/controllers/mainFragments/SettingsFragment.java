@@ -83,7 +83,7 @@ public class SettingsFragment extends ListFragment {
     private OnCheckedChangeListener wrapperCheckedChangeListener = new OnCheckedChangeListener() {
         @Override
         public void onCheckedChanged(CompoundButton buttonView, boolean isChecked) {
-            final int position = getListView().getPositionForView(buttonView);
+            final int position = buttonView != null ? getListView().getPositionForView(buttonView) : ListView.INVALID_POSITION;
             if (position != ListView.INVALID_POSITION) {
                 if (isChecked) {
                     // Activate selected wrapper
@@ -128,9 +128,7 @@ public class SettingsFragment extends ListFragment {
                 //also I removed  "all[position]" because the arrayAdapter should work with the given
                 //list at initialisation. This is important at this position, because when the List
                 //changes (priorityChange) you can recognize it here :) (andy)
-                if (usedMediaWrappers.contains(this.getItem(position))) {
-                    holder.checkbox.setChecked(true);
-                }
+                holder.checkbox.setChecked(usedMediaWrappers.contains(this.getItem(position)));
 
                 holder.checkbox.setOnCheckedChangeListener(wrapperCheckedChangeListener);
                 final CheckBox checkBox = holder.checkbox;
@@ -146,6 +144,10 @@ public class SettingsFragment extends ListFragment {
             }
             else {
                 holder = (SettingsViewHolder) convertView.getTag();
+                holder.checkbox.setOnCheckedChangeListener(null);
+                //reset checked state, even if loaded from old item (after up-/downgrading item, this has to be done!)
+                holder.checkbox.setChecked(usedMediaWrappers.contains(this.getItem(position)));
+                holder.checkbox.setOnCheckedChangeListener(wrapperCheckedChangeListener);
             }
 
             //see longer description

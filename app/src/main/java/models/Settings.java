@@ -157,7 +157,6 @@ public class Settings {
     public void confirmWrapperChanges() {
         saveSettings();
         resetPlaylists();
-
     }
 
     public boolean isWrapperActive(String wrapper) {

@@ -48,31 +48,21 @@ public class MyPlaylistsFragment extends ListFragment implements AdapterView.OnI
         ViewGroup rootView = (ViewGroup) inflater.inflate(R.layout.fragment_playlists, container, false);
         ((MainActivity)getActivity()).getSupportActionBar().setTitle("My Playlists");
 
-        TreeSet<Playlist> treeSet = new TreeSet<>(new Comparator<Playlist>() {
-            @Override
-            public int compare(Playlist lhs, Playlist rhs) {
-                return lhs.getName().toLowerCase().compareTo(rhs.getName().toLowerCase());
-            }
-        });
-
-        treeSet.addAll(PlaylistsManager.getInstance().getPlaylists());
-
-        ArrayList<Playlist> sortedPlaylists = new ArrayList<>();
-
-        Iterator<Playlist> it = treeSet.iterator();
-        while (it.hasNext()) {
-            sortedPlaylists.add(it.next());
-        }
-
         // Bind adapter to the ListFragment
         setListAdapter(
                 new PlaylistArrayAdapter(
                         getActivity(),
                         R.layout.rows,
                         R.id.txtview,
-                        sortedPlaylists
+                        PlaylistsManager.getInstance().getPlaylists()
                         )
         );
+        ((PlaylistArrayAdapter)getListAdapter()).sort(new Comparator<Playlist>() {
+            @Override
+            public int compare(Playlist lhs, Playlist rhs) {
+                return lhs.getName().toLowerCase().compareTo(rhs.getName().toLowerCase());
+            }
+        });
         // Retain the ListFragment instance across Activity re-creation
         setRetainInstance(true);
 
@@ -125,6 +115,7 @@ public class MyPlaylistsFragment extends ListFragment implements AdapterView.OnI
             @Override
             public void onClick(DialogInterface dialog, int which) {
                 PlaylistsManager.getInstance().removePlaylist(playlist);
+                onPlaylistsListChange();
             }
         });
         deleteDialog.setNegativeButton("no", null);
@@ -143,6 +134,11 @@ public class MyPlaylistsFragment extends ListFragment implements AdapterView.OnI
 
         public PlaylistArrayAdapter(Context context, int resource, int textViewResourceId, List<Playlist> objects) {
             super(context, resource, textViewResourceId, objects);
+        }
+
+        @Override
+        public void sort(Comparator<? super Playlist> comparator) {
+            super.sort(comparator);
         }
 
         @Override
