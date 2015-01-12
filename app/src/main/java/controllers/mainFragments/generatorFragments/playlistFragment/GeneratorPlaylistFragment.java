@@ -46,6 +46,7 @@ public class GeneratorPlaylistFragment extends PlaylistFragment implements Playl
     public void onViewCreated(View view, Bundle savedInstanceState) {
         super.onViewCreated(view, savedInstanceState);
         setLoading(true);
+        generator.setContext(getActivity().getApplicationContext());
         generator.startGeneration();
     }
 

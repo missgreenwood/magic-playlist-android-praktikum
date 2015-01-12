@@ -6,6 +6,7 @@ import android.content.DialogInterface;
 import android.graphics.Color;
 import android.graphics.Paint;
 import android.os.Bundle;
+import android.provider.MediaStore;
 import android.support.v4.app.ListFragment;
 import android.util.Log;
 import android.view.LayoutInflater;
@@ -39,6 +40,7 @@ public class PlaylistFragment extends ListFragment implements
     public PlaylistFragment() {
     }
 
+    //TODO: needed?
     public int getFirstVisibleItem() {
         return firstVisibleItem;
     }
@@ -70,28 +72,11 @@ public class PlaylistFragment extends ListFragment implements
 
     private void markAsCurrentlyPlaying(int index) {
         removeCurrentlyPlayingMark();
-        Log.v("", "mark as currently playing index: " + index);
-        Log.v("", "first visible position: " + firstVisibleItem + "visible item count: " + visibleItemCount);
         int correctedIndex = index - firstVisibleItem;
 
-
-        if ((visibleItemCount + firstVisibleItem - 1) < index) {
-            Log.v("", "too far up, item not visible, totalItemcount+firstvisibleitem-1 <index");
-        } else if ((firstVisibleItem > index)) {
-            Log.v("", "too far down, item not visible, firstVisibleItem>index, ");
-        } else {
-            Log.v("", " corrected index (at least when ignoring partial visibility: " + correctedIndex);
-            currentlyPlayingView = getListView().getChildAt(correctedIndex);
-
-            if (currentlyPlayingView == null) {
-
-                Log.v("", "some case we haven't caught yet...?but this should actually be handled before");
-            } else {
-                Log.v("", "currently playing view: " + currentlyPlayingView.toString());
-                currentlyPlayingView.setBackgroundColor(Color.argb(100, 80, 80, 80));
-
-            }
-
+        currentlyPlayingView = getListView().getChildAt(correctedIndex);
+        if (currentlyPlayingView != null) {
+            currentlyPlayingView.setBackgroundColor(Color.argb(100, 80, 80, 80));
         }
     }
 
@@ -188,7 +173,13 @@ public class PlaylistFragment extends ListFragment implements
 
     @Override
     public void onPlaylistChange() {
-        ((ArrayAdapter<Song>)getListAdapter()).notifyDataSetChanged();
+        ((SongArrayAdapter)getListAdapter()).notifyDataSetChanged();
+    }
+
+    @Override
+    public void onResume() {
+        onPlaylistChange();
+        super.onResume();
     }
 
     @Override

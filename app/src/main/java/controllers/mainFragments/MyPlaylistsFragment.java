@@ -115,7 +115,6 @@ public class MyPlaylistsFragment extends ListFragment implements AdapterView.OnI
             @Override
             public void onClick(DialogInterface dialog, int which) {
                 PlaylistsManager.getInstance().removePlaylist(playlist);
-                onPlaylistsListChange();
             }
         });
         deleteDialog.setNegativeButton("no", null);

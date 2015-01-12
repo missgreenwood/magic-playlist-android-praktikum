@@ -1,5 +1,6 @@
 package models.playlist;
 
+import android.content.Context;
 import android.util.Log;
 
 import java.util.ArrayList;
@@ -45,6 +46,10 @@ public class PlaylistGenerator implements LastFmListener {
         this.listener = listener;
         lfm = new LastfmMetadataWrapper(this);
         playlist = new Playlist();
+    }
+
+    public void setContext (Context context) {
+        lfm.setContext(context);
     }
 
     public void startGeneration() {
