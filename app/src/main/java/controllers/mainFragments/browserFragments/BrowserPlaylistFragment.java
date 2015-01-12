@@ -1,5 +1,6 @@
 package controllers.mainFragments.browserFragments;
 
+import android.app.ProgressDialog;
 import android.content.Context;
 import android.os.Bundle;
 import android.support.v4.app.ListFragment;
@@ -18,7 +19,6 @@ import java.util.List;
 import java.util.TreeSet;
 
 import controllers.MainActivity;
-import controllers.mainFragments.generatorFragments.PlaylistFragment;
 import models.mediaModels.Playlist;
 import models.playlist.PlaylistsManager;
 import rest.client.Client;
@@ -32,10 +32,15 @@ public class BrowserPlaylistFragment extends ListFragment implements
         Client.Listener {
     private Client client;
     private ArrayList<Playlist> searchResults;
-    private PlaylistFragment playlistFragment;
+
+    // test, remove before deploy
+    private ArrayList<Playlist> testLists;
+
+    private ResultPlaylistFragment results;
     private String artist;
     private String genre;
     private PlaylistsManager manager;
+    private ProgressDialog loadingDialog;
     public BrowserPlaylistFragment() {
 
     }
@@ -48,12 +53,41 @@ public class BrowserPlaylistFragment extends ListFragment implements
         manager = PlaylistsManager.getInstance();
         client.addObserver(this);
         manager.addObserver(this);
-        client.findPlaylistsByGenreAndArtist(genre, artist);
         searchResults = new ArrayList<>();
-        setListAdapter(new PlaylistArrayAdapter(getActivity(),R.layout.rows,R.id.txtview,searchResults)
-        );
+
+        // test functions, remove when server is fully working
+        testLists = PlaylistsManager.getInstance().getPlaylists();
+        TreeSet<Playlist> treeSet = new TreeSet<>(new Comparator<Playlist>() {
+            @Override
+            public int compare(Playlist lhs, Playlist rhs) {
+                return lhs.getName().toLowerCase().compareTo(rhs.getName().toLowerCase());
+            }
+        });
+        treeSet.addAll(PlaylistsManager.getInstance().getPlaylists());
+        Iterator<Playlist> it = treeSet.iterator();
+        while (it.hasNext()) {
+            testLists.add(it.next());
+        }
+        Log.d("", "Test lists for upload:" + testLists);
+        for (int i = 0; i < testLists.size(); i++) {
+            Playlist testList = testLists.get(i);
+            client.addPlaylist(testList);
+            Log.d("", "Playlist uploaded:" + testList);
+        }
+        setListAdapter(new PlaylistArrayAdapter(getActivity(),R.layout.rows,R.id.txtview,testLists));
+
+        // remove comment when server is fully working
+        // setListAdapter(new PlaylistArrayAdapter(getActivity(),R.layout.rows,R.id.txtview,searchResults));
+
         setRetainInstance(true);
         return rootView;
+    }
+    @Override
+    public void onViewCreated(View view, Bundle savedInstanceState) {
+        super.onViewCreated(view, savedInstanceState);
+        // remove comment when server is fully working
+        // setLoading(true);
+        // client.findPlaylistsByGenreAndArtist(genre, artist);
     }
 
     @Override
@@ -72,19 +106,32 @@ public class BrowserPlaylistFragment extends ListFragment implements
 
     }
 
+    private void setLoading(boolean visible) {
+        if (visible) {
+            if (loadingDialog != null) {
+                loadingDialog = null;
+            }
+            loadingDialog = ProgressDialog.show(getActivity(), "Loading", "Loading matching playlists from database");
+        } else if(loadingDialog != null) {
+            loadingDialog.dismiss();
+        }
+    }
+
     @Override
     public void onFindPlaylistsCallback(List<Playlist> playlists) {
-        TreeSet<Playlist> treeSet = new TreeSet<>(new Comparator<Playlist>() {
+        // remove comment when server is fully working
+        /* setLoading(false);
+            TreeSet<Playlist> treeSet = new TreeSet<>(new Comparator<Playlist>() {
             @Override
             public int compare(Playlist lhs, Playlist rhs) {
                 return lhs.getName().toLowerCase().compareTo(rhs.getName().toLowerCase());
             }
         });
-        treeSet.addAll(PlaylistsManager.getInstance().getPlaylists());
+        // treeSet.addAll(PlaylistsManager.getInstance().getPlaylists());
         Iterator<Playlist> it = treeSet.iterator();
         while (it.hasNext()) {
             searchResults.add(it.next());
-        }
+        } */
     }
 
     private class PlaylistArrayAdapter extends ArrayAdapter<Playlist> {
@@ -102,6 +149,7 @@ public class BrowserPlaylistFragment extends ListFragment implements
     }
 }
 
-// populate return array with search results
-// display search results as playlists
-// implement costum playlist view with like button/bar
+// TODO: Fix playlist upload
+// TODO: Substitute test functions with actual functions
+
+
