@@ -18,14 +18,15 @@ public class ResultPlaylistFragment extends PlaylistFragment {
 
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
-        starButton = (Button) container.findViewById(R.id.starBtn);
+        View v = inflater.inflate(R.layout.fragment_result_playlist, container, false);
+        starButton = (Button) v.findViewById(R.id.starBtn);
         starButton.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
                 Toast.makeText(getActivity(), "You just liked this playlist!", Toast.LENGTH_LONG).show();
             }
         });
-        return inflater.inflate(R.layout.fragment_result_playlist, container, false);
+        return v;
     }
 }
 // TODO: access rating button correctly
