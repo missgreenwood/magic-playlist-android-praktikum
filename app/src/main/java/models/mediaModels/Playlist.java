@@ -1,16 +1,17 @@
 package models.mediaModels;
 
+import android.os.Parcel;
+import android.os.Parcelable;
 import android.util.Log;
 
 import java.util.ArrayList;
 
 import models.playlist.PlaylistFileHandler;
-import models.playlist.PlaylistsManager;
 
 /**
  * Created by TheDaAndy on 27.12.2014.
  */
-public class Playlist {
+public class Playlist implements Parcelable {
     //TODO save in DB
     private static int uniqueId = 0;
 
@@ -124,6 +125,16 @@ public class Playlist {
 
     public void setGenre(String genre) {
         this.genre = genre;
+    }
+
+    @Override
+    public int describeContents() {
+        return 0;
+    }
+
+    @Override
+    public void writeToParcel(Parcel dest, int flags) {
+
     }
 
     public interface Listener {
