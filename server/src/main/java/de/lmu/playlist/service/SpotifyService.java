@@ -10,7 +10,7 @@ public interface SpotifyService {
      * @param authCode the auth code
      * @return the persisted token pair
      */
-    public SpotifyToken obtainToken(String authCode);
+    public SpotifyToken obtainTokenPair(String authCode);
 
     /**
      * Refreshes the access token that belongs to the pair of the provided refresh token.

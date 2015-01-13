@@ -58,5 +58,4 @@ public interface PlaylistFacade {
     @Path("/spotify/refresh_token")
     @Produces(MediaType.APPLICATION_JSON)
     public SpotifyToken refreshToken(@QueryParam("refresh_token") String refreshToken);
-    // BasicNameValuePair authCodePair = new BasicNameValuePair("refresh_token", refreshToken);
 }

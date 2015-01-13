@@ -8,4 +8,6 @@ public final class SpotifyConstants {
 
     public static final String SPOTIFY_URL = "https://accounts.spotify.com/api/token";
 
+    public static final String REDIRECT_URI = "http://141.84.213.249:5050/playlist/spotify/get_tokens";
+
 }
