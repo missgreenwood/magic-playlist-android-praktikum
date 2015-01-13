@@ -4,7 +4,6 @@ import com.google.inject.Inject;
 import com.mongodb.BasicDBObject;
 
 import org.mongojack.DBQuery;
-import org.mongojack.WriteResult;
 
 import de.lmu.playlist.domain.entity.SpotifyToken;
 import de.lmu.playlist.service.MongoService;

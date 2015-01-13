@@ -5,8 +5,6 @@ import com.mongodb.MongoException;
 
 import java.util.List;
 
-import javax.ws.rs.QueryParam;
-
 import de.lmu.playlist.domain.entity.Playlist;
 import de.lmu.playlist.domain.entity.SpotifyToken;
 import de.lmu.playlist.service.PlaylistService;
@@ -34,8 +32,7 @@ public class PlaylistFacadeImpl implements PlaylistFacade {
         try {
             playlistService.addPlaylist(playlist);
         } catch (MongoException.DuplicateKey duplicateKey) {
-            // this exception occurs when we try to add a playlist with an already existing name.
-            // our current strategy: ignore it! 
+            throw new ConflictException();
         }
     }
 
