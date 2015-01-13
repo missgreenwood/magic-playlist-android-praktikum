@@ -6,11 +6,30 @@ repositories {
 
 dependencies {
     compile 'org.eclipse.jetty:jetty-servlet:9.1.5.v20140505'
-    compile 'com.sun.jersey:jersey-server:1.18.1'
-    compile 'com.sun.jersey.contribs:jersey-guice:1.18.1'
+    compile 'com.sun.jersey.contribs:jersey-guice:1.18.3'
+    compile 'com.sun.jersey:jersey-bundle:1.18.3'
     compile 'com.fasterxml.jackson.jaxrs:jackson-jaxrs-json-provider:2.3.0'
+    compile 'javax.xml.bind:jaxb-api:2.1'
     compile 'org.mongojack:mongojack:2.0.0'
     compile 'org.mongodb:mongo-java-driver:2.11.4'
     compile 'com.google.inject.extensions:guice-servlet:3.0'
     compile 'org.testng:testng:6.1.1'
+    compile 'com.google.code.gson:gson:2.2.4'
+}
+
+jar {
+    manifest {
+        attributes "Implementation-Title": "Magic Playlist Server"
+        attributes "Implementation-Version": '1.0'
+        attributes "Main-Class" : 'de.lmu.playlist.PlaylistServer'
+    }
+}
+
+task fatJar(type: Jar) {
+    manifest {
+        attributes "Main-Class" : 'de.lmu.playlist.PlaylistServer'
+    }
+    baseName = project.name + '-all'
+    from { configurations.compile.collect { it.isDirectory() ? it : zipTree(it) } }
+    with jar
 }
