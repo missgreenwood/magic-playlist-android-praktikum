@@ -47,6 +47,7 @@ public class PlaylistDaoImpl extends AbstractDao<Playlist> implements PlaylistDa
         getDBCollection().update(DBQuery.is(Playlist.NAME, playlist.getName()), playlist);
     }
 
+    @Override
     public void drop() {
         super.drop();
     }

@@ -10,6 +10,7 @@ import android.widget.Toast;
 
 import controllers.mainFragments.generatorFragments.PlaylistFragment;
 import models.mediaModels.Playlist;
+import models.playlist.PlaylistsManager;
 import rest.client.Client;
 import tests.R;
 
@@ -18,6 +19,7 @@ import tests.R;
  */
 public class ResultPlaylistFragment extends PlaylistFragment {
     private Button starButton;
+    private Button saveButton;
     private int id;
     private String playlist_name;
     private Playlist playlist;
@@ -26,11 +28,19 @@ public class ResultPlaylistFragment extends PlaylistFragment {
     public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
         View v = inflater.inflate(R.layout.fragment_result_playlist, container, false);
         starButton = (Button) v.findViewById(R.id.starBtn);
+        saveButton = (Button) v.findViewById(R.id.saveBtn);
         starButton.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
                 Toast.makeText(getActivity(), "You just liked this playlist!", Toast.LENGTH_LONG).show();
                 Client.getInstance().likePlaylist(playlist);
+            }
+        });
+        saveButton.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                Toast.makeText(getActivity(), "You just saved this playlist!", Toast.LENGTH_LONG).show();
+                PlaylistsManager.getInstance().addPlaylist(playlist);
             }
         });
         return v;
