@@ -14,6 +14,8 @@ import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.SortedSet;
 import java.util.TreeSet;
+import java.util.regex.Matcher;
+import java.util.regex.Pattern;
 
 import models.mediaModels.Playlist;
 import models.mediaModels.Song;
@@ -79,23 +81,15 @@ public class PlaylistFileHandler {
 
             HashMap<Integer, Song> songs = new HashMap<>();
             while ((line = reader.readLine()) != null) {
-                int i = line.indexOf('=');
-//                Log.d()
                 int songNumber;
-
-                if (i == -1) {
+                Matcher matcher = Pattern.compile("^(file|title|length)(\\d+)=(.*)$", Pattern.CASE_INSENSITIVE).matcher(line);
+                if (!matcher.matches()) {
                     continue;
                 }
-
-                try {
-                    songNumber = Integer.parseInt(line.substring(i-1,i));
-                } catch(Exception e) {
-                    continue;
-                }
-
-                String label = line.substring(0, i-1).toLowerCase(),
-                       value = line.substring(i + 1);
-
+                String label = matcher.group(1).toLowerCase(),
+                        value = matcher.group(3);
+                songNumber = Integer.parseInt(matcher.group(2));
+                Log.d("PlaylistFileHandler", "song " + songNumber + ": " + label + " = " + value);
                 Song song;
                 if (!songs.containsKey(songNumber)) {
                     song = new Song();
@@ -122,6 +116,7 @@ public class PlaylistFileHandler {
                         song.setLength(Integer.parseInt(value));
                         break;
                 }
+
             }
 
             //TODO: check time effort for sorting...
