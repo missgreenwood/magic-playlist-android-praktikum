@@ -34,7 +34,30 @@ public class SpotifyServiceImpl implements SpotifyService {
         payload.add("redirect_uri", SpotifyConstants.REDIRECT_URI);
 
         WebResource resource = client.resource(SpotifyConstants.SPOTIFY_URL);
+        String idSecret = SpotifyConstants.CLIENT_ID + ":" + SpotifyConstants.CLIENT_SECRET;
+        String idSecretEncoded = new String(Base64.encode(idSecret.getBytes()));
+        resource.header("Authorization", "Basic " + idSecretEncoded);
+        resource.type(MediaType.APPLICATION_FORM_URLENCODED_TYPE);
 
+        String resourc = resource.toString();
+        SpotifyToken token = null;
+        try {
+            token = resource.post(SpotifyToken.class, payload);
+        } catch (UniformInterfaceException | ClientHandlerException e) {
+            e.printStackTrace();
+            throw new BadRequestException();
+        }
+
+        return token;
+    }
+
+    @Override
+    public SpotifyToken refreshTokenPair(String refreshToken) {
+        MultivaluedMap<String, String> payload =  new MultivaluedMapImpl();
+        payload.add("grant_type", "refresh_token");
+        payload.add("refresh_token", refreshToken);
+
+        WebResource resource = client.resource(SpotifyConstants.SPOTIFY_URL);
         String idSecret = SpotifyConstants.CLIENT_ID + ":" + SpotifyConstants.CLIENT_SECRET;
         String idSecretEncoded = new String(Base64.encode(idSecret.getBytes()));
 
@@ -48,10 +71,5 @@ public class SpotifyServiceImpl implements SpotifyService {
         }
 
         return token;
-    }
-
-    @Override
-    public SpotifyToken refreshTokenPair(String refreshToken) {
-        return tokenDao.update(null);
     }
 }
