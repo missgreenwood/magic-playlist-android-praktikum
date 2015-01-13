@@ -22,8 +22,7 @@ import de.lmu.playlist.service.MongoService;
 import de.lmu.playlist.service.MongoServiceImpl;
 import de.lmu.playlist.service.PlaylistService;
 import de.lmu.playlist.service.PlaylistServiceImpl;
-import de.lmu.playlist.service.SpotifyService;
-import de.lmu.playlist.service.SpotifyServiceImpl;
+// import de.lmu.playlist.service.SpotifyServiceImpl;
 
 public class PlaylistModule extends ServletModule {
 
@@ -33,7 +32,7 @@ public class PlaylistModule extends ServletModule {
         bind(PlaylistDao.class).to(PlaylistDaoImpl.class).in(Singleton.class);
         bind(TokenDao.class).to(TokenDaoImpl.class).in(Singleton.class);
         bind(MongoService.class).to(MongoServiceImpl.class).in(Singleton.class);
-        bind(SpotifyService.class).to(SpotifyServiceImpl.class).in(Singleton.class);
+        // bind(SpotifyService.class).to(SpotifyServiceImpl.class).in(Singleton.class);
         bind(PlaylistService.class).to(PlaylistServiceImpl.class).in(Singleton.class);
         bind(PlaylistFacade.class).to(PlaylistFacadeImpl.class).in(Singleton.class);
 
