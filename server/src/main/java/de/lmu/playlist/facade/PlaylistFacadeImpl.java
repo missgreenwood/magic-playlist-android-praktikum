@@ -60,12 +60,12 @@ public class PlaylistFacadeImpl implements PlaylistFacade {
     }
 
     @Override
-    public SpotifyToken getTokens(@QueryParam("auth_code") String authCode) {
+    public SpotifyToken getTokens(String authCode) {
         return spotifyService.obtainTokenPair(authCode);
     }
 
     @Override
-    public SpotifyToken refreshToken(@QueryParam("refresh_token") String refreshToken) {
+    public SpotifyToken refreshToken(String refreshToken) {
         return spotifyService.refreshTokenPair(refreshToken);
     }
 }
