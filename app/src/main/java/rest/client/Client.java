@@ -46,9 +46,11 @@ public class Client {
         AsyncHttpClient asyncHttpClient = new AsyncHttpClient();
         try {
             String json = gson.toJson(playlist);
-            Log.d("Client", "playlist send request with playlistString: " + json);
+            Log.d("Client", "playlist send request to address: \"" + ClientConstants.ADD_PLAYLIST_URL + "\" with playlistString: " + json);
 
-            asyncHttpClient.post(context, ClientConstants.ADD_PLAYLIST_URL, new StringEntity(json), "application/json", new TextHttpResponseHandler() {
+            StringEntity entity = new StringEntity(json);
+            entity.setContentType("application/json");
+            asyncHttpClient.post(context, ClientConstants.ADD_PLAYLIST_URL, entity, "application/json", new TextHttpResponseHandler() {
                 @Override
                 public void onFailure(int i, Header[] headers, String s, Throwable throwable) {
                     Log.e("Client", "Error while uploading Playlist: " + throwable.getMessage() + " headers: " + headers + " status: " + i);
@@ -57,6 +59,10 @@ public class Client {
 
                 @Override
                 public void onSuccess(int i, Header[] headers, String s) {
+                    for (Header header : headers) {
+                        Log.d("TEST", "header: " + header);
+                    }
+                    Log.d("TEST", "success!!!" + " string: " + s + " status: " + i);
                     onAddPlaylistSuccess();
                 }
             });
@@ -128,7 +134,9 @@ public class Client {
         AsyncHttpClient asyncHttpClient = new AsyncHttpClient();
         try {
             String json = gson.toJson(playlist);
-            asyncHttpClient.post(context, ClientConstants.LIKE_PLAYLIST_URL, new StringEntity(json), "application/json", new TextHttpResponseHandler() {
+            StringEntity entity = new StringEntity(json);
+            entity.setContentType("application/json");
+            asyncHttpClient.post(context, ClientConstants.LIKE_PLAYLIST_URL, entity, "application/json", new TextHttpResponseHandler() {
                 @Override
                 public void onFailure(int i, Header[] headers, String s, Throwable throwable) {
                     onLikePlaylistError();

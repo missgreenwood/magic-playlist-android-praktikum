@@ -1,6 +1,9 @@
 package de.lmu.playlist.domain.entity;
 
 import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
+
+import java.util.ArrayList;
+
 import javax.xml.bind.annotation.XmlRootElement;
 
 @XmlRootElement
@@ -15,7 +18,7 @@ public class Playlist {
 
     private int likes;
 
-    private Iterable<Song> songs;
+    private ArrayList<Song> songs;
 
     private String genre;
 
@@ -43,7 +46,7 @@ public class Playlist {
         return songs;
     }
 
-    public void setSongs(Iterable<Song> songs) {
+    public void setSongs(ArrayList<Song> songs) {
         this.songs = songs;
     }
 
