@@ -5,21 +5,27 @@ import android.content.Context;
 import android.content.DialogInterface;
 import android.graphics.Color;
 import android.graphics.Paint;
+import android.graphics.Point;
 import android.os.Bundle;
-import android.provider.MediaStore;
 import android.support.v4.app.ListFragment;
 import android.util.Log;
+import android.view.Gravity;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
-import android.widget.AbsListView;
+import android.view.animation.AlphaAnimation;
+import android.view.animation.Animation;
+import android.view.animation.DecelerateInterpolator;
+import android.view.animation.ScaleAnimation;
 import android.widget.AdapterView;
 import android.widget.ArrayAdapter;
 import android.widget.ListView;
 import android.widget.TextView;
+import android.widget.Toast;
 
 import java.util.List;
 
+import controllers.mainFragments.generatorFragments.playlistFragment.OnSwipeListener;
 import models.mediaModels.Playlist;
 import models.mediaModels.Song;
 import models.mediawrappers.PlayQueue;
@@ -29,32 +35,19 @@ import tests.R;
  * created by Andreas
  */
 public class PlaylistFragment extends ListFragment implements
-        PlayQueue.Listener, AdapterView.OnItemLongClickListener, Playlist.Listener, AbsListView.OnScrollListener {
+        PlayQueue.Listener, AdapterView.OnItemLongClickListener, Playlist.Listener {
 
     private Playlist playlist;
     private View currentlyPlayingView;
-    private int firstVisibleItem;
-    private int visibleItemCount;
-    private int totalItemCount;
+
+    private int currentlyDraggedItemPos = -1;
+    private float currentDraggedX = 0;
+    private Song lastRemovedSong;
+    private int lastRemovedPos;
+    private TextView removedSongNotification;
+    private boolean dragCanceled = false;
 
     public PlaylistFragment() {
-    }
-
-    //TODO: needed?
-    public int getFirstVisibleItem() {
-        return firstVisibleItem;
-    }
-
-    public void setFirstVisibleItem(int firstVisibleItem) {
-        this.firstVisibleItem = firstVisibleItem;
-    }
-
-    public int getVisibleItemCount() {
-        return visibleItemCount;
-    }
-
-    public void setVisibleItemCount(int visibleItemCount) {
-        this.visibleItemCount = visibleItemCount;
     }
 
     @Override
@@ -72,7 +65,7 @@ public class PlaylistFragment extends ListFragment implements
 
     private void markAsCurrentlyPlaying(int index) {
         removeCurrentlyPlayingMark();
-        int correctedIndex = index - firstVisibleItem;
+        int correctedIndex = index - getListView().getFirstVisiblePosition();
 
         currentlyPlayingView = getListView().getChildAt(correctedIndex);
         if (currentlyPlayingView != null) {
@@ -94,9 +87,124 @@ public class PlaylistFragment extends ListFragment implements
     @Override
     public void onViewCreated(View view, Bundle savedInstanceState) {
         super.onViewCreated(view, savedInstanceState);
-        getListView().setOnItemLongClickListener(this);
-        getListView().setOnScrollListener(this);
+        removedSongNotification = ((TextView)view.findViewById(R.id.removedSongNotification));
+        removedSongNotification.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                Log.d("PlaylistFragment", " ON REVERT CLICKED");
+                playlist.getSongsList(true).add(lastRemovedPos, lastRemovedSong);
+                lastRemovedSong = null;
+                lastRemovedPos = -1;
+                hideRemovedSongNotification();
+                SongArrayAdapter adapter = (SongArrayAdapter) getListAdapter();
+                if (adapter != null) {
+                    adapter.notifyDataSetChanged();
+                }
+            }
+        });
+        final ListView listView = getListView();
+//        listView.setOnItemLongClickListener(this);
+        listView.setOnTouchListener(new OnSwipeListener() {
+            @Override
+            public void onRightSwipe() {
+                dragItem(listView.pointToPosition((int)endX, (int)endY), startX, endX);
+            }
 
+            @Override
+            public void onLeftSwipe() {
+                dragItem(listView.pointToPosition((int)endX, (int)endY), startX, endX);
+            }
+
+            @Override
+            public void onUp() {
+                cancelDrag();
+                dragCanceled = false;
+            }
+        });
+    }
+
+    private void hideRemovedSongNotification() {
+        removedSongNotification.setVisibility(View.VISIBLE);
+//        if (removedSongNotification.getAnimation() == null) {
+        Animation fadeIn = new AlphaAnimation(1, 0);
+        fadeIn.setInterpolator(new DecelerateInterpolator()); //add this
+        fadeIn.setDuration(1000);
+        fadeIn.setAnimationListener(new Animation.AnimationListener() {
+            @Override
+            public void onAnimationStart(Animation animation) {
+
+            }
+
+            @Override
+            public void onAnimationEnd(Animation animation) {
+                removedSongNotification.setVisibility(View.GONE);
+            }
+
+            @Override
+            public void onAnimationRepeat(Animation animation) {
+
+            }
+        });
+
+        removedSongNotification.setAnimation(fadeIn);
+    }
+
+    private void cancelDrag()
+    {
+        if (currentlyDraggedItemPos == -1) {
+            return;
+        }
+        dragCanceled = true;
+        ListView listView = getListView();
+        View item = listView.getChildAt(currentlyDraggedItemPos - listView.getFirstVisiblePosition());
+        if (item != null) {
+            item.setX(0);
+            currentDraggedX = 0;
+            currentlyDraggedItemPos = -1;
+        }
+    }
+
+    private void dragItem(int position, float startX, float endX) {
+        if (dragCanceled) {
+            return;
+        }
+        ListView listView = getListView();
+
+        if (currentlyDraggedItemPos == -1) {
+            currentlyDraggedItemPos = position;
+        }
+        View item = listView.getChildAt(currentlyDraggedItemPos - listView.getFirstVisiblePosition());
+        if (item != null) {
+            currentDraggedX = endX - startX;
+            Point size = new Point();
+            getActivity().getWindowManager().getDefaultDisplay().getSize(size);
+            if ((endX >= size.x * 0.95 || endX <= size.x * 0.05) && Math.abs(currentDraggedX) > size.x * 0.4) {
+                cancelDrag();
+                item.setVisibility(View.GONE);
+                SongArrayAdapter adapter = (SongArrayAdapter)getListAdapter();
+                if (adapter != null) {
+                    lastRemovedSong = adapter.getItem(position);
+                    lastRemovedPos = position;
+                    playlist.removeSong(lastRemovedSong);
+                    adapter.notifyDataSetChanged();
+                    showRevertRemoveToast();
+                }
+            } else {
+                item.setX(currentDraggedX);
+            }
+        }
+    }
+
+    private void showRevertRemoveToast() {
+        removedSongNotification.setText("The song \"" + lastRemovedSong.getSongname() + "\" has been removed from your playlist. To revert, simply click this message.");
+        removedSongNotification.setVisibility(View.VISIBLE);
+//        if (removedSongNotification.getAnimation() == null) {
+        Animation fadeIn = new AlphaAnimation(0, 1);
+        fadeIn.setInterpolator(new DecelerateInterpolator()); //add this
+        fadeIn.setDuration(1000);
+
+        removedSongNotification.setAnimation(fadeIn);
+//        }
     }
 
     @Override
@@ -185,24 +293,8 @@ public class PlaylistFragment extends ListFragment implements
         super.onResume();
     }
 
-    @Override
-    public void onScrollStateChanged(AbsListView view, int scrollState) {
-
-    }
-
-    @Override
-    public void onScroll(AbsListView view, int firstVisibleItem, int visibleItemCount, int totalItemCount) {
-
-        this.visibleItemCount = visibleItemCount;
-        this.firstVisibleItem = firstVisibleItem;
-        this.totalItemCount = totalItemCount;
-
-        Log.v("", "on scroll: visibleItemCount: " + visibleItemCount + " firstVisibleItem: " + firstVisibleItem);
-    }
-
     private class SongArrayAdapter extends ArrayAdapter<Song>
     {
-
         public SongArrayAdapter(Context context, int resource, int textViewResourceId, List<Song> objects) {
             super(context, resource, textViewResourceId, objects);
         }
@@ -211,18 +303,32 @@ public class PlaylistFragment extends ListFragment implements
         public View getView(int position, View convertView, ViewGroup parent)
         {
             final Song song = getItem(position);
-            TextView view = (TextView) super.getView(position, null, parent);
+            TextView view = (TextView) super.getView(position, convertView, parent);
+
+            String text = (position + 1) + ". " + song.getArtist() + " - " + song.getSongname();
+
+            view.setVisibility(View.VISIBLE);
+
             if (song.isNotPlayable()) {
                 view.setEnabled(false);
-                view.setText(view.getText() + " (not found!)");
+                view.setText(text + " (not found!)");
                 view.setTextColor(Color.rgb(100, 100, 100));
                 view.setPaintFlags(view.getPaintFlags() | Paint.STRIKE_THRU_TEXT_FLAG);
+            } else {
+                view.setEnabled(true);
+                view.setText(text);
+                view.setPaintFlags(view.getPaintFlags() & (~Paint.STRIKE_THRU_TEXT_FLAG));
+                view.setTextColor(Color.BLACK);
             }
             if (PlayQueue.getInstance().getCurrentSong() == song) {
                 currentlyPlayingView = view;
                 currentlyPlayingView.setBackgroundColor(Color.argb(100, 80, 80, 80));
             }
-            view.setText((position + 1) + ". " + song.getArtist() + " - " + song.getSongname());
+            if (position == currentlyDraggedItemPos) {
+                view.setX(currentDraggedX);
+            } else {
+                view.setX(0);
+            }
             return view;
         }
     }

@@ -11,9 +11,7 @@ import android.view.View;
 import android.widget.Toast;
 
 import java.util.ArrayList;
-import java.util.List;
 
-import controllers.MainActivity;
 import controllers.mainFragments.generatorFragments.PlaylistFragment;
 import models.mediaModels.Playlist;
 import models.mediaModels.Song;
@@ -36,16 +34,6 @@ public class GeneratorPlaylistFragment extends PlaylistFragment implements
     private boolean uploading = false;
     private boolean destroying = false;
 
-    @Override
-    public void onCreate(Bundle savedInstanceState) {
-        super.onCreate(savedInstanceState);
-    }
-
-    @Override
-    public void onResume() {
-        super.onResume();
-        ((MainActivity)getActivity()).getSupportActionBar().setTitle(generator.getPlaylist().getName());
-    }
 
     public void setGeneratorData(String genre, int songsCountLimit, ArrayList<String> artists, String playlistName) {
         generator = new PlaylistGenerator(this, genre, songsCountLimit, artists);
@@ -56,7 +44,6 @@ public class GeneratorPlaylistFragment extends PlaylistFragment implements
     public void onViewCreated(View view, Bundle savedInstanceState) {
         super.onViewCreated(view, savedInstanceState);
         setLoading(true);
-        generator.setContext(getActivity().getApplicationContext());
         generator.generatePlaylist();
     }
 

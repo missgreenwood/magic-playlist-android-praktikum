@@ -89,7 +89,6 @@ public class PlaylistFileHandler {
                 String label = matcher.group(1).toLowerCase(),
                         value = matcher.group(3);
                 songNumber = Integer.parseInt(matcher.group(2));
-                Log.d("PlaylistFileHandler", "song " + songNumber + ": " + label + " = " + value);
                 Song song;
                 if (!songs.containsKey(songNumber)) {
                     song = new Song();
@@ -119,7 +118,6 @@ public class PlaylistFileHandler {
 
             }
 
-            //TODO: check time effort for sorting...
             SortedSet<Integer> keys = new TreeSet<>(songs.keySet());
             for (int key : keys) {
                 newPlaylist.addSong(songs.get(key));

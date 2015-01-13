@@ -107,10 +107,7 @@ public class ArtistsFragment extends ListFragment {
 
         @Override
         public View getView(int position, View convertView, ViewGroup parent) {
-            TextView view = (TextView) convertView;
-            if (convertView == null) {
-                view = new TextView(getContext());
-            }
+            TextView view = (TextView) super.getView(position, convertView, parent);
             String artist = getItem(position);
             if (artist != null) {
                 view.setText(artist);
