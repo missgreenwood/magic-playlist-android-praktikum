@@ -4,6 +4,7 @@ import android.content.Intent;
 import android.content.IntentFilter;
 import android.net.Uri;
 import android.os.Bundle;
+import android.support.v4.app.FragmentManager;
 import android.support.v4.app.FragmentTransaction;
 import android.support.v7.app.ActionBarActivity;
 import android.util.Log;
@@ -34,7 +35,7 @@ import tests.R;
  * Created by judith on 02.02.15.
  */
 public class MainActivity extends ActionBarActivity implements
-        View.OnClickListener {
+        View.OnClickListener, FragmentManager.OnBackStackChangedListener {
 
     private Button myPlaylists;
     private Button playlistsGenerator;
@@ -77,6 +78,9 @@ public class MainActivity extends ActionBarActivity implements
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
+
+        getSupportFragmentManager().addOnBackStackChangedListener(this);
+
         myPlaylists = (Button) this.findViewById(R.id.button5);
         playlistsGenerator = (Button) this.findViewById(R.id.button6);
         otherPlaylists = (Button) this.findViewById(R.id.button7);
@@ -108,6 +112,10 @@ public class MainActivity extends ActionBarActivity implements
         if (id == R.id.action_settings) {
             return true;
         }
+        if (id == android.R.id.home) {
+            getSupportFragmentManager().popBackStack();
+        }
+
         return super.onOptionsItemSelected(item);
     }
 
@@ -125,6 +133,16 @@ public class MainActivity extends ActionBarActivity implements
             this.openPlaylistBrowser();
         }
     }
+
+    @Override
+    public void onBackStackChanged() {
+        if (getSupportFragmentManager().getBackStackEntryCount() > 0) {
+            getSupportActionBar().setDisplayHomeAsUpEnabled(true);
+        } else {
+            getSupportActionBar().setDisplayHomeAsUpEnabled(false);
+        }
+    }
+
 
     @Override
     protected void onStart() {
