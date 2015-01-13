@@ -1,15 +1,12 @@
 package de.lmu.playlist.facade;
 
-import com.google.inject.Guice;
 import com.google.inject.Inject;
-import com.google.inject.Injector;
 import com.mongodb.MongoException;
 
 import java.util.List;
 
 import javax.ws.rs.QueryParam;
 
-import de.lmu.playlist.PlaylistModule;
 import de.lmu.playlist.domain.entity.Playlist;
 import de.lmu.playlist.domain.entity.SpotifyToken;
 import de.lmu.playlist.service.PlaylistService;
@@ -63,12 +60,12 @@ public class PlaylistFacadeImpl implements PlaylistFacade {
     }
 
     @Override
-    public SpotifyToken getTokens(@QueryParam("auth_code") String authCode) {
-        return spotifyService.obtainToken(authCode);
+    public SpotifyToken getTokens(String authCode) {
+        return spotifyService.obtainTokenPair(authCode);
     }
 
     @Override
-    public SpotifyToken refreshToken(@QueryParam("refresh_token") String refreshToken) {
+    public SpotifyToken refreshToken(String refreshToken) {
         return spotifyService.refreshTokenPair(refreshToken);
     }
 }

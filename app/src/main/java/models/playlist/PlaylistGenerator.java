@@ -73,7 +73,9 @@ public class PlaylistGenerator implements LastFmListener {
         }
         if (initArtists != null) {
             for(String artist : initArtists) {
-                findSimilarArtists(getArtistInfo(artist));
+                ArtistInfo artistInfo = getArtistInfo(artist);
+                artistInfo.setPriority(2.5f);
+                findSimilarArtists(artistInfo);
             }
         }
         startGeneration();

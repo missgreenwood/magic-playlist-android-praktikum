@@ -6,6 +6,7 @@ import android.content.DialogInterface;
 import android.graphics.Color;
 import android.graphics.Paint;
 import android.os.Bundle;
+import android.provider.MediaStore;
 import android.support.v4.app.ListFragment;
 import android.util.Log;
 import android.view.LayoutInflater;
@@ -14,17 +15,14 @@ import android.view.ViewGroup;
 import android.widget.AbsListView;
 import android.widget.AdapterView;
 import android.widget.ArrayAdapter;
-import android.widget.Button;
 import android.widget.ListView;
 import android.widget.TextView;
-import android.widget.Toast;
 
 import java.util.List;
 
 import models.mediaModels.Playlist;
 import models.mediaModels.Song;
 import models.mediawrappers.PlayQueue;
-import rest.client.Client;
 import tests.R;
 
 /**
@@ -38,7 +36,6 @@ public class PlaylistFragment extends ListFragment implements
     private int firstVisibleItem;
     private int visibleItemCount;
     private int totalItemCount;
-    private Button uploadBtn;
 
     public PlaylistFragment() {
     }
@@ -91,16 +88,7 @@ public class PlaylistFragment extends ListFragment implements
 
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
-        View v = inflater.inflate(R.layout.fragment_playlist, container, false);
-        uploadBtn = (Button) v.findViewById(R.id.uploadBtn);
-        uploadBtn.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                Toast.makeText(getActivity(), "You just uploaded this playlist!", Toast.LENGTH_LONG).show();
-                Client.getInstance().addPlaylist(playlist);
-            }
-        });
-        return v;
+        return inflater.inflate(R.layout.fragment_playlist, container, false);
     }
 
     @Override
