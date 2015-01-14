@@ -27,6 +27,7 @@ import java.util.ArrayList;
 
 import models.apiwrappers.APIWrapper;
 import models.apiwrappers.CallbackInterface;
+import rest.client.ClientConstants;
 
 /**
  * Created by charlotte on 20.12.14.
@@ -49,6 +50,7 @@ public class SpotifyLoginHandler {
     private static final String SPOTIFY_ACCESS_TOKEN_CALLBACK = "spotify-access-token-callback";
     Activity context;
     private SharedPreferences preferences;
+    private String currentAccessToken;
 
     public SpotifyLoginHandler() {
 
@@ -80,7 +82,6 @@ public class SpotifyLoginHandler {
 
     }
 
-
     public void saveRefreshToken(String refreshToken) {
 
         SharedPreferences.Editor editor = preferences.edit();
@@ -89,12 +90,10 @@ public class SpotifyLoginHandler {
         editor.commit();
     }
 
-
     public String retrieveRefreshToken() {
 
         return preferences.getString(SPOTIFY_REFRESH_TOKEN_STRING, null);
     }
-
 
     public void getNewAccessToken(String refreshToken) {
 
@@ -102,7 +101,7 @@ public class SpotifyLoginHandler {
         ArrayList<NameValuePair> params = new ArrayList<NameValuePair>();
         params.add(authCodePair);
 
-        String url = "http://141.84.213.249:5050/playlist/spotify/refresh_token";
+        String url = ClientConstants.BASE_URL + "/spotify/refresh_token";
         url = APIWrapper.encodeURL(url, params);
 
 
@@ -129,13 +128,11 @@ public class SpotifyLoginHandler {
 
     }
 
-
     public boolean hasSpotifyRequestToken() {
         String refreshToken = retrieveRefreshToken();
         return (refreshToken != null && !(refreshToken.equals("")));
 
     }
-
 
     public void startSpotifyLogin() {
         //TODO: Abfrage nach Access Token?
@@ -150,7 +147,6 @@ public class SpotifyLoginHandler {
 
     }
 
-
     public void getAccessAndRefreshToken(String authCode) {
 
 
@@ -158,7 +154,7 @@ public class SpotifyLoginHandler {
         ArrayList<NameValuePair> params = new ArrayList<NameValuePair>();
         params.add(authCodePair);
 
-        String url = "http://141.84.213.249:5050/playlist/spotify/get_tokens";
+        String url = ClientConstants.BASE_URL + "/spotify/get_tokens";
         url = APIWrapper.encodeURL(url, params);
 
         Log.d(TAG, url);
@@ -178,10 +174,14 @@ public class SpotifyLoginHandler {
 
         AsyncHttpClient asyncHttpClient = new AsyncHttpClient();
         Header[] headers = {new BasicHeader("Content-type", "application/json")};
+
+        Log.d(TAG, url);
+
         asyncHttpClient.get(getContext(), url, headers, null, new TextHttpResponseHandler() {
             @Override
             public void onFailure(int i, Header[] headers, String s, Throwable throwable) {
-                Log.d(TAG, "back result is: " + s);
+                Log.d(TAG, "back result is: " + s + throwable.getStackTrace() + " " + throwable.getMessage() + " " + throwable.getCause() + " " + throwable.toString());
+
                 //processWebCallResult("", DEFAULT_CALLBACK, null);
 
             }
@@ -199,5 +199,13 @@ public class SpotifyLoginHandler {
 
     }
 
+    public String getCurrentAccessToken() {
 
+        return currentAccessToken;
+
+    }
+
+    public void setCurrentAccessToken(String currentAccessToken) {
+        this.currentAccessToken = currentAccessToken;
+    }
 }
