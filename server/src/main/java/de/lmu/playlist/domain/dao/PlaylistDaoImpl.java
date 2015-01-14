@@ -4,6 +4,7 @@ import com.google.inject.Inject;
 import com.mongodb.BasicDBObject;
 
 import org.mongojack.DBQuery;
+import org.mongojack.WriteResult;
 
 import java.util.List;
 
@@ -43,8 +44,9 @@ public class PlaylistDaoImpl extends AbstractDao<Playlist> implements PlaylistDa
     }
 
     @Override
-    public void update(Playlist playlist) {
+    public Playlist update(Playlist playlist) {
         getDBCollection().update(DBQuery.is(Playlist.NAME, playlist.getName()), playlist);
+        return findPlaylist(playlist.getName());
     }
 
     @Override

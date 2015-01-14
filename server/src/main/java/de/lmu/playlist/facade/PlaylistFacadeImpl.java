@@ -47,8 +47,8 @@ public class PlaylistFacadeImpl implements PlaylistFacade {
     }
 
     @Override
-    public void likePlaylist(Playlist playlist) {
-        playlistService.likePlaylist(playlist);
+    public String likePlaylist(String name) {
+        return String.valueOf(playlistService.likePlaylist(name).getLikes());
     }
 
     @Override

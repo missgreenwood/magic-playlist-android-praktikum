@@ -11,6 +11,7 @@ import java.util.HashMap;
 import models.mediaModels.Playlist;
 import models.mediaModels.Song;
 import models.mediawrappers.PlayQueue;
+import models.mediawrappers.SpotifyLoginHandler;
 import models.playlist.PlaylistsManager;
 
 /**
@@ -68,6 +69,13 @@ public class Settings {
         for (String wrapper : wrappers) {
             mediaWrappers.add(wrapper);
         }
+
+        /*this is very ugly...   @author charlotte*/
+        if (mediaWrappers.contains(Song.MEDIA_WRAPPER_SPOTIFY)) {
+            // SpotifyLoginHandler.getInstance().startSpotifyLogin();
+
+        }
+
 
         this.preferences = preferences;
     }
@@ -128,6 +136,14 @@ public class Settings {
         if (!usedMediaWrappers.contains(wrapper)) {
             usedMediaWrappers.add(wrapper);
         }
+
+
+        /*again very very ugly*/
+        if (wrapper.equals(Song.MEDIA_WRAPPER_SPOTIFY)) {
+            //SpotifyLoginHandler.getInstance().startSpotifyLogin();
+
+        }
+
         saveSettings();
         resetPlaylists();
     }

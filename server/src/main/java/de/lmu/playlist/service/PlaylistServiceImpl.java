@@ -52,9 +52,11 @@ public class PlaylistServiceImpl implements PlaylistService {
     }
 
     @Override
-    public void likePlaylist(Playlist playlist) {
+    public Playlist likePlaylist(String name) {
+        Playlist playlist = playlistDao.findPlaylist(name);
         playlist.setLikes(playlist.getLikes() + 1);
         playlistDao.update(playlist);
+        return playlistDao.findPlaylist(name);
     }
 
     @Override
