@@ -33,9 +33,10 @@ public interface PlaylistService {
     /**
      * Increments the Playlist's like count and persists that change.
      *
-     * @param playlist the playlist to like.
+     * @param name the playlist to like.
+     * @return the updated playlist
      */
-    void likePlaylist(Playlist playlist);
+    Playlist likePlaylist(String name);
 
     /**
      * Proceed with caution.

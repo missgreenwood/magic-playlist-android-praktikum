@@ -39,7 +39,6 @@ public class SpotifyServiceImpl implements SpotifyService {
         resource.header("Authorization", "Basic " + idSecretEncoded);
         resource.type(MediaType.APPLICATION_FORM_URLENCODED_TYPE);
 
-        String resourc = resource.toString();
         SpotifyToken token = null;
         try {
             token = resource.post(SpotifyToken.class, payload);

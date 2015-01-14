@@ -42,8 +42,7 @@ public interface PlaylistFacade {
 
     @PUT
     @Path("/like")
-    @Consumes(MediaType.APPLICATION_JSON)
-    public void likePlaylist(Playlist playlist);
+    public String likePlaylist(@QueryParam("name") String name);
 
     @DELETE
     @Path("/clean")

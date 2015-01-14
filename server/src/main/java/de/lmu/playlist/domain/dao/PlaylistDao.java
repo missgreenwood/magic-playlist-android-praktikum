@@ -12,7 +12,7 @@ public interface PlaylistDao {
 
     public List<Playlist> findPlaylists(String genre);
 
-    public void update(Playlist playlist);
+    public Playlist update(Playlist playlist);
 
     public void drop();
 }
