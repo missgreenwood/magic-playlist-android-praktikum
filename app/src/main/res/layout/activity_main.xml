@@ -10,13 +10,7 @@
         android:id="@+id/mainViewGroup"
         android:layout_width="fill_parent"
         android:layout_height="0dp"
-        android:layout_weight="1">
-        <fragment
-            android:layout_width="fill_parent"
-            android:layout_height="fill_parent"
-            android:name="controllers.MainFragment"
-            tools:layout="@layout/fragment_main_fragment" />
-    </FrameLayout>
+        android:layout_weight="1" />
     <fragment
         android:name="controllers.mainFragments.myplaylistsFragments.MediaPlayerFragment"
         android:layout_width="fill_parent"

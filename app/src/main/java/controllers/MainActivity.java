@@ -28,43 +28,18 @@ import models.mediawrappers.FileStreamingMediaService;
 import models.mediawrappers.PlayQueue;
 import models.playlist.LocalSongsManager;
 import models.mediawrappers.SpotifyLoginHandler;
+import models.playlist.PlaylistsManager;
 import rest.client.Client;
 import tests.R;
 
 /**
  * Created by judith on 02.02.15.
  */
-public class MainActivity extends ActionBarActivity implements
-        View.OnClickListener, FragmentManager.OnBackStackChangedListener {
+public class MainActivity extends ActionBarActivity implements FragmentManager.OnBackStackChangedListener {
 
-    private Button myPlaylists;
-    private Button playlistsGenerator;
-    private Button otherPlaylists;
-    private Button settings;
-//    private PlayQueue playQueue; //TODO: lokale Variable
-//    private ArrayList<Song> songs; //TODO: wieder lokale Variable, ist nur wegen der Testklassen
     private Config spotifyConfig;
     private MyBroadcastReceiver broadcastReceiver = null;
-    private MyPlaylistsFragment playlistsListFragment;
-    private GeneratorFragment generatorFragment;
-    private SettingsFragment settingsFragment;
-    private BrowserFragment browserFragment;
-//    public ArrayList<Song> getSongs() {
-//        return songs;
-//    }
-//
-//    public void setSongs(ArrayList<Song> songs) {
-//        this.songs = songs;
-//    }
 
-//    public PlayQueue getPlayQueue() {
-//        return playQueue;
-//    }
-
-//    public void setPlayQueue(PlayQueue playQueue) {
-//        this.playQueue = playQueue;
-//    }
-//
     public Config getSpotifyConfig() {
         return spotifyConfig;
     }
@@ -79,35 +54,32 @@ public class MainActivity extends ActionBarActivity implements
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
 
+        loadInitFragment();
+
         getSupportFragmentManager().addOnBackStackChangedListener(this);
 
-        myPlaylists = (Button) this.findViewById(R.id.button5);
-        playlistsGenerator = (Button) this.findViewById(R.id.button6);
-        otherPlaylists = (Button) this.findViewById(R.id.button7);
-        settings = (Button) this.findViewById(R.id.button8);
-        myPlaylists.setOnClickListener(this);
-        playlistsGenerator.setOnClickListener(this);
-        otherPlaylists.setOnClickListener(this);
-        settings.setOnClickListener(this);
-
-//        String songpath = Environment.getExternalStorageDirectory().getPath() + "/Download/song.mp3";
-
         PlayQueue.getInstance().setContext(this);
+    }
+
+    private void loadInitFragment() {
+        MainFragment mainFragment = (MainFragment) getSupportFragmentManager().findFragmentByTag("mainFragment");
+        if (mainFragment == null) {
+            mainFragment = new MainFragment();
+            FragmentTransaction transact = getSupportFragmentManager().beginTransaction();
+            transact.replace(R.id.mainViewGroup, mainFragment, "mainFragment");
+            transact.commit();
+        }
     }
 
 
     @Override
     public boolean onCreateOptionsMenu(Menu menu) {
-        // Inflate the menu; this adds items to the action bar if it is present.
         getMenuInflater().inflate(R.menu.main, menu);
         return true;
     }
 
     @Override
     public boolean onOptionsItemSelected(MenuItem item) {
-        // Handle action bar item clicks here. The action bar will
-        // automatically handle clicks on the Home/Up button, so long
-        // as you specify a parent activity in AndroidManifest.xml.
         int id = item.getItemId();
         if (id == R.id.action_settings) {
             return true;
@@ -117,21 +89,6 @@ public class MainActivity extends ActionBarActivity implements
         }
 
         return super.onOptionsItemSelected(item);
-    }
-
-    @Override
-    public void onClick(View view) {
-        //Log.d("", "Klick auf Button");
-
-        if (view == myPlaylists) {
-            this.openMyPlaylists();
-        } else if (view == playlistsGenerator) {
-            this.openPlaylistGenerator();
-        } else if (view == settings) {
-            this.openSettings();
-        } else if (view == otherPlaylists) {
-            this.openPlaylistBrowser();
-        }
     }
 
     @Override
@@ -158,33 +115,9 @@ public class MainActivity extends ActionBarActivity implements
         SpotifyLoginHandler spotifyLoginHandler = SpotifyLoginHandler.getInstance();
         spotifyLoginHandler.setContext(this);
         spotifyLoginHandler.openAuthWindow();
-
-
 */
 
-//        Song strokes = new Song("The Strokes", "Last Nite");
-//        Song random = new Song("Caribou", "Melody Day");
-//        Song random2 = new Song("The Strokes", "Reptilia");
-//        Song newSong = new Song("Tocotronic", "Let there be rock");
-//        Song fifthSong = new Song("Muse", "Hysteria");
-//
-//        Playlist testListe = new Playlist("testListe");
-//        testListe.addSong(strokes);
-//        testListe.addSong(random);
-//        testListe.addSong(random2);
-//        testListe.addSong(newSong);
-//        testListe.addSong(fifthSong);
-
-//        PlaylistsManager.getInstance().addPlaylist(testListe);
-
-//        playQueue = new PlayQueue(this, testListe.getSongsList());
-        /* we call playSongs with true here i.e. the mediswrappers will all be overwritten!
-        set to false if you don't want media wrappers to be overwritten if they are not null
-         */
-//        playQueue.playSongs(true);
-
         Settings.getInstance().loadSettings(getPreferences(MODE_PRIVATE));
-
         Settings.getInstance().setOnMediaWrapperListChangeListener(new Settings.Listener() {
             @Override
             public void onMediaWrapperListChange(ArrayList<String> mediaWrappers) {
@@ -198,6 +131,9 @@ public class MainActivity extends ActionBarActivity implements
         Client.getInstance().setContext(getApplicationContext());
 
         LocalSongsManager.getInstance().setContext(getApplicationContext());
+
+        PlaylistsManager.getInstance().loadPlaylists();
+
         super.onStart();
     }
 
@@ -215,57 +151,9 @@ public class MainActivity extends ActionBarActivity implements
         super.onStop();
     }
 
-    public void openMyPlaylists() {
-        playlistsListFragment = (MyPlaylistsFragment) getSupportFragmentManager().findFragmentByTag("playlistsListFragment");
-        if (playlistsListFragment == null) {
-            playlistsListFragment = new MyPlaylistsFragment();
-            FragmentTransaction transact = getSupportFragmentManager().beginTransaction();
-            transact.replace(R.id.mainViewGroup, playlistsListFragment, "playlistsListFragment");
-            transact.addToBackStack(null);
-            transact.commit();
-        }
-   }
-
-    public void openPlaylistGenerator() {
-        generatorFragment = (GeneratorFragment) getSupportFragmentManager().findFragmentByTag("generatorFragment");
-        if (generatorFragment == null) {
-            generatorFragment = new GeneratorFragment();
-            FragmentTransaction transact = getSupportFragmentManager().beginTransaction();
-            transact.replace(R.id.mainViewGroup, generatorFragment, "generatorFragment");
-            transact.addToBackStack(null);
-            transact.commit();
-        }
-    }
-
-    public void openSettings() {
-        settingsFragment = (SettingsFragment) getSupportFragmentManager().findFragmentByTag("settingsFragment");
-        if (settingsFragment == null) {
-            settingsFragment = new SettingsFragment();
-            FragmentTransaction transact = getSupportFragmentManager().beginTransaction();
-            transact.replace(R.id.mainViewGroup, settingsFragment, "settingsFragment");
-            transact.addToBackStack(null);
-            transact.commit();
-        }
-    }
-
-    public void openPlaylistBrowser() {
-        browserFragment = (BrowserFragment) getSupportFragmentManager().findFragmentByTag("browserFragment");
-        if (browserFragment == null) {
-            browserFragment = new BrowserFragment();
-            FragmentTransaction transact = getSupportFragmentManager().beginTransaction();
-            transact.replace(R.id.mainViewGroup, browserFragment, "browserFragment");
-            transact.addToBackStack(null);
-            transact.commit();
-        }
-    }
-
     @Override
     protected void onNewIntent(Intent intent) {
         super.onNewIntent(intent);
-
-
-
-
         if (intent.getAction().equals("android.intent.action.VIEW")) {
 
             Uri uri = intent.getData();
@@ -283,15 +171,9 @@ public class MainActivity extends ActionBarActivity implements
               //  Config playerConfig = new Config(this, response.getAccessToken(), SpotifyMediaWrapper.CLIENT_ID);
               //  setSpotifyConfig(playerConfig);
 
-//
               SpotifyLoginHandler.getInstance().getAccessAndRefreshToken(authorizationCode);
-
-
           }
-
         }
-
-
     }
 
 

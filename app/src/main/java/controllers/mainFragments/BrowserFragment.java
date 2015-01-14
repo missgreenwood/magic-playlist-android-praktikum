@@ -1,19 +1,28 @@
 package controllers.mainFragments;
 
 import android.app.AlertDialog;
+import android.app.ProgressDialog;
+import android.content.DialogInterface;
 import android.os.Bundle;
 import android.support.v4.app.FragmentTransaction;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.Toast;
+
+import com.loopj.android.http.RequestHandle;
 
 import java.util.ArrayList;
+import java.util.List;
 
 import controllers.MainActivity;
 import controllers.mainFragments.browserFragments.playlistFragment.BrowserPlaylistFragment;
 import controllers.mainFragments.generatorFragments.ArtistsFragment;
 import controllers.mainFragments.generatorFragments.GenresListFragment;
 import controllers.mainFragments.generatorFragments.SingleArtistFragment;
+import models.mediaModels.Playlist;
+import rest.client.Client;
+import rest.client.ClientListener;
 import tests.R;
 
 /**
@@ -22,12 +31,16 @@ import tests.R;
 public class BrowserFragment extends android.support.v4.app.Fragment implements
         GenresListFragment.OnGenrePass,
         SingleArtistFragment.Listener,
-        View.OnClickListener {
+        View.OnClickListener,
+        ClientListener.FindPlaylistsListener
+{
     private GenresListFragment genresFragment;
     private SingleArtistFragment artistsFragment;
     private BrowserPlaylistFragment browserPlaylistFragment;
     private String genre;
     private String artist;
+    private ProgressDialog loadingDialog;
+    private RequestHandle requestHandle;
 
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
@@ -40,10 +53,7 @@ public class BrowserFragment extends android.support.v4.app.Fragment implements
         return view;
     }
 
-    private void createSearchView() {
-        Bundle args = new Bundle();
-        args.putString("artist", artist);
-        args.putString("genre", genre);
+    private void createSearchView(List<Playlist> playlists) {
         browserPlaylistFragment = (BrowserPlaylistFragment)getActivity().getSupportFragmentManager().findFragmentByTag("browserPlaylistFragment");
         if (browserPlaylistFragment==null) {
             browserPlaylistFragment = new BrowserPlaylistFragment();
@@ -52,7 +62,26 @@ public class BrowserFragment extends android.support.v4.app.Fragment implements
             transact.addToBackStack(null);
             transact.commit();
         }
-        browserPlaylistFragment.setSearchData(args);
+        browserPlaylistFragment.setPlaylists(playlists);
+    }
+
+    private void setLoading(boolean visible) {
+        if (visible) {
+            if (loadingDialog != null) {
+                loadingDialog = null;
+            }
+            loadingDialog = ProgressDialog.show(getActivity(), "Loading", "Loading matching playlists from database", false, true, new DialogInterface.OnCancelListener() {
+                @Override
+                public void onCancel(DialogInterface dialog) {
+                    if (requestHandle != null && !requestHandle.isFinished()) {
+                        requestHandle.cancel(true);
+                        Toast.makeText(getActivity(), "Load playlists request canceled!", Toast.LENGTH_SHORT).show();
+                    }
+                }
+            });
+        } else if(loadingDialog != null) {
+            loadingDialog.dismiss();
+        }
     }
 
     @Override
@@ -95,7 +124,8 @@ public class BrowserFragment extends android.support.v4.app.Fragment implements
             setArtistInfo.create().show();
             return;
         }
-        createSearchView();
+        setLoading(true);
+        requestHandle = Client.getInstance().findPlaylistsByGenreAndArtist(this, genre, artist);
     }
 
     @Override
@@ -116,5 +146,21 @@ public class BrowserFragment extends android.support.v4.app.Fragment implements
     @Override
     public void onSingleArtistSelection(String artist) {
         this.artist = artist;
+    }
+
+    @Override
+    public void onFindPlaylistsSuccess(List<Playlist> playlists) {
+        setLoading(false);
+        if (playlists != null && playlists.size() > 0) {
+            createSearchView(playlists);
+        } else {
+            Toast.makeText(getActivity(), "No playlists found for given search filters!", Toast.LENGTH_LONG).show();
+        }
+    }
+
+    @Override
+    public void onFindPlaylistsError() {
+        setLoading(false);
+        Toast.makeText(getActivity(), "Error while playlists search. Please try again!", Toast.LENGTH_LONG).show();
     }
 }

@@ -12,7 +12,7 @@ public class PlaylistsManager {
 
     private ArrayList<Listener> observers;
 
-    private static PlaylistsManager instance = new PlaylistsManager();
+    private final static PlaylistsManager instance = new PlaylistsManager();
 
     public static PlaylistsManager getInstance() {
         return instance;
@@ -20,15 +20,25 @@ public class PlaylistsManager {
 
     private ArrayList<Playlist> playlists;
 
-    public PlaylistsManager() {
+    private PlaylistsManager() {
         observers = new ArrayList<>();
-        playlists = PlaylistFileHandler.loadPlaylists();
+        playlists = new ArrayList<>();
+    }
+
+    public void loadPlaylists()
+    {
+        ArrayList<Playlist> loadedPlaylists = PlaylistFileHandler.loadPlaylists();
+        if (loadedPlaylists != null) {
+            playlists.addAll(loadedPlaylists);
+        }
     }
 
     public void addPlaylist(Playlist playlist)
     {
-        playlists.add(playlist);
-        notifyOnPlaylistsListChange();
+        if (!playlists.contains(playlist)) {
+            playlists.add(playlist);
+            notifyOnPlaylistsListChange();
+        }
     }
 
     public ArrayList<Playlist> getPlaylists()
@@ -64,6 +74,10 @@ public class PlaylistsManager {
             }
         }
         return true;
+    }
+
+    public boolean containsPlaylist(Playlist playlist) {
+        return playlists != null && playlists.contains(playlist);
     }
 
     public interface Listener {

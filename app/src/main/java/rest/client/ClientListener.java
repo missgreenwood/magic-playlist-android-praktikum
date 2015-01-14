@@ -11,7 +11,7 @@ public interface ClientListener {
 
     public interface AddPlaylistListener extends ClientListener {
         void onAddPlaylistSuccess();
-        void onAddPlaylistError();
+        void onAddPlaylistError(boolean alreadyExists);
     }
 
     public interface FindSinglePlaylistListener extends ClientListener {

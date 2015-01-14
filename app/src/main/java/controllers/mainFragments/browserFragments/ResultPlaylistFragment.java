@@ -1,5 +1,7 @@
 package controllers.mainFragments.browserFragments;
 
+import android.app.ProgressDialog;
+import android.content.DialogInterface;
 import android.os.Bundle;
 import android.util.Log;
 import android.view.LayoutInflater;
@@ -8,53 +10,89 @@ import android.view.ViewGroup;
 import android.widget.Button;
 import android.widget.Toast;
 
+import com.loopj.android.http.RequestHandle;
+
 import controllers.mainFragments.generatorFragments.PlaylistFragment;
 import models.mediaModels.Playlist;
+import models.mediawrappers.PlayQueue;
 import models.playlist.PlaylistsManager;
 import rest.client.Client;
+import rest.client.ClientListener;
 import tests.R;
 
 /**
  * Created by judith on 12.01.15.
  */
-public class ResultPlaylistFragment extends PlaylistFragment {
-    private Button starButton;
-    private Button saveButton;
-    private int id;
-    private String playlist_name;
-    private Playlist playlist;
+public class ResultPlaylistFragment extends PlaylistFragment implements ClientListener.LikePlaylistListener {
+
+    private ProgressDialog loadingDialog;
+    private RequestHandle requestHandle;
 
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
+        final ResultPlaylistFragment _this = this;
         View v = inflater.inflate(R.layout.fragment_result_playlist, container, false);
-        starButton = (Button) v.findViewById(R.id.starBtn);
-        saveButton = (Button) v.findViewById(R.id.saveBtn);
-        starButton.setOnClickListener(new View.OnClickListener() {
+
+        v.findViewById(R.id.starBtn).setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                Toast.makeText(getActivity(), "You just liked this playlist!", Toast.LENGTH_LONG).show();
-                Client.getInstance().likePlaylist(playlist);
+                setLoading(true);
+                requestHandle = Client.getInstance().likePlaylist(_this, playlist);
             }
         });
-        saveButton.setOnClickListener(new View.OnClickListener() {
+        v.findViewById(R.id.saveBtn).setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                Toast.makeText(getActivity(), "You just saved this playlist!", Toast.LENGTH_LONG).show();
                 PlaylistsManager.getInstance().addPlaylist(playlist);
+                if (playlist.save()) {
+                    Toast.makeText(getActivity(), "You just saved this playlist!", Toast.LENGTH_LONG).show();
+                } else {
+                    Toast.makeText(getActivity(), "Error while saving playlist!", Toast.LENGTH_LONG).show();
+                }
             }
         });
         return v;
     }
 
-    public void setLikeData(Bundle args) {
-        Log.d("", "Liked playlist object: " + args.getParcelable("playlist"));
-        this.playlist = args.getParcelable("playlist");
-        if (playlist instanceof Playlist) {
-            Log.d("", "Playlist has correct datatype!");
+    @Override
+    public void onViewCreated(View view, Bundle savedInstanceState) {
+        //important to override, because otherwise, you can delete songs from playlist!
+    }
+
+    @Override
+    public void onLikePlaylistSuccess() {
+        setLoading(false);
+        Toast.makeText(getActivity(), "Playlist successfully liked!", Toast.LENGTH_SHORT).show();
+        playlist.setLikes(playlist.getLikes() + 1);
+    }
+
+    @Override
+    public void onLikePlaylistError() {
+        setLoading(false);
+        Toast.makeText(getActivity(), "Error while sending playlist like!", Toast.LENGTH_SHORT).show();
+    }
+
+    private void setLoading(boolean visible) {
+        if (visible) {
+            if (loadingDialog != null) {
+                loadingDialog = null;
+            }
+            loadingDialog = new ProgressDialog(getActivity());
+            loadingDialog.setMessage("Uploading playlist \"" + playlist.getName() + "\"...");
+            loadingDialog.setTitle("Upload playlist");
+            loadingDialog.setCancelable(true);
+            loadingDialog.setOnDismissListener(new DialogInterface.OnDismissListener() {
+                @Override
+                public void onDismiss(DialogInterface dialog) {
+                    if (requestHandle != null && !requestHandle.isFinished()) {
+                        requestHandle.cancel(true);
+                        Toast.makeText(getActivity(), "Uploading request canceled!", Toast.LENGTH_SHORT).show();
+                    }
+                }
+            });
+            loadingDialog.show();
+        } else if(loadingDialog != null) {
+            loadingDialog.dismiss();
         }
-        else {
-            Log.d("", "Playlist datatype is incorrect!");
-        }
-        this.playlist_name = args.getString("playlist_name");
     }
 }

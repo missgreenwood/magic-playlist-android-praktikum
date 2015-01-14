@@ -64,6 +64,7 @@ public class PlaylistGenerator implements LastFmListener {
     public void generatePlaylist()
     {
         if (initGenre != null && !initGenre.isEmpty()) {
+            playlist.setGenre(initGenre);
             genreCallsCount++;
             lfm.findGenreArtists(initGenre, 20);
         }
