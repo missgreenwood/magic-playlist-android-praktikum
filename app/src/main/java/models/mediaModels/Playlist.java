@@ -22,6 +22,7 @@ public class Playlist implements Parcelable {
     private String name;
     private int likes = 0;
     private String genre;
+    private boolean alreadyLiked;
 
     public Playlist() {
         name = "new Playlist " + uniqueId++;
@@ -154,9 +155,17 @@ public class Playlist implements Parcelable {
     public boolean equals(Object o) {
         if (o instanceof Playlist) {
             Playlist p = (Playlist) o;
-            return p.getName() == ((Playlist) o).getName();
+            return p.getName().equals(getName());
         }
         return false;
+    }
+
+    public boolean isAlreadyLiked() {
+        return alreadyLiked;
+    }
+
+    public void setAlreadyLiked(boolean alreadyLiked) {
+        this.alreadyLiked = alreadyLiked;
     }
 
     public interface Listener {

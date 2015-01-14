@@ -40,7 +40,7 @@ public interface PlaylistFacade {
     @Produces(MediaType.APPLICATION_JSON)
     public List<Playlist> findPlaylists(@QueryParam("genre") String genre, @QueryParam("artist") String artist);
 
-    @PUT
+    @GET
     @Path("/like")
     public String likePlaylist(@QueryParam("name") String name);
 

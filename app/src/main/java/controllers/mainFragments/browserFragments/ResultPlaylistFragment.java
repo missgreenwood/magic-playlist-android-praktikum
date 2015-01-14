@@ -2,6 +2,7 @@ package controllers.mainFragments.browserFragments;
 
 import android.app.ProgressDialog;
 import android.content.DialogInterface;
+import android.graphics.Color;
 import android.os.Bundle;
 import android.util.Log;
 import android.view.LayoutInflater;
@@ -28,24 +29,43 @@ public class ResultPlaylistFragment extends PlaylistFragment implements ClientLi
     private ProgressDialog loadingDialog;
     private RequestHandle requestHandle;
 
+    private Button starBtn;
+    private Button saveBtn;
+
+    private boolean alreadyLiked = false;
+
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
         final ResultPlaylistFragment _this = this;
         View v = inflater.inflate(R.layout.fragment_result_playlist, container, false);
 
-        v.findViewById(R.id.starBtn).setOnClickListener(new View.OnClickListener() {
+        starBtn = (Button) v.findViewById(R.id.starBtn);
+        saveBtn = (Button) v.findViewById(R.id.saveBtn);
+
+        if (PlaylistsManager.getInstance().containsPlaylist(playlist)) {
+            disableBtn(saveBtn, "Playlist with name already exists");
+        }
+
+        alreadyLiked = playlist.isAlreadyLiked();
+        if (alreadyLiked) {
+            disableBtn(starBtn, "Likes: " + playlist.getLikes());
+        }
+        starBtn.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                setLoading(true);
-                requestHandle = Client.getInstance().likePlaylist(_this, playlist);
+                if (!alreadyLiked) {
+                    alreadyLiked = true;
+                    disableBtn(starBtn, "Loading likes...");
+                    requestHandle = Client.getInstance().likePlaylist(_this, playlist);
+                }
             }
         });
-        v.findViewById(R.id.saveBtn).setOnClickListener(new View.OnClickListener() {
+        saveBtn.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
                 PlaylistsManager.getInstance().addPlaylist(playlist);
                 if (playlist.save()) {
-                    Toast.makeText(getActivity(), "You just saved this playlist!", Toast.LENGTH_LONG).show();
+                    disableBtn(saveBtn, "Saved!");
                 } else {
                     Toast.makeText(getActivity(), "Error while saving playlist!", Toast.LENGTH_LONG).show();
                 }
@@ -55,44 +75,30 @@ public class ResultPlaylistFragment extends PlaylistFragment implements ClientLi
     }
 
     @Override
-    public void onViewCreated(View view, Bundle savedInstanceState) {
+    protected void initListeners(View view) {
         //important to override, because otherwise, you can delete songs from playlist!
     }
 
     @Override
     public void onLikePlaylistSuccess() {
-        setLoading(false);
-        Toast.makeText(getActivity(), "Playlist successfully liked!", Toast.LENGTH_SHORT).show();
-        playlist.setLikes(playlist.getLikes() + 1);
+        disableBtn(starBtn, "Likes: " + playlist.getLikes());
     }
 
     @Override
     public void onLikePlaylistError() {
-        setLoading(false);
+        alreadyLiked = false;
         Toast.makeText(getActivity(), "Error while sending playlist like!", Toast.LENGTH_SHORT).show();
     }
 
-    private void setLoading(boolean visible) {
-        if (visible) {
-            if (loadingDialog != null) {
-                loadingDialog = null;
-            }
-            loadingDialog = new ProgressDialog(getActivity());
-            loadingDialog.setMessage("Uploading playlist \"" + playlist.getName() + "\"...");
-            loadingDialog.setTitle("Upload playlist");
-            loadingDialog.setCancelable(true);
-            loadingDialog.setOnDismissListener(new DialogInterface.OnDismissListener() {
-                @Override
-                public void onDismiss(DialogInterface dialog) {
-                    if (requestHandle != null && !requestHandle.isFinished()) {
-                        requestHandle.cancel(true);
-                        Toast.makeText(getActivity(), "Uploading request canceled!", Toast.LENGTH_SHORT).show();
-                    }
-                }
-            });
-            loadingDialog.show();
-        } else if(loadingDialog != null) {
-            loadingDialog.dismiss();
-        }
+
+    private void setLoading() {
+        disableBtn(starBtn, "loading likes...");
+    }
+
+    private void disableBtn(Button btn, String text) {
+        btn.setText(text);
+        btn.setEnabled(false);
+        btn.setBackgroundColor(Color.DKGRAY);
+        btn.setTextColor(Color.WHITE);
     }
 }

@@ -7,13 +7,13 @@ public class ClientConstants {
 
     public final static String ADD_PLAYLIST_URL = BASE_URL + "/add";
 
-    public final static String FIND_PLAYLIST_URL = BASE_URL + "/find/name?name=%s";
+    public final static String FIND_PLAYLIST_URL = BASE_URL + "/find/name";
 
     public final static String FIND_PLAYLISTS_URL = BASE_URL + "/find?";
 
-    public final static String GENRE_PARAM = "genre=%s";
+    public final static String GENRE_PARAM = "genre";
 
-    public final static String ARTIST_PARAM = "artist=%s";
+    public final static String ARTIST_PARAM = "artist";
 
     public final static String LIKE_PLAYLIST_URL = BASE_URL + "/like";
 

@@ -15,7 +15,7 @@ public interface ClientListener {
     }
 
     public interface FindSinglePlaylistListener extends ClientListener {
-        void onFindSinglePlaylistSuccess(Playlist playlists);
+        void onFindSinglePlaylistSuccess(Playlist playlist);
         void onFindSinglePlaylistError();
     }
 

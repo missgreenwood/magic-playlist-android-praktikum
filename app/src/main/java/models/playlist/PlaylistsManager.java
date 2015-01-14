@@ -29,6 +29,7 @@ public class PlaylistsManager {
     {
         ArrayList<Playlist> loadedPlaylists = PlaylistFileHandler.loadPlaylists();
         if (loadedPlaylists != null) {
+            playlists.clear();
             playlists.addAll(loadedPlaylists);
         }
     }

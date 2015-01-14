@@ -135,12 +135,17 @@ public class PlaylistFragment extends ListFragment implements
     @Override
     public void onViewCreated(View view, Bundle savedInstanceState) {
         super.onViewCreated(view, savedInstanceState);
+        initListeners(view);
+    }
+
+    protected void initListeners (View view)
+    {
         removedSongNotification = ((TextView)view.findViewById(R.id.removedSongNotification));
         removedSongNotification.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
                 if (lastRemovedSong != null && lastRemovedPos != -1)
-                playlist.getSongsList(true).add(lastRemovedPos, lastRemovedSong);
+                    playlist.getSongsList(true).add(lastRemovedPos, lastRemovedSong);
                 lastRemovedSong = null;
                 lastRemovedPos = -1;
                 hideRemovedSongNotification();

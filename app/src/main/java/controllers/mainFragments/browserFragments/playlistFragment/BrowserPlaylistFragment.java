@@ -60,7 +60,6 @@ public class BrowserPlaylistFragment extends ListFragment {
             transact.addToBackStack(null);
             transact.commit();
         }
-        Log.d("BrowserPlaylist", "setPlaylist");
         resultsFragment.setPlaylist((Playlist)getListAdapter().getItem(playlistId));
     }
 

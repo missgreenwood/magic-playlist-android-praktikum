@@ -110,7 +110,7 @@ public class MyPlaylistsFragment extends ListFragment implements AdapterView.OnI
     public boolean onItemLongClick(AdapterView<?> parent, View view, int position, long id) {
         final Playlist playlist = (Playlist)getListAdapter().getItem(position);
         AlertDialog.Builder deleteDialog = new AlertDialog.Builder(getActivity());
-        deleteDialog.setTitle("delete song from playlist?");
+        deleteDialog.setTitle("Delete playlist?");
         deleteDialog.setPositiveButton("yes", new DialogInterface.OnClickListener() {
             @Override
             public void onClick(DialogInterface dialog, int which) {
@@ -143,7 +143,7 @@ public class MyPlaylistsFragment extends ListFragment implements AdapterView.OnI
         @Override
         public View getView(int position, View convertView, ViewGroup parent)
         {
-            LinearLayout view = (LinearLayout) super.getView(position, null, parent);
+            LinearLayout view = (LinearLayout) super.getView(position, convertView, parent);
             TextView textView = (TextView)view.findViewById(R.id.txtview);
             textView.setText(getItem(position).getName());
             return view;
