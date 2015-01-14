@@ -37,6 +37,7 @@ import tests.R;
 public class MainActivity extends ActionBarActivity implements
         View.OnClickListener, FragmentManager.OnBackStackChangedListener {
 
+    private static boolean hasAlreadySentRequest = false;
     private Button myPlaylists;
     private Button playlistsGenerator;
     private Button otherPlaylists;
@@ -49,6 +50,7 @@ public class MainActivity extends ActionBarActivity implements
     private GeneratorFragment generatorFragment;
     private SettingsFragment settingsFragment;
     private BrowserFragment browserFragment;
+
 //    public ArrayList<Song> getSongs() {
 //        return songs;
 //    }
@@ -154,13 +156,14 @@ public class MainActivity extends ActionBarActivity implements
         this.registerReceiver(broadcastReceiver, intentFilter);
         this.setTitle("Magic Playlist");
 
-/*
-        SpotifyLoginHandler spotifyLoginHandler = SpotifyLoginHandler.getInstance();
-        spotifyLoginHandler.setContext(this);
-        spotifyLoginHandler.openAuthWindow();
 
+        if (!hasAlreadySentRequest) {
+            hasAlreadySentRequest = true;
+            SpotifyLoginHandler spotifyLoginHandler = SpotifyLoginHandler.getInstance();
+            spotifyLoginHandler.setContext(this);
+            spotifyLoginHandler.openAuthWindow();
+        }
 
-*/
 
 //        Song strokes = new Song("The Strokes", "Last Nite");
 //        Song random = new Song("Caribou", "Melody Day");
@@ -275,6 +278,8 @@ public class MainActivity extends ActionBarActivity implements
 
           if (uri!=null) {
               Log.d("", "spotify auth received, uri not null");
+
+              Log.d("", "uri " + uri.toString());
 
               AuthenticationResponse response = SpotifyAuthentication.parseOauthResponse(uri);
               String authorizationCode = response.getCode();
