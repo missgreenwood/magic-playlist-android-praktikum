@@ -15,9 +15,11 @@ import de.lmu.playlist.PlaylistModule;
 import de.lmu.playlist.domain.dao.PlaylistDao;
 import de.lmu.playlist.domain.entity.Playlist;
 
+@Test
 public class PlaylistServiceTest {
 
     private PlaylistService playlistService;
+
     private PlaylistDao playlistDao;
 
     @BeforeClass
@@ -65,7 +67,7 @@ public class PlaylistServiceTest {
         playlist.setLikes(2);
         playlistService.addPlaylist(playlist);
 
-        playlistService.likePlaylist(playlist);
+        playlistService.likePlaylist("update.playlist");
         Playlist updatedPlaylist = playlistService.findPlaylist("update.playlist");
         Assert.assertEquals(updatedPlaylist.getLikes(), 3);
 
