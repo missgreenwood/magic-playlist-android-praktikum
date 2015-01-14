@@ -72,10 +72,10 @@ public class SpotifyMediaWrapper extends RemoteFileStreamingMediaWrapper impleme
 
 
         //TODO: nicht access token hardcoden!
-        String accessToken = "BQAikzApJ-5PxbXEEnou32JJeeCdNsY5BBGI2WnDt7C82jCEImuIR7XZgzR9SSiDRMsLnhodWU78sQkJ7AhMPOs5m-g3kgY3QCKUHdHouFjvG0DIa4zwmmkwXGFNDtXsXgotCfOefvFha9tb0xc4SONKC4Z0MoV-5hhN3F4";
+        // String accessToken = "BQAikzApJ-5PxbXEEnou32JJeeCdNsY5BBGI2WnDt7C82jCEImuIR7XZgzR9SSiDRMsLnhodWU78sQkJ7AhMPOs5m-g3kgY3QCKUHdHouFjvG0DIa4zwmmkwXGFNDtXsXgotCfOefvFha9tb0xc4SONKC4Z0MoV-5hhN3F4";
 
 
-        Config spotifyConfig = new Config(context, accessToken, CLIENT_ID);
+        Config spotifyConfig = new Config(context, SpotifyLoginHandler.getInstance().getCurrentAccessToken(), CLIENT_ID);
 
 
         Log.d(TAG, "spotify play, config: " + (spotifyConfig == null));
@@ -89,6 +89,7 @@ public class SpotifyMediaWrapper extends RemoteFileStreamingMediaWrapper impleme
                     Log.d(TAG, "player is initialised");
                     mPlayer.addConnectionStateCallback(SpotifyMediaWrapper.this);
                     mPlayer.addPlayerNotificationCallback(SpotifyMediaWrapper.this);
+                    mPlayer.play(getPlayPath());
                     // mPlayer.play("spotify:track:0LTZD4vTsp0EN1wXatc9IR");
                 }
 
