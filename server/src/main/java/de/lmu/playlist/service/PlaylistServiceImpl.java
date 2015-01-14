@@ -30,7 +30,6 @@ public class PlaylistServiceImpl implements PlaylistService {
 
     @Override
     public List<Playlist> findPlaylists(String genre, String artist) {
-        System.out.println("genre: " + genre + " artist: " + artist);
         List<Playlist> playlists = playlistDao.findPlaylists(genre);
 
         if (artist != null && !artist.isEmpty()) {
