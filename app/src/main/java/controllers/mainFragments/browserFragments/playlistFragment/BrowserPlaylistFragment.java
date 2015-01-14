@@ -1,5 +1,6 @@
 package controllers.mainFragments.browserFragments.playlistFragment;
 
+import android.app.FragmentManager;
 import android.app.ProgressDialog;
 import android.content.Context;
 import android.os.Bundle;
@@ -22,6 +23,7 @@ import java.util.TreeSet;
 import controllers.MainActivity;
 import controllers.mainFragments.browserFragments.ResultPlaylistFragment;
 import models.mediaModels.Playlist;
+import models.playlist.PlaylistsManager;
 import rest.client.Client;
 import rest.client.ClientListener;
 import tests.R;
@@ -72,7 +74,14 @@ public class BrowserPlaylistFragment extends ListFragment {
         });
         treeSet.addAll(playlists);
         for (Playlist playlist : treeSet) {
-            this.playlists.add(playlist);
+            //add only extern playlist, if we don't have the same locally! Otherwise, add rating info
+            Playlist ownPlaylist = PlaylistsManager.getInstance().getEqualPlaylist(playlist);
+            if (ownPlaylist != null) {
+                ownPlaylist.setLikes(playlist.getLikes());
+                this.playlists.add(ownPlaylist);
+            } else {
+                this.playlists.add(playlist);
+            }
         }
         PlaylistArrayAdapter adapter = (PlaylistArrayAdapter)getListAdapter();
         if (adapter != null) {

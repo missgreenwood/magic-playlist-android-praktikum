@@ -22,7 +22,8 @@ public class Playlist implements Parcelable {
     private String name;
     private int likes = 0;
     private String genre;
-    private boolean alreadyLiked;
+    private transient boolean alreadyLiked;
+    private transient boolean alreadyUploaded;
 
     public Playlist() {
         name = "new Playlist " + uniqueId++;
@@ -45,7 +46,7 @@ public class Playlist implements Parcelable {
 
     public boolean addSong(Song newSong) {
         songs.add(newSong);
-        if (PlaylistsManager.getInstance().containsPlaylist(this)) {
+        if (PlaylistsManager.getInstance().containsPlaylistName(this)) {
             boolean success = PlaylistFileHandler.savePlaylist(this);
             if (!success) {
                 songs.remove(newSong);
@@ -59,7 +60,7 @@ public class Playlist implements Parcelable {
 
     public boolean removeSong(Song song) {
         songs.remove(song);
-        if (PlaylistsManager.getInstance().containsPlaylist(this)) {
+        if (PlaylistsManager.getInstance().containsPlaylistName(this)) {
             boolean success = PlaylistFileHandler.savePlaylist(this);
             if (!success) {
                 songs.add(song);
@@ -88,7 +89,7 @@ public class Playlist implements Parcelable {
     }
 
     public void setName(String name) {
-        if (PlaylistsManager.getInstance().containsPlaylist(this)) {
+        if (PlaylistsManager.getInstance().containsPlaylistName(this)) {
             boolean success = PlaylistFileHandler.changePlaylistName(this.name, name);
             if (success) {
                 this.name = name;
@@ -155,7 +156,16 @@ public class Playlist implements Parcelable {
     public boolean equals(Object o) {
         if (o instanceof Playlist) {
             Playlist p = (Playlist) o;
-            return p.getName().equals(getName());
+            boolean genresEqual = true;
+            if (p.getGenre() == null) {
+                genresEqual = genre == null;
+            } else {
+                genresEqual = p.getGenre().equals(genre);
+            }
+            return p.getName().equals(getName()) &&
+                    p.getSongsList().equals(getSongsList()) &&
+                    genresEqual;
+
         }
         return false;
     }
@@ -166,6 +176,14 @@ public class Playlist implements Parcelable {
 
     public void setAlreadyLiked(boolean alreadyLiked) {
         this.alreadyLiked = alreadyLiked;
+    }
+
+    public boolean isAlreadyUploaded() {
+        return alreadyUploaded;
+    }
+
+    public void setAlreadyUploaded(boolean alreadyUploaded) {
+        this.alreadyUploaded = alreadyUploaded;
     }
 
     public interface Listener {

@@ -77,8 +77,23 @@ public class PlaylistsManager {
         return true;
     }
 
-    public boolean containsPlaylist(Playlist playlist) {
-        return playlists != null && playlists.contains(playlist);
+    //I don't use contains, because in equality of 2 playlists their songs has to be the same. In this case the name is important, because playlistName is unique!
+    public boolean containsPlaylistName(Playlist playlist) {
+        if (playlist == null) {
+            return false;
+        }
+        for (Playlist ownPlaylist : playlists) {
+            if (ownPlaylist.getName().equals(playlist.getName())) {
+                return true;
+            }
+        }
+        return false;
+    }
+
+    public Playlist getEqualPlaylist(Playlist playlist) {
+        //indexOf works with equals function, so if we have a playlist equal this one, return it
+        int index = playlists.indexOf(playlist);
+        return index != -1 ? playlists.get(index) : null;
     }
 
     public interface Listener {

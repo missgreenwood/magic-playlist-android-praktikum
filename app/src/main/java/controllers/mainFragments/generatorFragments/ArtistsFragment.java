@@ -14,6 +14,8 @@ import android.widget.EditText;
 import android.widget.ListView;
 import android.widget.TextView;
 
+import com.loopj.android.http.RequestHandle;
+
 import java.util.ArrayList;
 import java.util.Comparator;
 import java.util.TreeSet;
@@ -30,6 +32,7 @@ public class ArtistsFragment extends ListFragment {
     private ArrayList<String> selectedArtists = new ArrayList<>();
 
     private LastfmMetadataWrapper lfm = new LastfmMetadataWrapper(null);
+    private RequestHandle requestHandler;
 
     public ArtistsFragment() {
     }
@@ -63,7 +66,10 @@ public class ArtistsFragment extends ListFragment {
 
                 ((ArtistsArrayAdapter)getListAdapter()).notifyDataSetChanged();
                 if (searchString.length() > 1) {
-                    lfm.findGenreArtists(searchString, 10, new LastFmListener.SearchArtistListener() {
+                    if (requestHandler != null && !requestHandler.isFinished()) {
+                        requestHandler.cancel(true);
+                    }
+                    requestHandler = lfm.findGenreArtists(searchString, 10, new LastFmListener.SearchArtistListener() {
                         @Override
                         public void onSearchArtistSuccess(String[][] artistsArray) {
                             addExternArtists(artistsArray);

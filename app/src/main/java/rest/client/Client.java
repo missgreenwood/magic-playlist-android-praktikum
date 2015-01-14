@@ -1,6 +1,7 @@
 package rest.client;
 
 import android.content.Context;
+import android.util.Log;
 
 import com.google.gson.Gson;
 import com.google.gson.reflect.TypeToken;
@@ -59,6 +60,7 @@ public class Client {
 
                 @Override
                 public void onSuccess(int i, Header[] headers, String s) {
+                    playlist.setAlreadyUploaded(true);
                     if (listener != null) {
                         listener.onAddPlaylistSuccess();
                     }
@@ -121,7 +123,7 @@ public class Client {
                     if (listener != null) {
                         listener.onFindPlaylistsSuccess(playlists);
                     }
-                } catch (Exception e) {
+                } catch (com.google.gson.JsonSyntaxException e) {
                     if (listener != null) {
                         listener.onFindPlaylistsError();
                     }

@@ -97,15 +97,26 @@ public class PlaylistFragment extends ListFragment implements
     public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
         View v = inflater.inflate(R.layout.fragment_playlist, container, false);
         uploadBtn = (Button) v.findViewById(R.id.uploadBtn);
-        final PlaylistFragment _this = this;
-        uploadBtn.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                setLoading(true);
-                requestHandle = Client.getInstance().addPlaylist(_this, playlist);
-            }
-        });
+        if (playlist.isAlreadyUploaded()) {
+            disableBtn(uploadBtn, "already uploaded");
+        } else {
+            final PlaylistFragment _this = this;
+            uploadBtn.setOnClickListener(new View.OnClickListener() {
+                @Override
+                public void onClick(View v) {
+                    setLoading(true);
+                    requestHandle = Client.getInstance().addPlaylist(_this, playlist);
+                }
+            });
+        }
         return v;
+    }
+
+    protected void disableBtn(Button btn, String text) {
+        btn.setText(text);
+        btn.setEnabled(false);
+        btn.setBackgroundColor(Color.DKGRAY);
+        btn.setTextColor(Color.WHITE);
     }
 
     private void setLoading(boolean visible) {
@@ -344,7 +355,7 @@ public class PlaylistFragment extends ListFragment implements
     @Override
     public void onAddPlaylistSuccess() {
         setLoading(false);
-        Toast.makeText(getActivity(), "Playlist successfully uploaded!", Toast.LENGTH_SHORT).show();
+        disableBtn(uploadBtn, "uploaded!");
     }
 
     @Override
