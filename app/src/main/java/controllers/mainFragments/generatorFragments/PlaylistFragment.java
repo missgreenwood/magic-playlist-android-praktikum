@@ -384,6 +384,8 @@ public class PlaylistFragment extends ListFragment implements
             if (PlayQueue.getInstance().getCurrentSong() == song) {
                 currentlyPlayingView = view;
                 currentlyPlayingView.setBackgroundColor(Color.argb(100, 80, 80, 80));
+            } else {
+                view.setBackgroundColor(Color.TRANSPARENT);
             }
             if (position == currentlyDraggedItemPos) {
                 view.setX(currentDraggedX);

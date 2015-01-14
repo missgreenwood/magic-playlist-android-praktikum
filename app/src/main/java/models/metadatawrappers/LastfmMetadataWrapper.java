@@ -5,6 +5,7 @@ import android.os.Bundle;
 import android.util.Log;
 
 import com.loopj.android.http.AsyncHttpClient;
+import com.loopj.android.http.RequestHandle;
 import com.loopj.android.http.TextHttpResponseHandler;
 
 import models.apiwrappers.APIWrapper;
@@ -44,6 +45,7 @@ public class LastfmMetadataWrapper extends AbstractMetadataWrapper {
     public static final String LASTFM_GET_SIMILAR_METHOD = "artist.getSimilar";
     public static final String LASTFM_GET_TOP_TRACKS_METHOD = "artist.gettoptracks";
     public static final String LASTFM_GET_TAG_ARTISTS_METHOD = "tag.getTopArtists";
+    public static final String LASTFM_SEARCH_ARTIST_METHOD = "artist.search";
 
     public static final String LASTFM_ARTIST_STRING = "artist";
     public static final String LASTFM_TAG_STRING = "tag";
@@ -56,22 +58,15 @@ public class LastfmMetadataWrapper extends AbstractMetadataWrapper {
         this.listener = listener;
     }
 
-    public String findSimilarArtists(String artist, int limit) {
+    public void findSimilarArtists(String artist, int limit) {
         String url = LASTFM_BASE_URL;
 
-        BasicNameValuePair keyPair = new BasicNameValuePair(LASTFM_API_KEY_STRING, LASTFM_API_KEY);
-        BasicNameValuePair methodPair = new BasicNameValuePair(LASTFM_METHOD_STRING, LASTFM_GET_SIMILAR_METHOD);
-        BasicNameValuePair artistPair = new BasicNameValuePair(LASTFM_ARTIST_STRING, artist);
-        BasicNameValuePair limitPair = new BasicNameValuePair(LASTFM_LIMIT_STRING, "" + limit);
-        BasicNameValuePair formatPair = new BasicNameValuePair(LASTFM_FORMAT_STRING, LASTFM_FORMAT_JSON);
-
-
         ArrayList<NameValuePair> params = new ArrayList<>();
-        params.add(keyPair);
-        params.add(methodPair);
-        params.add(artistPair);
-        params.add(limitPair);
-        params.add(formatPair);
+        params.add(new BasicNameValuePair(LASTFM_API_KEY_STRING, LASTFM_API_KEY));
+        params.add(new BasicNameValuePair(LASTFM_METHOD_STRING, LASTFM_GET_SIMILAR_METHOD));
+        params.add(new BasicNameValuePair(LASTFM_ARTIST_STRING, artist));
+        params.add(new BasicNameValuePair(LASTFM_LIMIT_STRING, "" + limit));
+        params.add(new BasicNameValuePair(LASTFM_FORMAT_STRING, LASTFM_FORMAT_JSON));
 
 
         url = APIWrapper.encodeURL(url, params);
@@ -79,30 +74,18 @@ public class LastfmMetadataWrapper extends AbstractMetadataWrapper {
         Bundle data = new Bundle();
         data.putString("artist", artist);
 
-//        APIWrapper asyncHTTP = new APIWrapper(this, SIMILAR_ARTISTS_CALLBACK, APIWrapper.GET_METHOD, data);
-//        asyncHTTP.execute(url);
-
         makeCall(url, SIMILAR_ARTISTS_CALLBACK, data);
-
-        return url;
     }
 
     public void findTopTracks(String artist, int limit) {
         String url = LASTFM_BASE_URL;
 
-        BasicNameValuePair keyPair = new BasicNameValuePair(LASTFM_API_KEY_STRING, LASTFM_API_KEY);
-        BasicNameValuePair methodPair = new BasicNameValuePair(LASTFM_METHOD_STRING, LASTFM_GET_TOP_TRACKS_METHOD);
-        BasicNameValuePair artistPair = new BasicNameValuePair(LASTFM_ARTIST_STRING, artist);
-        BasicNameValuePair limitPair = new BasicNameValuePair(LASTFM_LIMIT_STRING, "" + limit);
-        BasicNameValuePair formatPair = new BasicNameValuePair(LASTFM_FORMAT_STRING, LASTFM_FORMAT_JSON);
-
-
         ArrayList<NameValuePair> params = new ArrayList<NameValuePair>();
-        params.add(keyPair);
-        params.add(methodPair);
-        params.add(artistPair);
-        params.add(limitPair);
-        params.add(formatPair);
+        params.add(new BasicNameValuePair(LASTFM_API_KEY_STRING, LASTFM_API_KEY));
+        params.add(new BasicNameValuePair(LASTFM_METHOD_STRING, LASTFM_GET_TOP_TRACKS_METHOD));
+        params.add(new BasicNameValuePair(LASTFM_ARTIST_STRING, artist));
+        params.add(new BasicNameValuePair(LASTFM_LIMIT_STRING, "" + limit));
+        params.add(new BasicNameValuePair(LASTFM_FORMAT_STRING, LASTFM_FORMAT_JSON));
 
 
         url = APIWrapper.encodeURL(url, params);
@@ -110,32 +93,58 @@ public class LastfmMetadataWrapper extends AbstractMetadataWrapper {
         final Bundle data = new Bundle();
         data.putString("artist", artist);
 
-//        APIWrapper asyncHTTP = new APIWrapper(this, TOP_TRACKS_CALLBACK, APIWrapper.POST_METHOD, data);
-//        asyncHTTP.execute(url);
         makeCall(url, TOP_TRACKS_CALLBACK, data);
     }
 
     public void findGenreArtists(String genre, int limit) {
         String url = LASTFM_BASE_URL;
 
-        BasicNameValuePair keyPair = new BasicNameValuePair(LASTFM_API_KEY_STRING, LASTFM_API_KEY);
-        BasicNameValuePair methodPair = new BasicNameValuePair(LASTFM_METHOD_STRING, LASTFM_GET_TAG_ARTISTS_METHOD);
-        BasicNameValuePair artistPair = new BasicNameValuePair(LASTFM_TAG_STRING, genre);
-        BasicNameValuePair limitPair = new BasicNameValuePair(LASTFM_LIMIT_STRING, "" + limit);
-        BasicNameValuePair formatPair = new BasicNameValuePair(LASTFM_FORMAT_STRING, LASTFM_FORMAT_JSON);
+        ArrayList<NameValuePair> params = new ArrayList<NameValuePair>();
+        params.add(new BasicNameValuePair(LASTFM_API_KEY_STRING, LASTFM_API_KEY));
+        params.add(new BasicNameValuePair(LASTFM_METHOD_STRING, LASTFM_GET_TAG_ARTISTS_METHOD));
+        params.add(new BasicNameValuePair(LASTFM_TAG_STRING, genre));
+        params.add(new BasicNameValuePair(LASTFM_LIMIT_STRING, "" + limit));
+        params.add(new BasicNameValuePair(LASTFM_FORMAT_STRING, LASTFM_FORMAT_JSON));
 
+
+        url = APIWrapper.encodeURL(url, params);
+        makeCall(url, TAG_ARTISTS_CALLBACK, null);
+    }
+
+    public RequestHandle findGenreArtists(String artist, int limit, final LastFmListener.SearchArtistListener listener) {
+        String url = LASTFM_BASE_URL;
 
         ArrayList<NameValuePair> params = new ArrayList<NameValuePair>();
-        params.add(keyPair);
-        params.add(methodPair);
-        params.add(artistPair);
-        params.add(limitPair);
-        params.add(formatPair);
+        params.add(new BasicNameValuePair(LASTFM_API_KEY_STRING, LASTFM_API_KEY));
+        params.add(new BasicNameValuePair(LASTFM_METHOD_STRING, LASTFM_SEARCH_ARTIST_METHOD));
+        params.add(new BasicNameValuePair(LASTFM_ARTIST_STRING, artist));
+        params.add(new BasicNameValuePair(LASTFM_LIMIT_STRING, "" + limit));
+        params.add(new BasicNameValuePair(LASTFM_FORMAT_STRING, LASTFM_FORMAT_JSON));
 
 
         url = APIWrapper.encodeURL(url, params);
 
         makeCall(url, TAG_ARTISTS_CALLBACK, null);
+        AsyncHttpClient asyncHttpClient = new AsyncHttpClient();
+        Header[] headers = {new BasicHeader("Content-type", "application/json")};
+        return asyncHttpClient.get(context, url, headers, null, new TextHttpResponseHandler() {
+            @Override
+            public void onFailure(int i, Header[] headers, String s, Throwable throwable) {
+                if (listener != null) {
+                    listener.onSearchArtistError();
+                }
+            }
+            @Override
+            public void onSuccess(int i, Header[] headers, String s) {
+                if (listener != null) {
+                    String[] firstAttribs = {"results", "artistmatches", "artist"},
+                            globalAttribs = null,
+                            getAttribs = {"mbid", "name"};
+                    String[][] artistsArray = convertJSONStringToArray(s, firstAttribs, getAttribs, globalAttribs);
+                    listener.onSearchArtistSuccess(artistsArray);
+                }
+            }
+        });
     }
 
     private void makeCall(String url, final String callback, final Bundle data) {
@@ -219,13 +228,22 @@ public class LastfmMetadataWrapper extends AbstractMetadataWrapper {
                 }
             }
 
+            int i = 1;
             //get JSONArray with interesting elements (artist/track)
+            if (firstAttribs.length > 2) { //searchArtist has special
+                for (;i < firstAttribs.length - 1; i++) {
+                    containerObject = containerObject.getJSONObject(firstAttribs[i]);
+                }
+            }
+
+            String lastAttribKey = firstAttribs[firstAttribs.length-1];
+
             JSONArray elementsJsonArray;
-            Object elementsArray = containerObject.get(firstAttribs[1]);
+            Object elementsArray = containerObject.get(lastAttribKey);
             if (elementsArray instanceof JSONArray) {
-                elementsJsonArray = containerObject.getJSONArray(firstAttribs[1]);
+                elementsJsonArray = containerObject.getJSONArray(lastAttribKey);
             } else if (elementsArray instanceof JSONObject) {
-                JSONObject element = containerObject.getJSONObject(firstAttribs[1]);
+                JSONObject element = containerObject.getJSONObject(lastAttribKey);
                 elementsJsonArray = new JSONArray().put(element);
             } else {
                 return new String[0][0];

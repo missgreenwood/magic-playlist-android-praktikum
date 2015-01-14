@@ -17,4 +17,9 @@ public interface LastFmListener {
     void onSimilarArtistsCallback(String calledArtist, String returnedArtist, String[][] similarArtists);
     void onTopTracksCallback(String calledArtist, String returnedArtist, ArrayList<String> trackNames);
     void onGenreArtistsCallback(String[][] artistsArray);
+
+    public interface SearchArtistListener {
+        void onSearchArtistSuccess(String[][] artistsArray);
+        void onSearchArtistError();
+    }
 }

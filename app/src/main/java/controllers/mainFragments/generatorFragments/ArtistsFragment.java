@@ -15,7 +15,11 @@ import android.widget.ListView;
 import android.widget.TextView;
 
 import java.util.ArrayList;
+import java.util.Comparator;
+import java.util.TreeSet;
 
+import models.metadatawrappers.LastFmListener;
+import models.metadatawrappers.LastfmMetadataWrapper;
 import models.playlist.LocalSongsManager;
 import tests.R;
 
@@ -25,6 +29,8 @@ public class ArtistsFragment extends ListFragment {
     protected ArrayList<String> artists = new ArrayList<>();
     private ArrayList<String> selectedArtists = new ArrayList<>();
 
+    private LastfmMetadataWrapper lfm = new LastfmMetadataWrapper(null);
+
     public ArtistsFragment() {
     }
 
@@ -33,8 +39,11 @@ public class ArtistsFragment extends ListFragment {
         super.onCreate(savedInstanceState);
 
         artists.addAll(LocalSongsManager.getInstance().getAllArtists());
+        addArtists(selectedArtists);
         setListAdapter(new ArtistsArrayAdapter(getActivity(),
                 android.R.layout.simple_list_item_1, android.R.id.text1, artists));
+
+        lfm.setContext(getActivity().getApplicationContext());
     }
 
     @Override
@@ -46,14 +55,55 @@ public class ArtistsFragment extends ListFragment {
 
             @Override public void afterTextChanged(Editable s) {
                 artists.clear();
-                artists.addAll(LocalSongsManager.getInstance().getArtists(searchInput.getText().toString()));
+                String searchString = searchInput.getText().toString();
+
+                artists.addAll(LocalSongsManager.getInstance().getArtists(searchString));
+
+                addArtists(selectedArtists);
+
                 ((ArtistsArrayAdapter)getListAdapter()).notifyDataSetChanged();
+                if (searchString.length() > 1) {
+                    lfm.findGenreArtists(searchString, 10, new LastFmListener.SearchArtistListener() {
+                        @Override
+                        public void onSearchArtistSuccess(String[][] artistsArray) {
+                            addExternArtists(artistsArray);
+                        }
+
+                        @Override public void onSearchArtistError() {}
+                    });
+                }
             }
 
             @Override
             public void onTextChanged(CharSequence s, int start, int before, int count) {}
         });
         return v;
+    }
+
+    private void addExternArtists(String[][] artistsData) {
+        if (artistsData != null && artistsData.length > 0) {
+            ArrayList<String> artistsList = new ArrayList<>();
+            for (String[] artistsArray : artistsData) {
+                artistsList.add(artistsArray[1]);
+            }
+            addArtists(artistsList);
+        }
+    }
+
+    private void addArtists(ArrayList<String> artistsData) {
+        if (artistsData != null && artistsData.size() > 0) {
+            TreeSet<String> sortedArtists = new TreeSet<>(artists);
+
+            for (String artist: artistsData) {
+                if (!sortedArtists.contains(artist)) {
+                    sortedArtists.add(artist);
+                }
+            }
+
+            artists.clear();
+            artists.addAll(sortedArtists);
+            ((ArtistsArrayAdapter)getListAdapter()).notifyDataSetChanged();
+        }
     }
 
     public void setListener(Listener listener) {

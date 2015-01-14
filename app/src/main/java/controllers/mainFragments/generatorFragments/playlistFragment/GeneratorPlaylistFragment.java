@@ -104,11 +104,11 @@ public class GeneratorPlaylistFragment extends PlaylistFragment implements
         uploadDialog.setPositiveButton("yes, upload Playlist", new DialogInterface.OnClickListener() {
             @Override
             public void onClick(DialogInterface dialog, int which) {
-                Client.getInstance().addPlaylist(_this, playlist);
                 loadingDialog = ProgressDialog.show(getActivity(),
                         "Uploading playlist \"" + generator.getPlaylist().getName() + "\"",
                         "uploading...");
                 uploading = true;
+                Client.getInstance().addPlaylist(_this, playlist);
             }
         });
         uploadDialog.setNegativeButton("no", null);

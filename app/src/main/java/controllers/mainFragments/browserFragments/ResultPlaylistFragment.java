@@ -90,11 +90,6 @@ public class ResultPlaylistFragment extends PlaylistFragment implements ClientLi
         Toast.makeText(getActivity(), "Error while sending playlist like!", Toast.LENGTH_SHORT).show();
     }
 
-
-    private void setLoading() {
-        disableBtn(starBtn, "loading likes...");
-    }
-
     private void disableBtn(Button btn, String text) {
         btn.setText(text);
         btn.setEnabled(false);
