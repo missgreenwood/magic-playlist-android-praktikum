@@ -1,14 +1,15 @@
 package models.playlist;
 
+import android.content.Context;
+
 import java.util.ArrayList;
 
-import controllers.mainFragments.MyPlaylistsFragment;
 import models.mediaModels.Playlist;
 
 /**
  * Created by TheDaAndy on 29.12.2014.
  */
-public class PlaylistsManager {
+public class PlaylistsManager implements Playlist.Listener {
 
     private ArrayList<Listener> observers;
 
@@ -20,6 +21,9 @@ public class PlaylistsManager {
 
     private ArrayList<Playlist> playlists;
 
+    private PlaylistHandler databaseHandler;
+    private PlaylistHandler fileHandler = new PlaylistFileHandler();
+
     private PlaylistsManager() {
         observers = new ArrayList<>();
         playlists = new ArrayList<>();
@@ -27,16 +31,26 @@ public class PlaylistsManager {
 
     public void loadPlaylists()
     {
-        ArrayList<Playlist> loadedPlaylists = PlaylistFileHandler.loadPlaylists();
+        ArrayList<Playlist> loadedPlaylists = fileHandler.loadPlaylists();
+//        ArrayList<Playlist> loadedPlaylists = databaseHandler.loadPlaylists();
         if (loadedPlaylists != null) {
             playlists.clear();
-            playlists.addAll(loadedPlaylists);
+            for(Playlist playlist : loadedPlaylists) {
+                addPlaylist(playlist);
+                databaseHandler.savePlaylist(playlist);
+            }
+
         }
+    }
+
+    public void setContext(Context context) {
+        databaseHandler = new PlaylistDatabaseHandler(context);
     }
 
     public void addPlaylist(Playlist playlist)
     {
         if (!playlists.contains(playlist)) {
+            playlist.addObserver(this);
             playlists.add(playlist);
             notifyOnPlaylistsListChange();
         }
@@ -49,7 +63,8 @@ public class PlaylistsManager {
 
     public void removePlaylist(Playlist playlist) {
         playlists.remove(playlist);
-        playlist.destroy();
+        playlist.removeObserver(this);
+        databaseHandler.destroy(playlist.getName());
         notifyOnPlaylistsListChange();
     }
 
@@ -94,6 +109,15 @@ public class PlaylistsManager {
         //indexOf works with equals function, so if we have a playlist equal this one, return it
         int index = playlists.indexOf(playlist);
         return index != -1 ? playlists.get(index) : null;
+    }
+
+    public void renamePlaylist(String oldName, String newName) {
+        databaseHandler.changePlaylistName(oldName, newName);
+    }
+
+    @Override
+    public void onPlaylistChange(Playlist playlist) {
+        databaseHandler.savePlaylist(playlist);
     }
 
     public interface Listener {

@@ -25,7 +25,7 @@ public class Song {
     private transient AbstractMediaWrapper mediaWrapper;
     private transient String wrapperType;
     private transient boolean notPlayable = false;
-    private int songID;
+    private int songID = -1;
     private int length = -1;
 
     /**

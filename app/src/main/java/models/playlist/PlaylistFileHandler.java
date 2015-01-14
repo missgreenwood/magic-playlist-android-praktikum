@@ -23,13 +23,13 @@ import models.mediaModels.Song;
 /**
  * Created by TheDaAndy on 30.12.2014.
  */
-public class PlaylistFileHandler {
+public class PlaylistFileHandler implements PlaylistHandler{
 
-    private static final String PLAYLISTS_FILE_TYPE = ".pls";
+    private final String PLAYLISTS_FILE_TYPE = ".pls";
 
-    public static ArrayList<Playlist> loadPlaylists()
+    public ArrayList<Playlist> loadPlaylists()
     {
-        File dir = new File(PlaylistFileHandler.getFilePath(null));
+        File dir = new File(getFilePath(null));
         ArrayList<Playlist> playlists = new ArrayList<>();
 
         File[] playlistFiles = dir.listFiles(new FilenameFilter() {
@@ -55,7 +55,52 @@ public class PlaylistFileHandler {
         return playlists;
     }
 
-    private static Playlist loadPlaylist(String name, String type) {
+    public boolean changePlaylistName (String before, String after) {
+        File playlistFile = new File(getFilePath(before));
+        return playlistFile.renameTo(new File(getFilePath(after)));
+    }
+
+    public boolean savePlaylist(Playlist playlist) {
+        ArrayList<Song> songs = playlist.getSongsList();
+        OutputStreamWriter writer = null;
+        boolean success = false;
+
+        try {
+            writer = new OutputStreamWriter(new FileOutputStream(getFilePath(playlist.getName()), false));
+
+            String playlistEntry = "[playlist]\nNumberOfEntries=" + songs.size() + "\n";
+            writer.write(playlistEntry, 0, playlistEntry.length());
+            for (int i = 0; i < songs.size(); i++) {
+                Song song = songs.get(i);
+                String songEntry = "File"   + i + "=" + song.getSongUrl() + "\n"
+                        + "Title"  + i + "=" + song.getArtist() + " - " + song.getSongname() + "\n"
+                        + "Length" + i + "=" + song.getLength() + "\n";
+                writer.write(songEntry, 0, songEntry.length());
+            }
+            success = true;
+        } catch (Exception e) {
+            e.printStackTrace();
+        } finally {
+            if (writer != null) {
+                try {
+                    writer.close();
+                } catch (Exception e) {
+                    e.printStackTrace();
+                }
+            }
+        }
+        return success;
+    }
+
+    public boolean destroy(String name) {
+        return new File(getFilePath(name)).delete();
+    }
+
+
+
+
+
+    private Playlist loadPlaylist(String name, String type) {
         switch (type) {
             case "pls":
                 return loadPlaylistPls(name);
@@ -65,11 +110,11 @@ public class PlaylistFileHandler {
         return null;
     }
 
-    private static Playlist loadPlaylistM3U(String name) {
+    private Playlist loadPlaylistM3U(String name) {
         return loadPlaylistPls(name);
     }
 
-    private static Playlist loadPlaylistPls(String name) {
+    private Playlist loadPlaylistPls(String name) {
         Playlist newPlaylist = new Playlist(name);
 
         BufferedReader reader = null;
@@ -136,48 +181,7 @@ public class PlaylistFileHandler {
         return newPlaylist;
     }
 
-    public static boolean changePlaylistName (String before, String after) {
-        File playlistFile = new File(getFilePath(before));
-        return playlistFile.renameTo(new File(getFilePath(after)));
-    }
-
-    public static boolean savePlaylist(Playlist playlist) {
-        ArrayList<Song> songs = playlist.getSongsList();
-        OutputStreamWriter writer = null;
-        boolean success = false;
-
-        try {
-            writer = new OutputStreamWriter(new FileOutputStream(getFilePath(playlist.getName()), false));
-
-            String playlistEntry = "[playlist]\nNumberOfEntries=" + songs.size() + "\n";
-            writer.write(playlistEntry, 0, playlistEntry.length());
-            for (int i = 0; i < songs.size(); i++) {
-                Song song = songs.get(i);
-                String songEntry = "File"   + i + "=" + song.getSongUrl() + "\n"
-                                 + "Title"  + i + "=" + song.getArtist() + " - " + song.getSongname() + "\n"
-                                 + "Length" + i + "=" + song.getLength() + "\n";
-                writer.write(songEntry, 0, songEntry.length());
-            }
-            success = true;
-        } catch (Exception e) {
-            e.printStackTrace();
-        } finally {
-            if (writer != null) {
-                try {
-                    writer.close();
-                } catch (Exception e) {
-                    e.printStackTrace();
-                }
-            }
-        }
-        return success;
-    }
-
-    public static boolean destroy(String name) {
-        return new File(getFilePath(name)).delete();
-    }
-
-    private static String getFilePath(String name)
+    private String getFilePath(String name)
     {
         String directoryPath;
 
@@ -195,7 +199,7 @@ public class PlaylistFileHandler {
         return directoryPath + name + PLAYLISTS_FILE_TYPE;
     }
 
-    private static boolean isExternalStorageWritable() {
+    private boolean isExternalStorageWritable() {
         String state = Environment.getExternalStorageState();
         return Environment.MEDIA_MOUNTED.equals(state);
     }

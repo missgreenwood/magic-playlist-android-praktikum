@@ -46,28 +46,12 @@ public class Playlist implements Parcelable {
 
     public boolean addSong(Song newSong) {
         songs.add(newSong);
-        if (PlaylistsManager.getInstance().containsPlaylistName(this)) {
-            boolean success = PlaylistFileHandler.savePlaylist(this);
-            if (!success) {
-                songs.remove(newSong);
-                Log.e("Playlist", "could not save Playlist with new Song, write Rights?");
-                return false;
-            }
-        }
         notifyChange();
         return true;
     }
 
     public boolean removeSong(Song song) {
         songs.remove(song);
-        if (PlaylistsManager.getInstance().containsPlaylistName(this)) {
-            boolean success = PlaylistFileHandler.savePlaylist(this);
-            if (!success) {
-                songs.add(song);
-                Log.e("Playlist", "could not save Playlist with removed Song, write Rights?");
-                return false;
-            }
-        }
         notifyChange();
         return true;
     }
@@ -89,16 +73,9 @@ public class Playlist implements Parcelable {
     }
 
     public void setName(String name) {
-        if (PlaylistsManager.getInstance().containsPlaylistName(this)) {
-            boolean success = PlaylistFileHandler.changePlaylistName(this.name, name);
-            if (success) {
-                this.name = name;
-            } else {
-                Log.e("Playlist", "could not change Playlistname, due being unable to rename Playlistfile. Rights?");
-            }
-        } else {
-            this.name = name;
-        }
+        String oldName = this.name;
+        this.name = name;
+        PlaylistsManager.getInstance().renamePlaylist(oldName, name);
     }
 
     public int getLikes() {
@@ -122,12 +99,8 @@ public class Playlist implements Parcelable {
 
     private void notifyChange() {
         for (int i = 0; i < observers.size(); i++) {
-            observers.get(i).onPlaylistChange();
+            observers.get(i).onPlaylistChange(this);
         }
-    }
-
-    public void destroy() {
-        PlaylistFileHandler.destroy(getName());
     }
 
     public String getGenre() {
@@ -144,13 +117,7 @@ public class Playlist implements Parcelable {
     }
 
     @Override
-    public void writeToParcel(Parcel dest, int flags) {
-
-    }
-
-    public boolean save() {
-        return PlaylistFileHandler.savePlaylist(this);
-    }
+    public void writeToParcel(Parcel dest, int flags) {}
 
     @Override
     public boolean equals(Object o) {
@@ -187,6 +154,6 @@ public class Playlist implements Parcelable {
     }
 
     public interface Listener {
-        void onPlaylistChange();
+        void onPlaylistChange(Playlist playlist);
     }
 }
