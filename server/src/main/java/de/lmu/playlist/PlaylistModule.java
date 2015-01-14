@@ -14,8 +14,6 @@ import javax.ws.rs.ext.MessageBodyWriter;
 
 import de.lmu.playlist.domain.dao.PlaylistDao;
 import de.lmu.playlist.domain.dao.PlaylistDaoImpl;
-import de.lmu.playlist.domain.dao.TokenDao;
-import de.lmu.playlist.domain.dao.TokenDaoImpl;
 import de.lmu.playlist.facade.PlaylistFacade;
 import de.lmu.playlist.facade.PlaylistFacadeImpl;
 import de.lmu.playlist.service.MongoService;
@@ -31,7 +29,6 @@ public class PlaylistModule extends ServletModule {
     protected void configureServlets() {
         bind(DefaultServlet.class).in(Singleton.class);
         bind(PlaylistDao.class).to(PlaylistDaoImpl.class).in(Singleton.class);
-        bind(TokenDao.class).to(TokenDaoImpl.class).in(Singleton.class);
         bind(MongoService.class).to(MongoServiceImpl.class).in(Singleton.class);
         bind(SpotifyService.class).to(SpotifyServiceImpl.class).in(Singleton.class);
         bind(PlaylistService.class).to(PlaylistServiceImpl.class).in(Singleton.class);

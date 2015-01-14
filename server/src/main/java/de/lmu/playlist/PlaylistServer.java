@@ -5,7 +5,6 @@ import com.google.inject.servlet.GuiceFilter;
 import com.sun.jersey.spi.container.servlet.ServletContainer;
 
 import org.eclipse.jetty.server.Server;
-import org.eclipse.jetty.servlet.DefaultServlet;
 import org.eclipse.jetty.servlet.ServletContextHandler;
 import org.eclipse.jetty.servlet.ServletHolder;
 
@@ -18,8 +17,7 @@ public class PlaylistServer {
     public static void main(String[] args) throws Exception {
         Guice.createInjector(new PlaylistModule());
 
-        int port = 5050;
-        Server server = new Server(port);
+        Server server = new Server(5050);
 
         ServletHolder servletHolder = new ServletHolder(ServletContainer.class);
         servletHolder.setInitParameter("javax.ws.rs.Application", "PlaylistRestServer");
