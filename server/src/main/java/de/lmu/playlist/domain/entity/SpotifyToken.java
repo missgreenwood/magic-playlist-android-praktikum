@@ -19,6 +19,9 @@ public class SpotifyToken {
     @JsonProperty("access_token")
     private String accessToken;
 
+    @JsonProperty("expires_in")
+    private int expires_in;
+
     public SpotifyToken() {
         // dummy constructor
     }
@@ -37,5 +40,13 @@ public class SpotifyToken {
 
     public void setAccessToken(String accessToken) {
         this.accessToken = accessToken;
+    }
+
+    public int getExpires_in() {
+        return expires_in;
+    }
+
+    public void setExpires_in(int expires_in) {
+        this.expires_in = expires_in;
     }
 }
