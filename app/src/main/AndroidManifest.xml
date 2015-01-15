@@ -16,6 +16,10 @@
         <service
             android:name="models.mediawrappers.FileStreamingMediaService"
             android:enabled="true" />
+        <service
+            android:name="models.mediawrappers.SpotifyService"
+            android:enabled="true" />
+
         <activity
             android:name="controllers.TestActivity"
             android:label="@string/app_name">
@@ -39,7 +43,11 @@
                     android:host="callback"
                     android:scheme="my-first-android-app-login" />
             </intent-filter>
+
+
         </activity>
+
+
     </application>
 </manifest>
 
