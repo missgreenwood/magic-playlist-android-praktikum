@@ -126,14 +126,14 @@ public class PlayQueue {
     public String getNextType(Song song) {
 
 
-        Log.d(TAG, "method getNextType: get next type for song: " + song.toString());
+        Log.v(TAG, "method getNextType: get next type for song: " + song.toString());
 
         ListIterator<String> it = mediaWrappers.listIterator();
 
         while (it.hasNext()) {
 
             String mediaWrapperType = it.next();
-            Log.d(TAG, "mediaWrapperType in list: " + mediaWrapperType);
+            Log.v(TAG, "mediaWrapperType in list: " + mediaWrapperType);
             if (mediaWrapperType.equals(song.getMediaWrapperType()) && it.hasNext())
                 return it.next();
         }
@@ -148,7 +148,7 @@ public class PlayQueue {
 
     public void setCurrentSong(Song currentSong) {
 
-        Log.d(TAG, "set current song: " + currentSong);
+        Log.v(TAG, "set current song: " + currentSong);
 
         this.currentSong = currentSong;
     }
@@ -165,14 +165,14 @@ public class PlayQueue {
     public void playSongs(boolean overwrite) {
 
 
-        Log.d(TAG, "play songs called");
+        Log.v(TAG, "play songs called");
         initializePlaylist(overwrite);
         playCurrentSong();
     }
 
     private void playCurrentSong() {
 
-        Log.d(TAG, "play current song, counter is " + counter);
+        Log.v(TAG, "play current song, counter is " + counter);
 
         if (songs == null) {
             Log.d(TAG, "no songs list given");
@@ -258,7 +258,7 @@ public class PlayQueue {
         if (songs != null) {
             for (Song song : songs) {
 
-                Log.d(TAG, "initialize song: " + song.toString());
+                Log.v(TAG, "initialize song: " + song.toString());
 
                 if (overwrite || (song.getMediaWrapper() == null))
                     initializeSong(song);
@@ -343,7 +343,7 @@ public class PlayQueue {
         String methodName = e.getMethodName();
 
 
-        Log.d(TAG, "is jumping to " + index + " method was called by: " + methodName);
+        Log.v(TAG, "is jumping to " + index + " method was called by: " + methodName);
 
         stopCurrentSong();
 
@@ -398,7 +398,7 @@ public class PlayQueue {
     private boolean trySettingNextWrapper(Song song) {
 
 
-        Log.d(TAG, "try setting next wrapper for song: " + song.toString());
+        Log.v(TAG, "try setting next wrapper for song: " + song.toString());
 
         String type = getNextType(song);
 
@@ -410,7 +410,7 @@ public class PlayQueue {
         song.setMediaWrapper(null);
         song.setMediaWrapperType(type);
 
-        Log.d(TAG, "new mediawrapper type: " + type);
+        Log.v(TAG, "new mediawrapper type: " + type);
 
         return true;
 
@@ -431,7 +431,7 @@ public class PlayQueue {
         Song song = getSongForID(songID);
 
         if (song != null) {
-            Log.d(TAG, "state at onSongAvailable: " + getState() + " currentSong: " + getCurrentSong() + " song: " + song);
+            Log.v(TAG, "state at onSongAvailable: " + getState() + " currentSong: " + getCurrentSong() + " song: " + song);
 
             if (getState() == STATE_WAITING && song == getCurrentSong()) {
                 Log.d(TAG, "state is waiting and song is current song...");
@@ -445,7 +445,7 @@ public class PlayQueue {
 
     public void onSongNotAvailable(int songId) {
 
-        Log.d(TAG, "intent received, try setting next wrapper for song with id " + songId);
+        Log.v(TAG, "intent received, try setting next wrapper for song with id " + songId);
 
         Song song = getSongForID(songId);
 
