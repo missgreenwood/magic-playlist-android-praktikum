@@ -96,7 +96,7 @@ public class PlaylistGenerator implements LastFmListener {
             }
             SongInfo song = getNextSong(false);
             if (song != null) {
-                playlist.addSong(new Song(song.getArtistName(), song.getTrackName()));
+                playlist.addSong(Song.Builder.getSong(song.getArtistName(), song.getTrackName()));
             } else {
                 noSongFound = true;
             }

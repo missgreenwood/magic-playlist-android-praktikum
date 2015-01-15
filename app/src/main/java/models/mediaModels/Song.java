@@ -2,7 +2,12 @@ package models.mediaModels;
 
 import android.util.Log;
 
+import java.util.ArrayList;
+import java.util.HashMap;
+
 import models.mediawrappers.AbstractMediaWrapper;
+import models.playlist.PlaylistsManager;
+import models.playlist.database.Contracts;
 import tests.R;
 
 /**
@@ -25,7 +30,7 @@ public class Song {
     private transient AbstractMediaWrapper mediaWrapper;
     private transient String wrapperType;
     private transient boolean notPlayable = false;
-    private int songID;
+    private int songID = -1;
     private int length = -1;
 
     /**
@@ -34,21 +39,9 @@ public class Song {
      * @param artist
      * @param songname
      */
-    public Song(String artist, String songname) {
+    private Song(String artist, String songname) {
         this.artist = artist;
         this.songname = songname;
-        synchronized (countLock) {
-            currentSongID++;
-        }
-        this.songID = currentSongID;
-
-        Log.d("", "created song object with " + artist + songname + " with id: " + currentSongID);
-    }
-
-    public Song ()
-    {
-        this("", "");
-        //informations are given afterwards, needed in PlaylistFileHandler
     }
 
     /**
@@ -58,7 +51,7 @@ public class Song {
      * @param songname
      * @param wrapperType
      */
-    public Song(String artist, String songname, String wrapperType) {
+    private Song(String artist, String songname, String wrapperType) {
         this.artist = artist;
         this.songname = songname;
         this.wrapperType = wrapperType;
@@ -74,7 +67,7 @@ public class Song {
                 '}';
     }
 
-    public int getSongID() {
+    public int getId() {
         return songID;
     }
 
@@ -152,6 +145,9 @@ public class Song {
     public boolean equals(Object o) {
         if (o instanceof Song) {
             Song songObject = (Song) o;
+            if (songObject.getId() == getId()) {
+                return true;
+            }
             return songObject.getSongname().contentEquals(this.getSongname()) &&
                    songObject.getArtist().contentEquals(this.getArtist());
         } else {
@@ -165,5 +161,37 @@ public class Song {
 
     public void setNotPlayable(boolean notPlayable) {
         this.notPlayable = notPlayable;
+    }
+
+    public static class Builder {
+
+        private static HashMap<Integer, Song> songs = new HashMap<>();
+
+        public static Song getSong(String artist, String songname) {
+            //try to find Song in Db and find id for example (db will call getSongDb)
+            Song song = PlaylistsManager.getInstance().getSong(artist, songname);
+            // if no song is found, create new unsaved one when song is added to a playlist, which will be saved in DB, song will automatically be saved in db too
+            if (song == null && artist != null && artist.length() > 0 && songname != null && songname.length() > 0) {
+
+                song = new Song(artist, songname);
+            }
+            Log.v("Song.Builder", "existing song loaded: " + song);
+            return song;
+        }
+
+        /**this function should only be used by PlaylistDatabaseHandler, because it doesn't load songs from db (it would cause an endless loop)*/
+        public static Song getSongDb(int id, String artist, String songname, String mediaWrapperType, String url, int length) {
+            Song song = songs.get(id);
+            if (song == null && artist != null && artist.length() > 0 && songname != null && songname.length() > 0) {
+                song = new Song(artist, songname, mediaWrapperType);
+                song.setSongID(id);
+                song.setSongUrl(url);
+                song.setLength(length);
+                //save unloaded songs to hashmap
+                songs.put(song.getId(), song);
+                Log.v("Song.Builder", "create new (DB: " + songs.size() + "): " + song.getArtist() + " - " + song.getSongname() );
+            }
+            return song;
+        }
     }
 }

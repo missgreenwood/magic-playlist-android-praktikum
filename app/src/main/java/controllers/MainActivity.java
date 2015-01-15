@@ -29,6 +29,7 @@ import models.mediawrappers.PlayQueue;
 import models.playlist.LocalSongsManager;
 import models.mediawrappers.SpotifyLoginHandler;
 import models.playlist.PlaylistsManager;
+import models.playlist.database.Contracts;
 import rest.client.Client;
 import tests.R;
 
@@ -112,12 +113,9 @@ public class MainActivity extends ActionBarActivity implements FragmentManager.O
         this.registerReceiver(broadcastReceiver, intentFilter);
         this.setTitle("Magic Playlist");
 
-        if (!hasAlreadySentRequest) {
-            hasAlreadySentRequest = true;
-            SpotifyLoginHandler spotifyLoginHandler = SpotifyLoginHandler.getInstance();
-            spotifyLoginHandler.setContext(this);
-            spotifyLoginHandler.openAuthWindow();
-        }
+
+
+
 
         Settings.getInstance().loadSettings(getPreferences(MODE_PRIVATE));
         Settings.getInstance().setOnMediaWrapperListChangeListener(new Settings.Listener() {
@@ -134,6 +132,7 @@ public class MainActivity extends ActionBarActivity implements FragmentManager.O
 
         LocalSongsManager.getInstance().setContext(getApplicationContext());
 
+        PlaylistsManager.getInstance().setContext(getApplicationContext());
         PlaylistsManager.getInstance().loadPlaylists();
 
         super.onStart();
@@ -151,6 +150,12 @@ public class MainActivity extends ActionBarActivity implements FragmentManager.O
         PlayQueue.getInstance().setAutoPilotMode(true);
         unregisterReceiver(broadcastReceiver);
         super.onStop();
+    }
+
+    @Override
+    protected void onDestroy() {
+        super.onDestroy();
+        PlaylistsManager.getInstance().closeDb();
     }
 
     @Override

@@ -203,7 +203,7 @@ public class FileStreamingMediaService extends Service implements MediaPlayer.On
 
     public void onDestroy() {
 
-        Log.v(TAG, "on destroy?");
+        Log.v(TAG, "on destroyPlaylist?");
 
 
         //  if (mediaPlayer.isPlaying()) {

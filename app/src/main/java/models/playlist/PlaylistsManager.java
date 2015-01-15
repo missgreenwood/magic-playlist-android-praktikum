@@ -1,14 +1,17 @@
 package models.playlist;
 
+import android.content.Context;
+
 import java.util.ArrayList;
 
-import controllers.mainFragments.MyPlaylistsFragment;
 import models.mediaModels.Playlist;
+import models.mediaModels.Song;
 
 /**
  * Created by TheDaAndy on 29.12.2014.
+ *
  */
-public class PlaylistsManager {
+public class PlaylistsManager implements Playlist.Listener {
 
     private ArrayList<Listener> observers;
 
@@ -20,6 +23,9 @@ public class PlaylistsManager {
 
     private ArrayList<Playlist> playlists;
 
+    private PlaylistDatabaseHandler databaseHandler;
+    private PlaylistFileHandler fileHandler = new PlaylistFileHandler();
+
     private PlaylistsManager() {
         observers = new ArrayList<>();
         playlists = new ArrayList<>();
@@ -27,19 +33,39 @@ public class PlaylistsManager {
 
     public void loadPlaylists()
     {
-        ArrayList<Playlist> loadedPlaylists = PlaylistFileHandler.loadPlaylists();
+        ArrayList<Playlist> loadedPlaylists = databaseHandler.loadPlaylists();
+//        if (loadedPlaylists == null || loadedPlaylists.size() == 0) {
+//            loadedPlaylists = fileHandler.loadPlaylists();
+//        }
         if (loadedPlaylists != null) {
             playlists.clear();
-            playlists.addAll(loadedPlaylists);
+            for (Playlist playlist : loadedPlaylists) {
+                playlist.addObserver(this);
+                playlists.add(playlist);
+            }
+            notifyOnPlaylistsListChange();
         }
     }
 
-    public void addPlaylist(Playlist playlist)
+    public void closeDb()
     {
+        databaseHandler.close();
+    }
+
+    public void setContext(Context context) {
+        databaseHandler = new PlaylistDatabaseHandler(context);
+    }
+
+    public boolean addPlaylist(Playlist playlist)
+    {
+        boolean success = true;
         if (!playlists.contains(playlist)) {
+            playlist.addObserver(this);
             playlists.add(playlist);
+            success = savePlaylist(playlist);
             notifyOnPlaylistsListChange();
         }
+        return success;
     }
 
     public ArrayList<Playlist> getPlaylists()
@@ -49,7 +75,8 @@ public class PlaylistsManager {
 
     public void removePlaylist(Playlist playlist) {
         playlists.remove(playlist);
-        playlist.destroy();
+        playlist.removeObserver(this);
+        databaseHandler.destroyPlaylist(playlist);
         notifyOnPlaylistsListChange();
     }
 
@@ -94,6 +121,27 @@ public class PlaylistsManager {
         //indexOf works with equals function, so if we have a playlist equal this one, return it
         int index = playlists.indexOf(playlist);
         return index != -1 ? playlists.get(index) : null;
+    }
+
+    public void renamePlaylist(String oldName, String newName) {
+        databaseHandler.changePlaylistName(oldName, newName);
+    }
+
+    @Override
+    public void onPlaylistChange(Playlist playlist) {
+        savePlaylist(playlist);
+    }
+
+    public boolean savePlaylist(Playlist playlist) {
+        return databaseHandler.savePlaylist(playlist);
+    }
+
+    public Song getSong(String artist, String songname) {
+        return databaseHandler.getSong(artist, songname);
+    }
+
+    public Song getSong(int id) {
+        return databaseHandler.getSong(id);
     }
 
     public interface Listener {

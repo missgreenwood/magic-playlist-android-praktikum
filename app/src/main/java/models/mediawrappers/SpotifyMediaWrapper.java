@@ -296,7 +296,7 @@ public class SpotifyMediaWrapper extends RemoteFileStreamingMediaWrapper impleme
             setPlayPath(uri);
             sendSongAvailableIntent(true);
             // intent.setAction(PlayQueue.SONG_AVAILABLE);
-            // intent.putExtra(PlayQueue.SONG_ID, getSong().getSongID());
+            // intent.putExtra(PlayQueue.SONG_ID, getSongDb().getId());
 
         } else {
 

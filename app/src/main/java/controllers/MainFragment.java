@@ -12,6 +12,7 @@ import controllers.mainFragments.BrowserFragment;
 import controllers.mainFragments.GeneratorFragment;
 import controllers.mainFragments.MyPlaylistsFragment;
 import controllers.mainFragments.SettingsFragment;
+import models.mediawrappers.SpotifyLoginHandler;
 import tests.R;
 
 public class MainFragment extends Fragment implements View.OnClickListener {
@@ -25,6 +26,7 @@ public class MainFragment extends Fragment implements View.OnClickListener {
         v.findViewById(R.id.playlistsGeneratorBtn).setOnClickListener(this);
         v.findViewById(R.id.settingsBtn).setOnClickListener(this);
         v.findViewById(R.id.otherPlaylistsBtn).setOnClickListener(this);
+        v.findViewById(R.id.button5).setOnClickListener(this);
 
         return v;
     }
@@ -43,6 +45,11 @@ public class MainFragment extends Fragment implements View.OnClickListener {
                 break;
             case R.id.otherPlaylistsBtn:
                 this.openPlaylistBrowser();
+                break;
+            case R.id.button5:
+                SpotifyLoginHandler spotifyLoginHandler = SpotifyLoginHandler.getInstance();
+                spotifyLoginHandler.setContext(getActivity());
+                spotifyLoginHandler.openAuthWindow();
                 break;
         }
     }

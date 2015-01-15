@@ -56,7 +56,7 @@ public class LocalFileStreamingMediaWrapper extends FileStreamingMediaWrapper {
     @Override
     public boolean lookForSong() {
 
-      //  Log.d(TAG, "look for song: " + getSong().toString());
+      //  Log.d(TAG, "look for song: " + getSongDb().toString());
 
         computePlayPath(getSong());
 
@@ -76,7 +76,7 @@ public class LocalFileStreamingMediaWrapper extends FileStreamingMediaWrapper {
 
         }
 
-        //  intent.putExtra(PlayQueue.SONG_ID, getSong().getSongID());
+        //  intent.putExtra(PlayQueue.SONG_ID, getSongDb().getId());
         //  context.sendBroadcast(intent);
 
 

@@ -62,8 +62,7 @@ public class ResultPlaylistFragment extends PlaylistFragment implements ClientLi
         saveBtn.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                PlaylistsManager.getInstance().addPlaylist(playlist);
-                if (playlist.save()) {
+                if (PlaylistsManager.getInstance().addPlaylist(playlist)) {
                     disableBtn(saveBtn, "Saved!");
                 } else {
                     Toast.makeText(getActivity(), "Error while saving playlist!", Toast.LENGTH_LONG).show();

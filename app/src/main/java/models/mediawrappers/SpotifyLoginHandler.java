@@ -8,6 +8,7 @@ import android.app.Activity;
 import android.content.Context;
 
 
+import com.google.gson.Gson;
 import com.loopj.android.http.AsyncHttpClient;
 import com.loopj.android.http.TextHttpResponseHandler;
 import com.spotify.sdk.android.authentication.AuthenticationResponse;
@@ -25,6 +26,7 @@ import org.apache.http.message.BasicNameValuePair;
 
 import java.util.ArrayList;
 
+//import de.lmu.playlist.domain.entity.SpotifyToken;
 import models.apiwrappers.APIWrapper;
 import models.apiwrappers.CallbackInterface;
 import rest.client.ClientConstants;
@@ -173,14 +175,17 @@ public class SpotifyLoginHandler {
 
 
         AsyncHttpClient asyncHttpClient = new AsyncHttpClient();
-        Header[] headers = {new BasicHeader("Content-type", "application/json")};
+       // Header[] headers = {new BasicHeader("Content-type", "application/json")};
 
         Log.d(TAG, url);
 
-        asyncHttpClient.get(getContext(), url, headers, null, new TextHttpResponseHandler() {
+        asyncHttpClient.get(getContext(), url, null, null, new TextHttpResponseHandler() {
             @Override
             public void onFailure(int i, Header[] headers, String s, Throwable throwable) {
                 Log.d(TAG, "back result is: " + s + throwable.getStackTrace() + " " + throwable.getMessage() + " " + throwable.getCause() + " " + throwable.toString());
+
+                //  Gson gson = new Gson();
+                //  SpotifyToken spotifyToken = gson.fromJson(s, SpotifyToken.class);
 
                 //processWebCallResult("", DEFAULT_CALLBACK, null);
 

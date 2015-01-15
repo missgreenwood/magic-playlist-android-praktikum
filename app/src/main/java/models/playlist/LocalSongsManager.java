@@ -14,6 +14,7 @@ import models.mediawrappers.LocalFileStreamingMediaWrapper;
 
 /**
  * Created by TheDaAndy on 12.01.2015.
+ *
  */
 public class LocalSongsManager {
     private static LocalSongsManager instance = new LocalSongsManager();
@@ -60,7 +61,7 @@ public class LocalSongsManager {
         String url = cur.getString(cur.getColumnIndex(MediaStore.Audio.Media.DATA));
         int length = Integer.parseInt(cur.getString(cur.getColumnIndex(MediaStore.Audio.Media.DURATION))) / 1000;
 
-        Song song = new Song(artist, title);
+        Song song = Song.Builder.getSong(artist, title);
         song.setLength(length);
 
         LocalFileStreamingMediaWrapper wrapper = new LocalFileStreamingMediaWrapper(context, song);
