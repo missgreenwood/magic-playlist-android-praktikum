@@ -33,6 +33,7 @@ public class PlayQueue {
     private static final int STATE_PAUSED = 3;
     private static final PlayQueue instance = new PlayQueue();
     public static String SONG_ID = "com.example.song_id";
+    private static boolean forwardMode = true;
     //TODO: das ist nur vorläufig:
     private Song currentSong;
     private Context context;
@@ -183,6 +184,8 @@ public class PlayQueue {
         } else if (getCurrentSong() == null && counter < songs.size() && counter >= 0) {
             setCurrentSong(songs.get(counter));
         }
+
+
         playSongIntern();
     }
 
@@ -358,6 +361,13 @@ public class PlayQueue {
         if (counter >= 0) {
             setCurrentSong(songs.get(counter));
         }
+
+        if (currentSong.isNotPlayable()) {
+            nextTrack();
+            return;
+        }
+
+
         setState(STATE_IDLE);
         //playSongs();
         playCurrentSong();
