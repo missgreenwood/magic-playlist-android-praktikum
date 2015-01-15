@@ -17,5 +17,20 @@
             android:layout_height="wrap_content"
             android:choiceMode="multipleChoice">
         </ListView>
+        <LinearLayout
+            android:layout_width="fill_parent"
+            android:layout_height="wrap_content"
+            android:orientation="horizontal"
+            android:gravity="center"
+            android:layout_alignParentBottom="true"
+            style="@android:style/ButtonBar">
+            <Button
+                android:id="@+id/confirmBtn"
+                android:text="@string/confirm"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_weight="1"
+                style="@style/priorityBtn"/>
+        </LinearLayout>
     </RelativeLayout>
 </FrameLayout>
