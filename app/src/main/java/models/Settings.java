@@ -112,8 +112,8 @@ public class Settings {
             mediaWrappers.set(prio, upperWrapper);
         }
         adjustUsedMediaWrappersOrder();
-        saveSettings();
-        resetPlaylists();
+        // saveSettings();
+        // resetPlaylists();
     }
 
     public void decreaseWrapperPriority(String wrapper) {
@@ -124,14 +124,14 @@ public class Settings {
             mediaWrappers.set(prio, upperWrapper);
         }
         adjustUsedMediaWrappersOrder();
-        saveSettings();
-        resetPlaylists();
+        //  saveSettings();
+        // resetPlaylists();
     }
 
     public void deactivateWrapper(String wrapper) {
         usedMediaWrappers.remove(wrapper);
-        saveSettings();
-        resetPlaylists();
+        //  saveSettings();
+        //  resetPlaylists();
     }
 
     public void activateWrapper(String wrapper) {
@@ -145,11 +145,9 @@ public class Settings {
             SpotifyLoginHandler.getInstance().startSpotifyLogin();
 
         }
-
         adjustUsedMediaWrappersOrder();
-
-        saveSettings();
-        resetPlaylists();
+        // saveSettings();
+        // resetPlaylists();
     }
 
     private void resetPlaylists()
