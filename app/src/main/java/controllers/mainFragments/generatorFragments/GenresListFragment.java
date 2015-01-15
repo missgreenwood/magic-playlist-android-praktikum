@@ -1,11 +1,13 @@
 package controllers.mainFragments.generatorFragments;
 
+import android.content.Context;
 import android.os.Bundle;
 import android.support.v4.app.ListFragment;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.ArrayAdapter;
+import android.widget.LinearLayout;
 import android.widget.ListView;
 import android.widget.TextView;
 import android.widget.Toast;
@@ -32,8 +34,7 @@ public class GenresListFragment extends ListFragment {
         ViewGroup rootView = (ViewGroup) inflater.inflate(R.layout.fragment_genres, container, false);
         ((MainActivity)getActivity()).getSupportActionBar().setTitle("Genres");
         String[] selectedItems = new String[]{"Acoustic", "Ambient", "Blues", "Classical", "Country", "Dance", "Electronic", "Female Vocalists", "Folk", "Hardcore", "Hip Hop", "Indie", "Industrial", "Instrumental", "Jazz", "Latin", "Metal", "Pop", "Punk", "R&B", "Soul", "Reggae", "Rock", "World"};
-        // ArrayAdapter<String> adapter=new ArrayAdapter<String>(getActivity(),R.layout.rows,R.id.txtview,selectedItems);
-        ArrayAdapter<String> adapter=new ArrayAdapter<String>(getActivity(),android.R.layout.simple_list_item_1,android.R.id.text1,selectedItems);
+        GenresArrayAdapter adapter=new GenresArrayAdapter(getActivity(),R.layout.rows,R.id.txtview,selectedItems);
         // Bind adapter to the ListFragment
         setListAdapter(adapter);
         // Retain the ListFragment instance across Activity re-creation
@@ -55,6 +56,23 @@ public class GenresListFragment extends ListFragment {
     public void onDetach() {
         super.onDetach();
         dataPasser = null;
+    }
+
+    private class GenresArrayAdapter extends ArrayAdapter<String> {
+
+        public GenresArrayAdapter(Context context, int resource, int textViewResourceId, String[] objects) {
+            super(context, resource, textViewResourceId, objects);
+        }
+
+        @Override
+        public View getView(int position, View convertView, ViewGroup parent)
+        {
+            LinearLayout view = (LinearLayout) super.getView(position, convertView, parent);
+            view.setLayoutParams(new ListView.LayoutParams(ListView.LayoutParams.MATCH_PARENT,100));
+            TextView textView = (TextView)view.findViewById(R.id.txtview);
+            textView.setText(getItem(position).toString());
+            return view;
+        }
     }
 
 
