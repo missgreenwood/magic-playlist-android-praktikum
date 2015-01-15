@@ -32,7 +32,8 @@ public class GenresListFragment extends ListFragment {
         ViewGroup rootView = (ViewGroup) inflater.inflate(R.layout.fragment_genres, container, false);
         ((MainActivity)getActivity()).getSupportActionBar().setTitle("Genres");
         String[] selectedItems = new String[]{"Acoustic", "Ambient", "Blues", "Classical", "Country", "Dance", "Electronic", "Female Vocalists", "Folk", "Hardcore", "Hip Hop", "Indie", "Industrial", "Instrumental", "Jazz", "Latin", "Metal", "Pop", "Punk", "R&B", "Soul", "Reggae", "Rock", "World"};
-        ArrayAdapter<String> adapter=new ArrayAdapter<String>(getActivity(),R.layout.rows,R.id.txtview,selectedItems);
+        // ArrayAdapter<String> adapter=new ArrayAdapter<String>(getActivity(),R.layout.rows,R.id.txtview,selectedItems);
+        ArrayAdapter<String> adapter=new ArrayAdapter<String>(getActivity(),android.R.layout.simple_list_item_1,android.R.id.text1,selectedItems);
         // Bind adapter to the ListFragment
         setListAdapter(adapter);
         // Retain the ListFragment instance across Activity re-creation
