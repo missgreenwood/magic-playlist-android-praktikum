@@ -107,7 +107,8 @@ public class MainActivity extends ActionBarActivity implements FragmentManager.O
         this.setTitle("Magic Playlist");
 
 
-
+/* has to be set first!*/
+        SpotifyLoginHandler.getInstance().setContext(this);
 
 
         Settings.getInstance().loadSettings(getPreferences(MODE_PRIVATE));
@@ -122,7 +123,7 @@ public class MainActivity extends ActionBarActivity implements FragmentManager.O
         PlayQueue.getInstance().setAutoPilotMode(false);
 
         Client.getInstance().setContext(getApplicationContext());
-        SpotifyLoginHandler.getInstance().setContext(getApplicationContext());
+
 
         LocalSongsManager.getInstance().setContext(getApplicationContext());
 
