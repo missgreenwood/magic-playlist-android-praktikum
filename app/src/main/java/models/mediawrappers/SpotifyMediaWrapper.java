@@ -42,17 +42,18 @@ public class SpotifyMediaWrapper extends RemoteFileStreamingMediaWrapper impleme
 
     public static final String TAG = "main.java.models.mediawrappers.SpotifyMediaWrapper";
     public static final String CLIENT_ID = "605ac27c70444b499869422e93a492f8";
+    public static final String SET_TO_FOREGROUND = "set_to_foreground";
     public static String SPOTIFY_SEARCH_URL = "https://api.spotify.com/v1/search";
     public static String TYPE_TRACK_STRING = "type";
     // public int counter;
     public static String TYPE_TRACK = "track";
     public static String SPOTIFY_QUERY_STRING = "q";
     private static boolean firstTime = false;
+    private static Player mPlayer;
     // private List<Song> songs;
     // private String playPath;
     // private  Context context;
     private Spotify spotify;
-    private Player mPlayer;
     private SharedPreferences preferences;
     private SpotifyLoginHandler spotifyLoginHandler;
 
@@ -63,7 +64,7 @@ public class SpotifyMediaWrapper extends RemoteFileStreamingMediaWrapper impleme
         //  preferences = context.getSharedPreferences(SPOTIFY_SHARED_PREF_STRING, 0);
         // this.context=context;
         //  setSong(songsTemp);
-        this.spotifyLoginHandler = SpotifyLoginHandler.getInstance();
+        spotifyLoginHandler = SpotifyLoginHandler.getInstance();
         //  this.spotifyLoginHandler.setContext(getContext());
 
     }
@@ -80,13 +81,18 @@ public class SpotifyMediaWrapper extends RemoteFileStreamingMediaWrapper impleme
             spotifyLoginHandler.startSpotifyLogin();
 
         }*/
+
+
+        Log.d(TAG, "play song: " + getPlayPath());
+
+
         this.spotify = new Spotify();
         Config spotifyConfig = new Config(context, SpotifyLoginHandler.getInstance().getCurrentAccessToken(), CLIENT_ID);
 
 
         if (mPlayer != null && mPlayer.isInitialized()) {
 
-            Log.d(TAG, "play song");
+            Log.d(TAG, "play song " + getPlayPath());
             mPlayer.play(getPlayPath());
 
 
@@ -109,6 +115,14 @@ public class SpotifyMediaWrapper extends RemoteFileStreamingMediaWrapper impleme
                 }
             });
 
+
+            Intent foregroundIntent = new Intent(context, SpotifyService.class);
+            foregroundIntent.setAction(SET_TO_FOREGROUND);
+            foregroundIntent.putExtra(FileStreamingMediaService.INFO_PlAYPATH, getPlayPath());
+            foregroundIntent.putExtra(FileStreamingMediaService.INFO_SONGNAME, getSong().getSongname());
+            foregroundIntent.putExtra(FileStreamingMediaService.INFO_ARTIST, getSong().getArtist());
+            foregroundIntent.putExtra(FileStreamingMediaService.INFO_MEDIA_WRAPPER, getSong().getMediaWrapperType());
+            context.startService(foregroundIntent);
 
         }
 
