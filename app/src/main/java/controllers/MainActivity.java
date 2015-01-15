@@ -112,12 +112,9 @@ public class MainActivity extends ActionBarActivity implements FragmentManager.O
         this.registerReceiver(broadcastReceiver, intentFilter);
         this.setTitle("Magic Playlist");
 
-        if (!hasAlreadySentRequest) {
-            hasAlreadySentRequest = true;
-            SpotifyLoginHandler spotifyLoginHandler = SpotifyLoginHandler.getInstance();
-            spotifyLoginHandler.setContext(this);
-            spotifyLoginHandler.openAuthWindow();
-        }
+
+
+
 
         Settings.getInstance().loadSettings(getPreferences(MODE_PRIVATE));
         Settings.getInstance().setOnMediaWrapperListChangeListener(new Settings.Listener() {
