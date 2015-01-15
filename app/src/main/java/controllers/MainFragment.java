@@ -49,7 +49,7 @@ public class MainFragment extends Fragment implements View.OnClickListener {
             case R.id.button5:
                 SpotifyLoginHandler spotifyLoginHandler = SpotifyLoginHandler.getInstance();
                 spotifyLoginHandler.setContext(getActivity());
-                spotifyLoginHandler.openAuthWindow();
+                spotifyLoginHandler.startSpotifyLogin();
                 break;
         }
     }

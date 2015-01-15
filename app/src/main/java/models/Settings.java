@@ -72,7 +72,7 @@ public class Settings {
 
         /*this is very ugly...   @author charlotte*/
         if (mediaWrappers.contains(Song.MEDIA_WRAPPER_SPOTIFY)) {
-            // SpotifyLoginHandler.getInstance().startSpotifyLogin();
+            SpotifyLoginHandler.getInstance().startSpotifyLogin();
 
         }
 
@@ -140,7 +140,7 @@ public class Settings {
 
         /*again very very ugly*/
         if (wrapper.equals(Song.MEDIA_WRAPPER_SPOTIFY)) {
-            //SpotifyLoginHandler.getInstance().startSpotifyLogin();
+            SpotifyLoginHandler.getInstance().startSpotifyLogin();
 
         }
 
@@ -170,6 +170,20 @@ public class Settings {
 
     public boolean isWrapperActive(String wrapper) {
         return usedMediaWrappers.contains(wrapper);
+    }
+
+    public boolean canActivateWrapper(String s) {
+
+        /* ugly method.. */
+
+        if (!s.equals(Song.MEDIA_WRAPPER_SPOTIFY))
+            return true;
+
+        return SpotifyLoginHandler.getInstance().isLoggedIn();
+
+
+
+
     }
 
     public interface Listener {

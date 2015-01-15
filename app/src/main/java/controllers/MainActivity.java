@@ -122,6 +122,7 @@ public class MainActivity extends ActionBarActivity implements FragmentManager.O
         PlayQueue.getInstance().setAutoPilotMode(false);
 
         Client.getInstance().setContext(getApplicationContext());
+        SpotifyLoginHandler.getInstance().setContext(getApplicationContext());
 
         LocalSongsManager.getInstance().setContext(getApplicationContext());
 

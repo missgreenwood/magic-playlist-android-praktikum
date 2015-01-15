@@ -23,10 +23,17 @@ import org.apache.http.Header;
 import org.apache.http.NameValuePair;
 import org.apache.http.message.BasicHeader;
 import org.apache.http.message.BasicNameValuePair;
+import org.json.JSONException;
+import org.json.JSONObject;
 
 import java.util.ArrayList;
+import java.util.concurrent.Callable;
+import java.util.concurrent.Executors;
+import java.util.concurrent.ScheduledExecutorService;
+import java.util.concurrent.TimeUnit;
+import java.util.prefs.Preferences;
 
-//import de.lmu.playlist.domain.entity.SpotifyToken;
+
 import models.apiwrappers.APIWrapper;
 import models.apiwrappers.CallbackInterface;
 import rest.client.ClientConstants;
@@ -50,30 +57,27 @@ public class SpotifyLoginHandler {
     private static final String SPOTIFY_REFRESH_TOKEN_STRING = "spotify-refresh-token";
     private static final String SPOTIFY_TOKENS_CALLBACK = "spotify-tokens-callback";
     private static final String SPOTIFY_ACCESS_TOKEN_CALLBACK = "spotify-access-token-callback";
-    Activity context;
-    private SharedPreferences preferences;
+    Context context;
     private String currentAccessToken;
 
     public SpotifyLoginHandler() {
 
     }
 
+    /*
     public SpotifyLoginHandler(Activity context) {
         this.context = context;
-
-        preferences = context.getSharedPreferences(SPOTIFY_SHARED_PREF_STRING, 0);
-
-    }
+    }*/
 
     public static SpotifyLoginHandler getInstance() {
         return instance;
     }
 
-    public Activity getContext() {
+    public Context getContext() {
         return context;
     }
 
-    public void setContext(Activity context) {
+    public void setContext(Context context) {
         this.context = context;
     }
 
@@ -86,18 +90,23 @@ public class SpotifyLoginHandler {
 
     public void saveRefreshToken(String refreshToken) {
 
+        SharedPreferences preferences = context.getSharedPreferences(SPOTIFY_SHARED_PREF_STRING, 0);
         SharedPreferences.Editor editor = preferences.edit();
         editor.putString(SPOTIFY_REFRESH_TOKEN_STRING, refreshToken);
         // Commit the edits!
-        editor.commit();
+        editor.apply();
     }
 
     public String retrieveRefreshToken() {
-
-        return preferences.getString(SPOTIFY_REFRESH_TOKEN_STRING, null);
+        Log.d(TAG, "retrieve refresh token");
+        String token = context.getSharedPreferences(SPOTIFY_SHARED_PREF_STRING, 0).getString(SPOTIFY_REFRESH_TOKEN_STRING, null);
+        Log.d(TAG, "token: " + token);
+        return token;
     }
 
-    public void getNewAccessToken(String refreshToken) {
+    public void getNewAccessToken() {
+
+        String refreshToken = retrieveRefreshToken();
 
         BasicNameValuePair authCodePair = new BasicNameValuePair("refresh_token", refreshToken);
         ArrayList<NameValuePair> params = new ArrayList<NameValuePair>();
@@ -113,15 +122,26 @@ public class SpotifyLoginHandler {
             @Override
             public void onFailure(int i, Header[] headers, String s, Throwable throwable) {
                 Log.d(TAG, "back result is: " + s);
-                //processWebCallResult("", DEFAULT_CALLBACK, null);
 
             }
 
             @Override
             public void onSuccess(int i, Header[] headers, String s) {
                 Log.d(TAG, "success! " + s);
-                //  processWebCallResult(s, SPOTIFY_ACCESS_TOKEN_CALLBACK, null);
-                //  Log.d(TAG, "back result is: "+s);
+
+
+                try {
+                    JSONObject tokens = new JSONObject(s);
+                    String accessToken = tokens.getString("access_token");
+                    int expiresIn = tokens.getInt("expires_in");
+                    setCurrentAccessToken(accessToken);
+                } catch (JSONException e) {
+                    e.printStackTrace();
+                }
+
+
+
+
             }
 
 
@@ -139,10 +159,13 @@ public class SpotifyLoginHandler {
     public void startSpotifyLogin() {
         //TODO: Abfrage nach Access Token?
         if (hasSpotifyRequestToken()) {
-            getNewAccessToken(retrieveRefreshToken());
+
+            Log.d(TAG, "has refresh token, get new access token");
+            getNewAccessToken();
 
         } else {
 
+            Log.d(TAG, "no refresh token, open auth window");
             openAuthWindow();
 
         }
@@ -161,18 +184,6 @@ public class SpotifyLoginHandler {
 
         Log.d(TAG, url);
 
-        //APIWrapper apiWrapper=new APIWrapper();
-        //String jsonArrayString = apiWrapper.getJSONCall(url, APIWrapper.GET);
-        /*
-        APIWrapper asyncHTTP = new APIWrapper(this, DEFAULT_CALLBACK, APIWrapper.GET_METHOD);
-        if(Build.VERSION.SDK_INT >= Build.VERSION_CODES.HONEYCOMB)
-            asyncHTTP.executeOnExecutor(AsyncTask.THREAD_POOL_EXECUTOR, url);
-        else
-            asyncHTTP.execute(url);
-
-        */
-        //return playpath;
-
 
         AsyncHttpClient asyncHttpClient = new AsyncHttpClient();
        // Header[] headers = {new BasicHeader("Content-type", "application/json")};
@@ -184,11 +195,6 @@ public class SpotifyLoginHandler {
             public void onFailure(int i, Header[] headers, String s, Throwable throwable) {
                 Log.d(TAG, "back result is: " + s + throwable.getStackTrace() + " " + throwable.getMessage() + " " + throwable.getCause() + " " + throwable.toString());
 
-                //  Gson gson = new Gson();
-                //  SpotifyToken spotifyToken = gson.fromJson(s, SpotifyToken.class);
-
-                //processWebCallResult("", DEFAULT_CALLBACK, null);
-
             }
 
             @Override
@@ -196,11 +202,55 @@ public class SpotifyLoginHandler {
                 Log.d(TAG, "success! " + s);
                 //  processWebCallResult(s, SPOTIFY_TOKENS_CALLBACK, null);
                 //  Log.d(TAG, "back result is: "+s);
+
+                try {
+                    JSONObject tokens = new JSONObject(s);
+                    String accessToken = tokens.getString("access_token");
+                    String refreshToken = tokens.getString("refresh_token");
+                    int expiresIn = tokens.getInt("expires_in");
+
+                    Log.d(TAG, "access token: " + accessToken);
+
+                    if (refreshToken != null && !(refreshToken.equals(""))) {
+
+                        Log.v(TAG, "saved refresh_token " + refreshToken);
+                        saveRefreshToken(refreshToken);
+
+                    }
+                    if (accessToken != null && !(accessToken.equals(""))) {
+
+                        Log.v(TAG, "set new access token " + accessToken);
+                        scheduleGettingNewAccessToken(expiresIn * 0.75);
+                        setCurrentAccessToken(accessToken);
+                    }
+
+
+                } catch (JSONException e) {
+                    e.printStackTrace();
+                }
             }
 
 
         });
 
+
+    }
+
+    private void scheduleGettingNewAccessToken(double v) {
+
+
+        Log.d(TAG, "new access token in " + v + " seconds");
+        ScheduledExecutorService scheduler =
+                Executors.newSingleThreadScheduledExecutor();
+
+        scheduler.schedule(new Callable<Object>() {
+            @Override
+            public Object call() throws Exception {
+
+                getNewAccessToken();
+                return null;
+            }
+        }, (long) v, TimeUnit.SECONDS);
 
     }
 
@@ -211,6 +261,15 @@ public class SpotifyLoginHandler {
     }
 
     public void setCurrentAccessToken(String currentAccessToken) {
+        Log.d(TAG, "set current access token: " + currentAccessToken);
         this.currentAccessToken = currentAccessToken;
+    }
+
+    public boolean isLoggedIn() {
+
+        //TODO: additional check
+
+
+        return ((getCurrentAccessToken() != null) && (!getCurrentAccessToken().equals("")));
     }
 }

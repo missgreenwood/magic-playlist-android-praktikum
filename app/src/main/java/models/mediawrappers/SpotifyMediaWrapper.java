@@ -1,6 +1,7 @@
 package models.mediawrappers;
 
 import android.app.Activity;
+import android.app.Application;
 import android.content.Context;
 import android.content.Intent;
 import android.content.SharedPreferences;
@@ -19,6 +20,7 @@ import com.spotify.sdk.android.playback.ConnectionStateCallback;
 import com.spotify.sdk.android.playback.Player;
 import com.spotify.sdk.android.playback.PlayerNotificationCallback;
 import com.spotify.sdk.android.playback.PlayerState;
+import com.spotify.sdk.android.playback.PlayerStateCallback;
 
 import org.apache.http.Header;
 import org.apache.http.NameValuePair;
@@ -45,12 +47,14 @@ public class SpotifyMediaWrapper extends RemoteFileStreamingMediaWrapper impleme
     // public int counter;
     public static String TYPE_TRACK = "track";
     public static String SPOTIFY_QUERY_STRING = "q";
+    private static boolean firstTime = false;
     // private List<Song> songs;
     // private String playPath;
     // private  Context context;
     private Spotify spotify;
     private Player mPlayer;
     private SharedPreferences preferences;
+    private SpotifyLoginHandler spotifyLoginHandler;
 
 
     public SpotifyMediaWrapper(Context context, Song songsTemp) {
@@ -59,6 +63,8 @@ public class SpotifyMediaWrapper extends RemoteFileStreamingMediaWrapper impleme
         //  preferences = context.getSharedPreferences(SPOTIFY_SHARED_PREF_STRING, 0);
         // this.context=context;
         //  setSong(songsTemp);
+        this.spotifyLoginHandler = SpotifyLoginHandler.getInstance();
+        this.spotifyLoginHandler.setContext(getContext());
 
     }
 
@@ -66,22 +72,27 @@ public class SpotifyMediaWrapper extends RemoteFileStreamingMediaWrapper impleme
     public boolean play() {
 
 
+        /*
+        if (spotifyLoginHandler.getCurrentAccessToken()==null || spotifyLoginHandler.getCurrentAccessToken().equals(""))
+
+        {
+            spotifyLoginHandler.setContext(getContext());
+            spotifyLoginHandler.startSpotifyLogin();
+
+        }*/
         this.spotify = new Spotify();
-
-        //TODO: das muss ich irgendwie auslagern!
-
-
-        //TODO: nicht access token hardcoden!
-        // String accessToken = "BQAikzApJ-5PxbXEEnou32JJeeCdNsY5BBGI2WnDt7C82jCEImuIR7XZgzR9SSiDRMsLnhodWU78sQkJ7AhMPOs5m-g3kgY3QCKUHdHouFjvG0DIa4zwmmkwXGFNDtXsXgotCfOefvFha9tb0xc4SONKC4Z0MoV-5hhN3F4";
-
-
         Config spotifyConfig = new Config(context, SpotifyLoginHandler.getInstance().getCurrentAccessToken(), CLIENT_ID);
 
 
-        Log.d(TAG, "spotify play, config: " + (spotifyConfig == null));
+        if (mPlayer != null && mPlayer.isInitialized()) {
 
-        if (spotifyConfig != null) {
-            Log.d(TAG, "config: " + spotifyConfig.cachePath + spotifyConfig.oauthToken);
+            Log.d(TAG, "play song");
+            mPlayer.play(getPlayPath());
+
+
+        } else {
+
+
             mPlayer = spotify.getPlayer(spotifyConfig, this, new Player.InitializationObserver() {
                 @Override
                 public void onInitialized() {
@@ -90,7 +101,6 @@ public class SpotifyMediaWrapper extends RemoteFileStreamingMediaWrapper impleme
                     mPlayer.addConnectionStateCallback(SpotifyMediaWrapper.this);
                     mPlayer.addPlayerNotificationCallback(SpotifyMediaWrapper.this);
                     mPlayer.play(getPlayPath());
-                    // mPlayer.play("spotify:track:0LTZD4vTsp0EN1wXatc9IR");
                 }
 
                 @Override
@@ -99,7 +109,10 @@ public class SpotifyMediaWrapper extends RemoteFileStreamingMediaWrapper impleme
                 }
             });
 
+
         }
+
+
         return false;
     }
 
@@ -126,34 +139,13 @@ public class SpotifyMediaWrapper extends RemoteFileStreamingMediaWrapper impleme
         BasicNameValuePair queryStringPair = new BasicNameValuePair(SPOTIFY_QUERY_STRING, songQueryString);
         BasicNameValuePair trackTypePair = new BasicNameValuePair(TYPE_TRACK_STRING, TYPE_TRACK);
 
-        //  BasicNameValuePair clientIDPair = new BasicNameValuePair(SOUNDCLOUD_CLIENT_ID_STRING, SOUNDCLOUD_CLIENT_ID);
-
-
         ArrayList<NameValuePair> params = new ArrayList<NameValuePair>();
-        // params.add(clientIDPair);
         params.add(queryStringPair);
         params.add(trackTypePair);
-
-
         url = APIWrapper.encodeURL(url, params);
-
-        Log.d(TAG, "spotify url: " + url);
-
-        //APIWrapper apiWrapper=new APIWrapper();
-        //String jsonArrayString = apiWrapper.getJSONCall(url, APIWrapper.GET);
-
         APIWrapper asyncHTTP = new APIWrapper(this, DEFAULT_CALLBACK, APIWrapper.GET_METHOD);
         asyncHTTP.execute(url);
 
-
-        /*
-        if(Build.VERSION.SDK_INT >= Build.VERSION_CODES.HONEYCOMB)
-            asyncHTTP.executeOnExecutor(AsyncTask.THREAD_POOL_EXECUTOR, url);
-        else
-            asyncHTTP.execute(url);
-
-
-        */
         AsyncHttpClient asyncHttpClient = new AsyncHttpClient();
         Header[] headers = {new BasicHeader("Content-type", "application/json")};
         asyncHttpClient.get(getContext(), url, headers, null, new TextHttpResponseHandler() {
@@ -166,17 +158,12 @@ public class SpotifyMediaWrapper extends RemoteFileStreamingMediaWrapper impleme
 
             @Override
             public void onSuccess(int i, Header[] headers, String s) {
-                Log.d(TAG, "success! " + s);
+                Log.v(TAG, "success! " + s);
                 processWebCallResult(s, DEFAULT_CALLBACK, null);
             }
 
 
         });
-
-
-
-        //  https://api.spotify.com/v1/search?q=title:paranoid+artist:radiohead&type=track
-
 
     }
 
@@ -189,15 +176,29 @@ public class SpotifyMediaWrapper extends RemoteFileStreamingMediaWrapper impleme
     @Override
     public void pausePlayer() {
 
+        Log.d(TAG, "calling pause player...");
         if (mPlayer != null)
+
+        {
+
+            mPlayer.removePlayerNotificationCallback(SpotifyMediaWrapper.this);
+            Log.d(TAG, "mplayer is being paused");
             mPlayer.pause();
+            mPlayer.addPlayerNotificationCallback(SpotifyMediaWrapper.this);
+
+        }
     }
 
     @Override
     public void resumePlayer() {
 
+        mPlayer.removePlayerNotificationCallback(SpotifyMediaWrapper.this);
+
         if (mPlayer != null)
             mPlayer.resume();
+
+        mPlayer.addPlayerNotificationCallback(SpotifyMediaWrapper.this);
+
     }
 
 
@@ -233,7 +234,17 @@ public class SpotifyMediaWrapper extends RemoteFileStreamingMediaWrapper impleme
 
     @Override
     public void onPlaybackEvent(EventType eventType, PlayerState playerState) {
-        Log.d("MainActivity", "Playback event received: " + eventType.name());
+
+
+        if (eventType == EventType.END_OF_CONTEXT) {
+
+            mPlayer.removePlayerNotificationCallback(SpotifyMediaWrapper.this);
+            Log.d(TAG, "Playback event received: " + eventType.name());
+            PlayQueue.getInstance().onTrackFinished();
+            mPlayer.addPlayerNotificationCallback(SpotifyMediaWrapper.this);
+
+
+        }
     }
 
     @Override
@@ -243,216 +254,35 @@ public class SpotifyMediaWrapper extends RemoteFileStreamingMediaWrapper impleme
 
     @Override
     public void processWebCallResult(String result, String callback, Bundle data) {
-
-        /*
-        if (callback.equals(SPOTIFY_TOKENS_CALLBACK)) {
-
-
-            //TODO: get access and refreseh tokens
-
-
-        }
-
-
-        else if (callback.equals(SPOTIFY_ACCESS_TOKEN_CALLBACK))
-        {
-
-
-            //TODO: get new access token for refresh token
-
-            String refreshToken="";
-            saveRefreshToken(refreshToken);
-        }
-
-        else {
-        */
-
         String uri = "";
         try {
             JSONObject spotifyJSONObject = new JSONObject(result);
             JSONObject trackListObject = spotifyJSONObject.getJSONObject("tracks");
             JSONArray trackListItems = trackListObject.getJSONArray("items");
-            JSONObject first = trackListItems.getJSONObject(0);
-
-            Log.d(TAG, "trackListObject: " + trackListObject);
-
-            uri = first.getString("uri");
-
-
-            Log.d(TAG, "track uri: " + uri);
-
+            if (trackListItems.length() > 0) {
+                JSONObject first = trackListItems.getJSONObject(0);
+                uri = first.getString("uri");
+            }
 
         } catch (JSONException e) {
             e.printStackTrace();
         }
 
 
-        Log.d(TAG, "result: " + result);
-        // Intent intent = new Intent();
-
 
         if ((uri != null) && !(uri.equals(""))) {
 
             setPlayPath(uri);
             sendSongAvailableIntent(true);
-            // intent.setAction(PlayQueue.SONG_AVAILABLE);
-            // intent.putExtra(PlayQueue.SONG_ID, getSongDb().getId());
+
 
         } else {
 
             sendSongAvailableIntent(false);
-            // intent.setAction(PlayQueue.SONG_NOT_AVAILABLE);
 
         }
 
-        // getContext().sendBroadcast(intent);
-
-
-        //    Intent intent=new Intent();
-        //    Intent intent=new Intent();
-        //  intent.setAction(PlayQueue.SONG_AVAILABLE);
-//        context.sendBroadcast(intent);
-        //  }
-    }
-
-    /*
-    public void openAuthWindow() {
-
-        Log.d("", "open auth window");
-        SpotifyAuthentication.openAuthWindow(CLIENT_ID, RESPONSE_TYPE_CODE, REDIRECT_URI, new String[]{"user-read-private", "streaming"}, null, (Activity)context);
 
     }
 
-
-    public void saveRefreshToken(String refreshToken) {
-
-        SharedPreferences.Editor editor = preferences.edit();
-        editor.putString(SPOTIFY_REFRESH_TOKEN_STRING, refreshToken);
-        // Commit the edits!
-        editor.commit();
-    }
-
-
-    public String retrieveRefreshToken() {
-
-        return preferences.getString(SPOTIFY_REFRESH_TOKEN_STRING, null);
-    }
-
-
-    public void getNewAccessToken(String refreshToken)
-    {
-
-        BasicNameValuePair authCodePair = new BasicNameValuePair("refresh_token", refreshToken);
-        ArrayList<NameValuePair> params = new ArrayList<NameValuePair>();
-        params.add(authCodePair);
-
-        String url="http://141.84.213.249:5050/playlist/spotify/refresh_token";
-        url = APIWrapper.encodeURL(url, params);
-
-
-
-        AsyncHttpClient asyncHttpClient = new AsyncHttpClient();
-        Header[] headers = {new BasicHeader("Content-type", "application/json")};
-        asyncHttpClient.get(getContext(), url, headers, null, new TextHttpResponseHandler() {
-            @Override
-            public void onFailure(int i, Header[] headers, String s, Throwable throwable) {
-                Log.d(TAG, "back result is: "+s);
-                //processWebCallResult("", DEFAULT_CALLBACK, null);
-
-            }
-
-            @Override
-            public void onSuccess(int i, Header[] headers, String s) {
-                Log.d(TAG, "success! " + s);
-                processWebCallResult(s, SPOTIFY_ACCESS_TOKEN_CALLBACK, null);
-                //  Log.d(TAG, "back result is: "+s);
-            }
-
-
-        });
-
-
-
-
-    }
-
-
-    public boolean hasSpotifyRequestToken()
-    {
-        String refreshToken = retrieveRefreshToken();
-        return (refreshToken!=null && !(refreshToken.equals("")));
-
-    }
-
-
-    public void startSpotifyLogin()
-    {
-        //TODO: Abfrage nach Access Token?
-        if (hasSpotifyRequestToken())
-        {
-            getNewAccessToken(retrieveRefreshToken());
-
-        }
-
-        else {
-
-            openAuthWindow();
-
-        }
-
-    }
-
-
-   public void getAccessAndRefreshToken(String authCode)
-   {
-
-
-
-
-       BasicNameValuePair authCodePair = new BasicNameValuePair("auth_code", authCode);
-       ArrayList<NameValuePair> params = new ArrayList<NameValuePair>();
-       params.add(authCodePair);
-
-        String url="http://141.84.213.249:5050/playlist/spotify/get_tokens";
-      url = APIWrapper.encodeURL(url, params);
-
-       Log.d(TAG, url);
-
-       //APIWrapper apiWrapper=new APIWrapper();
-       //String jsonArrayString = apiWrapper.getJSONCall(url, APIWrapper.GET);
-        /*
-        APIWrapper asyncHTTP = new APIWrapper(this, DEFAULT_CALLBACK, APIWrapper.GET_METHOD);
-        if(Build.VERSION.SDK_INT >= Build.VERSION_CODES.HONEYCOMB)
-            asyncHTTP.executeOnExecutor(AsyncTask.THREAD_POOL_EXECUTOR, url);
-        else
-            asyncHTTP.execute(url);
-
-        */
-    //return playpath;
-
-/*
-       AsyncHttpClient asyncHttpClient = new AsyncHttpClient();
-       Header[] headers = {new BasicHeader("Content-type", "application/json")};
-       asyncHttpClient.get(getContext(), url, headers, null, new TextHttpResponseHandler() {
-           @Override
-           public void onFailure(int i, Header[] headers, String s, Throwable throwable) {
-               Log.d(TAG, "back result is: "+s);
-               //processWebCallResult("", DEFAULT_CALLBACK, null);
-
-           }
-
-           @Override
-           public void onSuccess(int i, Header[] headers, String s) {
-               Log.d(TAG, "success! " + s);
-               processWebCallResult(s, SPOTIFY_TOKENS_CALLBACK, null);
-             //  Log.d(TAG, "back result is: "+s);
-           }
-
-
-       });
-
-
-
-
-   }*/
 }
