@@ -64,7 +64,7 @@ public class SpotifyMediaWrapper extends RemoteFileStreamingMediaWrapper impleme
         // this.context=context;
         //  setSong(songsTemp);
         this.spotifyLoginHandler = SpotifyLoginHandler.getInstance();
-        this.spotifyLoginHandler.setContext(getContext());
+        //  this.spotifyLoginHandler.setContext(getContext());
 
     }
 
