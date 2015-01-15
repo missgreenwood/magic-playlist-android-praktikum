@@ -111,7 +111,7 @@ public class Settings {
             mediaWrappers.set(prio-1, mediaWrappers.get(prio));
             mediaWrappers.set(prio, upperWrapper);
         }
-        saveSettings();
+        // saveSettings();
         // resetPlaylists();
     }
 
@@ -122,13 +122,13 @@ public class Settings {
             mediaWrappers.set(prio + 1, mediaWrappers.get(prio));
             mediaWrappers.set(prio, upperWrapper);
         }
-        saveSettings();
+        //  saveSettings();
         // resetPlaylists();
     }
 
     public void deactivateWrapper(String wrapper) {
         usedMediaWrappers.remove(wrapper);
-        saveSettings();
+        //  saveSettings();
         //  resetPlaylists();
     }
 
@@ -144,7 +144,7 @@ public class Settings {
 
         }
 
-        saveSettings();
+        // saveSettings();
         // resetPlaylists();
     }
 
