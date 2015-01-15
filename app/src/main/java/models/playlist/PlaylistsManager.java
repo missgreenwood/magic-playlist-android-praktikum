@@ -133,6 +133,7 @@ public class PlaylistsManager implements Playlist.Listener {
     }
 
     public boolean savePlaylist(Playlist playlist) {
+        fileHandler.savePlaylist(playlist);
         return databaseHandler.savePlaylist(playlist);
     }
 
