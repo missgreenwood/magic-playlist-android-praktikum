@@ -1,56 +1,84 @@
 <?xml version="1.0" encoding="utf-8"?>
 <!-- author judith -->
-<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+<FrameLayout xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:tools="http://schemas.android.com/tools"
-    tools:context=".MainActivity"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    tools:context="controllers.mainFragments.mainViewGroup"
+    android:background="@drawable/listening">
+<RelativeLayout
     android:orientation="horizontal"
-    android:background="@drawable/listening"
     android:layout_height="fill_parent"
     android:layout_width="fill_parent"
     android:baselineAligned="false">
     <LinearLayout
-        android:layout_width="0dip"
+        android:orientation="vertical"
         android:layout_height="fill_parent"
-        android:layout_weight=".275"
-        android:orientation="horizontal">
+        android:layout_width="wrap_content"
+        android:weightSum="1.0"
+        android:layout_alignParentRight="true">
+        <LinearLayout
+            android:layout_weight="0.05"
+            android:layout_height="0dp"
+            android:layout_width="0dp"/>
+        <LinearLayout
+            android:layout_weight="0.8"
+            android:layout_height="0dp"
+            android:layout_width="wrap_content"
+            android:orientation="vertical">
+            <Button
+                android:id="@+id/myPlaylistsBtn"
+                android:text="@string/my_playlists"
+                android:layout_width="223dp"
+                android:layout_height="wrap_content"
+                style="@style/btnStyleOrange"
+                android:layout_weight="0.1"/>
+            <LinearLayout
+                android:layout_height="0dp"
+                android:layout_width="0dp"
+                android:layout_weight="0.1"/>
+            <Button
+                android:id="@+id/playlistsGeneratorBtn"
+                android:text="@string/playlist_generator"
+                android:layout_width="fill_parent"
+                android:layout_height="wrap_content"
+                style="@style/btnStyleOrange"
+                android:layout_below="@+id/myPlaylistsBtn"
+                android:layout_alignParentLeft="true"
+                android:layout_alignParentStart="true"
+                android:layout_weight="0.1"/>
+            <LinearLayout
+                android:layout_height="0dp"
+                android:layout_width="0dp"
+                android:layout_weight="0.1"/>
+            <Button
+                android:id="@+id/otherPlaylistsBtn"
+                android:text="@string/playlist_browser"
+                android:layout_width="fill_parent"
+                android:layout_height="wrap_content"
+                style="@style/btnStyleOrange"
+                android:layout_centerVertical="true"
+                android:layout_alignParentLeft="true"
+                android:layout_alignParentStart="true"
+                android:layout_weight="0.1"/>
+            <LinearLayout
+                android:layout_height="0dp"
+                android:layout_width="0dp"
+                android:layout_weight="0.1"/>
+            <Button
+                android:id="@+id/settingsBtn"
+                android:text="@string/priority_list"
+                android:layout_width="fill_parent"
+                android:layout_height="wrap_content"
+                style="@style/btnStyleOrange"
+                android:layout_alignParentLeft="true"
+                android:layout_alignParentStart="true"
+                android:layout_weight="0.1"/>
+        </LinearLayout>
+        <LinearLayout
+            android:layout_weight="0.1"
+            android:layout_height="0dp"
+            android:layout_width="0dp" />
     </LinearLayout>
-    <LinearLayout
-        android:layout_width="0dip"
-        android:layout_height="wrap_content"
-        android:layout_weight=".7"
-        android:orientation="vertical">
-        <Button
-            android:id="@+id/myPlaylistsBtn"
-            android:text="@string/my_playlists"
-            android:layout_width="fill_parent"
-            android:layout_height="wrap_content"
-            android:layout_marginTop="20dp"
-            style="@style/btnStyleOrange" />
-        <Button
-            android:id="@+id/playlistsGeneratorBtn"
-            android:text="@string/playlist_generator"
-            android:layout_width="fill_parent"
-            android:layout_height="wrap_content"
-            android:layout_marginTop="20dp"
-            style="@style/btnStyleOrange" />
-        <Button
-            android:id="@+id/otherPlaylistsBtn"
-            android:text="@string/playlist_browser"
-            android:layout_width="fill_parent"
-            android:layout_height="wrap_content"
-            android:layout_marginTop="20dp"
-            style="@style/btnStyleOrange" />
-        <Button
-            android:id="@+id/settingsBtn"
-            android:text="@string/priority_list"
-            android:layout_width="fill_parent"
-            android:layout_height="wrap_content"
-            android:layout_marginTop="20dp"
-            style="@style/btnStyleOrange" />
-    </LinearLayout>
-    <LinearLayout
-        android:layout_width="0dip"
-        android:layout_height="fill_parent"
-        android:layout_weight="0.025">
-    </LinearLayout>
-</LinearLayout>
+</RelativeLayout>
+    </FrameLayout>
