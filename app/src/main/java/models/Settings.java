@@ -111,6 +111,7 @@ public class Settings {
             mediaWrappers.set(prio-1, mediaWrappers.get(prio));
             mediaWrappers.set(prio, upperWrapper);
         }
+        adjustUsedMediaWrappersOrder();
         // saveSettings();
         // resetPlaylists();
     }
@@ -122,6 +123,7 @@ public class Settings {
             mediaWrappers.set(prio + 1, mediaWrappers.get(prio));
             mediaWrappers.set(prio, upperWrapper);
         }
+        adjustUsedMediaWrappersOrder();
         //  saveSettings();
         // resetPlaylists();
     }
@@ -143,7 +145,7 @@ public class Settings {
             SpotifyLoginHandler.getInstance().startSpotifyLogin();
 
         }
-
+        adjustUsedMediaWrappersOrder();
         // saveSettings();
         // resetPlaylists();
     }
@@ -161,6 +163,17 @@ public class Settings {
         PlayQueue.getInstance().setState(PlayQueue.STATE_IDLE);
 
 
+    }
+
+    private void adjustUsedMediaWrappersOrder() {
+        ArrayList<String> newUsedOrder = new ArrayList<>();
+        for (String wrapper : mediaWrappers) {
+            if (usedMediaWrappers.contains(wrapper)) {
+                newUsedOrder.add(wrapper);
+            }
+        }
+        usedMediaWrappers.clear();
+        usedMediaWrappers.addAll(newUsedOrder);
     }
 
     public void confirmWrapperChanges() {
