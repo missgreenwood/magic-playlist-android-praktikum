@@ -1,10 +1,10 @@
 <?xml version="1.0" encoding="utf-8"?>
-<!-- author judith -->
+<!-- @author judith -->
 <FrameLayout xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:tools="http://schemas.android.com/tools"
-    android:layout_width="match_parent"
+    tools:context="controllers.mainFragments.generatorMainViewGroup"
     android:layout_height="match_parent"
-    tools:context="controllers.mainFragments.mainViewGroup"
+    android:layout_width="match_parent"
     android:background="@drawable/listening">
     <LinearLayout
         android:orientation="vertical"
@@ -12,11 +12,11 @@
         android:layout_width="wrap_content"
         android:weightSum="1.0"
         android:layout_gravity="center">
-    <LinearLayout
-        android:layout_weight="0.05"
-        android:layout_height="0dp"
-        android:layout_width="wrap_content"
-        android:orientation="vertical"/>
+        <LinearLayout
+            android:layout_weight="0.05"
+            android:layout_height="0dp"
+            android:layout_width="wrap_content"
+            android:orientation="vertical"/>
         <LinearLayout
             android:layout_weight="0.9"
             android:layout_height="0dp"
@@ -28,23 +28,23 @@
                 android:layout_width="fill_parent"
                 android:orientation="horizontal">
                 <Button
-                    android:id="@+id/myPlaylistsBtn"
-                    android:text="@string/my_playlists"
+                    android:id="@+id/songsCountLimitBtn"
+                    android:text="@string/songs_count_limit_text"
                     android:layout_width="223dp"
                     android:layout_height="fill_parent"
                     style="@style/btnStyleOrange"
                     android:layout_marginRight="10dp"/>
                 <Button
-                    android:id="@+id/playlistsGeneratorBtn"
-                    android:text="@string/playlist_generator"
+                    android:id="@+id/genresBtn"
+                    android:text="@string/genres"
                     android:layout_width="223dp"
                     android:layout_height="fill_parent"
                     style="@style/btnStyleOrange"
-                    android:layout_alignTop="@id/myPlaylistsBtn"
+                    android:layout_alignTop="@id/songsCountLimitBtn"
                     android:layout_marginRight="10dp"/>
                 <LinearLayout
                     android:layout_height="0dp"
-                    android:layout_width="fill_parent"
+                    android:layout_width="0dp"
                     android:layout_weight="0.1"/>
             </LinearLayout>
             <LinearLayout
@@ -57,19 +57,19 @@
                 android:layout_width="fill_parent"
                 android:orientation="horizontal">
                 <Button
-                    android:id="@+id/settingsBtn"
-                    android:text="@string/priority_list"
+                    android:id="@+id/artistsBtn"
+                    android:text="@string/artists"
                     android:layout_width="223dp"
                     android:layout_height="fill_parent"
                     style="@style/btnStyleOrange"
                     android:layout_marginRight="10dp"/>
                 <Button
-                    android:id="@+id/otherPlaylistsBtn"
-                    android:text="@string/playlist_browser"
+                    android:id="@+id/songsBtn"
+                    android:text="@string/songs"
                     android:layout_width="223dp"
                     android:layout_height="fill_parent"
                     style="@style/btnStyleOrange"
-                    android:layout_alignTop="@id/settingsBtn"
+                    android:layout_alignTop="@id/artistsBtn"
                     android:layout_marginRight="10dp"/>
                 <LinearLayout
                     android:layout_height="0dp"
@@ -91,8 +91,8 @@
                     android:layout_weight="0.1"
                     android:visibility="invisible"/>
                 <Button
-                    android:id="@+id/button5"
-                    android:text="@string/spotify_login"
+                    android:id="@+id/startGeneratorBtn"
+                    android:text="@string/start_generator"
                     android:layout_width="223dp"
                     android:layout_height="fill_parent"
                     style="@style/btnStyleOrange"
