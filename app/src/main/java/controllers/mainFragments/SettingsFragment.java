@@ -118,6 +118,7 @@ public class SettingsFragment extends ListFragment {
                 Context context = getActivity();
                 LayoutInflater inflater = (LayoutInflater) context.getSystemService(Context.LAYOUT_INFLATER_SERVICE);
                 convertView = inflater.inflate(R.layout.rows2, parent, false);
+                convertView.setLayoutParams(new ListView.LayoutParams(ListView.LayoutParams.MATCH_PARENT,100));
                 holder = new SettingsViewHolder();
                 holder.checkbox = (CheckBox) convertView.findViewById(R.id.checkbox);
                 holder.wrapper_name = (TextView) convertView.findViewById(R.id.wrapper_name);

@@ -32,4 +32,13 @@
     <string name="star">Star this playlist!</string>
     <string name="upload">Upload this playlist?</string>
     <string name="save">Save this playlist?</string>
+    <string-array name="menu_array">
+        <item>My Playlists</item>
+        <item>Playlist Generator</item>
+        <item>Playlist Browser</item>
+        <item>My Media Services</item>
+    </string-array>
+    <string name="drawer_open">Open navigation drawer</string>
+    <string name="drawer_close">Close navigation drawer</string>
+    <string name="spotify_login">Spotify-Login</string>
 </resources>

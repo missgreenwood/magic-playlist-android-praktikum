@@ -10,8 +10,6 @@ import android.support.v7.app.ActionBarActivity;
 import android.util.Log;
 import android.view.Menu;
 import android.view.MenuItem;
-import android.view.View;
-import android.widget.Button;
 
 import com.spotify.sdk.android.authentication.AuthenticationResponse;
 import com.spotify.sdk.android.authentication.SpotifyAuthentication;
@@ -19,15 +17,11 @@ import com.spotify.sdk.android.playback.Config;
 
 import java.util.ArrayList;
 
-import controllers.mainFragments.BrowserFragment;
-import controllers.mainFragments.GeneratorFragment;
-import controllers.mainFragments.MyPlaylistsFragment;
-import controllers.mainFragments.SettingsFragment;
 import models.Settings;
 import models.mediawrappers.FileStreamingMediaService;
 import models.mediawrappers.PlayQueue;
-import models.playlist.LocalSongsManager;
 import models.mediawrappers.SpotifyLoginHandler;
+import models.playlist.LocalSongsManager;
 import models.playlist.PlaylistsManager;
 import rest.client.Client;
 import tests.R;
@@ -131,6 +125,7 @@ public class MainActivity extends ActionBarActivity implements FragmentManager.O
 
         LocalSongsManager.getInstance().setContext(getApplicationContext());
 
+        PlaylistsManager.getInstance().setContext(getApplicationContext());
         PlaylistsManager.getInstance().loadPlaylists();
 
         super.onStart();
@@ -148,6 +143,12 @@ public class MainActivity extends ActionBarActivity implements FragmentManager.O
         PlayQueue.getInstance().setAutoPilotMode(true);
         unregisterReceiver(broadcastReceiver);
         super.onStop();
+    }
+
+    @Override
+    protected void onDestroy() {
+        super.onDestroy();
+        PlaylistsManager.getInstance().closeDb();
     }
 
     @Override

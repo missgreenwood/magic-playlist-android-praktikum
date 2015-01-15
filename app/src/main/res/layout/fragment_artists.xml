@@ -5,12 +5,10 @@
     android:layout_height="match_parent"
     tools:context="controllers.mainFragments.generatorFragments.ArtistsFragment"
     android:background="@drawable/listening">
-    <LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
-        xmlns:tools="http://schemas.android.com/tools"
+    <RelativeLayout
         android:orientation="vertical"
         android:layout_height="fill_parent"
         android:layout_width="fill_parent"
-        tools:context=".GeneratorActivity"
         android:background="#B3B3B3B3">
         <EditText
             android:id="@+id/editArtist"
@@ -18,5 +16,5 @@
             android:layout_height="wrap_content">
             <requestFocus />
         </EditText>
-    </LinearLayout>
+    </RelativeLayout>
 </FrameLayout>

@@ -107,14 +107,14 @@ public class PlayQueue {
     public Song getSongForID(int songID) {
 
         Song currentSong = getCurrentSong();
-        if (currentSong != null && currentSong.getSongID() == songID) {
+        if (currentSong != null && currentSong.getId() == songID) {
             return currentSong;
         }
 
         if (songs != null) {
             for (Song song : songs) {
 
-                if (song.getSongID() == songID)
+                if (song.getId() == songID)
                     return song;
             }
         }
@@ -218,7 +218,7 @@ public class PlayQueue {
             if (mediaWrappers.size() > 0) {
                 song.setMediaWrapperType(mediaWrappers.get(0));
             } else {
-                onSongNotAvailable(song.getSongID());
+                onSongNotAvailable(song.getId());
                 return;
             }
 

@@ -249,7 +249,7 @@ public class LastfmMetadataWrapper extends AbstractMetadataWrapper {
                 return new String[0][0];
             }
 
-            //build normal String array from JSONObjects with interesting attributes
+            //getSongDb normal String array from JSONObjects with interesting attributes
             arrayValues = new String[elementsJsonArray.length()][arrayValueAttribs.length];
             for (int elIndex = 0; elIndex < elementsJsonArray.length(); elIndex++) {
                 JSONObject element = elementsJsonArray.getJSONObject(elIndex);

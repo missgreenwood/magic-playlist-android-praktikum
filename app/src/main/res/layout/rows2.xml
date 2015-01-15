@@ -10,7 +10,7 @@
         android:layout_height="wrap_content"
         android:layout_gravity="center_vertical"
         android:checkMark="?android:attr/listChoiceIndicatorMultiple"
-        android:id="@+id/checkbox" />
+        android:id="@+id/checkbox"/>
     <TextView
         android:id="@+id/wrapper_name"
         android:layout_width="0dp"
@@ -20,7 +20,8 @@
         android:ellipsize="end"
         android:paddingLeft="6dp"
         android:paddingRight="6dp"
-        android:textAppearance="?android:attr/textAppearanceMedium" />
+        android:textAppearance="?android:attr/textAppearanceMedium"
+        android:textStyle="bold"/>
     <Button
         android:id="@+id/upBtn"
         android:text="@string/Up"

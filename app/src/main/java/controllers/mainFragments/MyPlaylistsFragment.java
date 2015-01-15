@@ -34,6 +34,7 @@ import tests.R;
 
 /**
  * Created by judith on 31.12.14.
+ *
  */
 public class MyPlaylistsFragment extends ListFragment implements AdapterView.OnItemLongClickListener, PlaylistsManager.Listener {
 

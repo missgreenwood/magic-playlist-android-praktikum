@@ -12,12 +12,10 @@ import android.widget.Toast;
 
 import com.loopj.android.http.RequestHandle;
 
-import java.util.ArrayList;
 import java.util.List;
 
 import controllers.MainActivity;
 import controllers.mainFragments.browserFragments.playlistFragment.BrowserPlaylistFragment;
-import controllers.mainFragments.generatorFragments.ArtistsFragment;
 import controllers.mainFragments.generatorFragments.GenresListFragment;
 import controllers.mainFragments.generatorFragments.SingleArtistFragment;
 import models.mediaModels.Playlist;
@@ -58,7 +56,8 @@ public class BrowserFragment extends android.support.v4.app.Fragment implements
         if (browserPlaylistFragment==null) {
             browserPlaylistFragment = new BrowserPlaylistFragment();
             FragmentTransaction transact = getActivity().getSupportFragmentManager().beginTransaction();
-            transact.add(R.id.browserMainViewGroup,browserPlaylistFragment,"browserPlaylistFragment");
+            transact.add(R.id.mainViewGroup,browserPlaylistFragment,"browserPlaylistFragment");
+            //transact.add(R.id.browserMainViewGroup,browserPlaylistFragment,"browserPlaylistFragment");
             transact.addToBackStack(null);
             transact.commit();
         }
@@ -96,7 +95,8 @@ public class BrowserFragment extends android.support.v4.app.Fragment implements
             genresFragment = new GenresListFragment();
             genresFragment.setListener(this);
             FragmentTransaction transact = getActivity().getSupportFragmentManager().beginTransaction();
-            transact.add(R.id.browserMainViewGroup,genresFragment,"genresSearchFragment");
+            transact.add(R.id.mainViewGroup,genresFragment,"genresSearchFragment");
+            // transact.add(R.id.browserMainViewGroup,genresFragment,"genresSearchFragment");
             transact.addToBackStack(null);
             transact.commit();
         }
@@ -108,7 +108,8 @@ public class BrowserFragment extends android.support.v4.app.Fragment implements
             artistsFragment = new SingleArtistFragment();
             artistsFragment.setListener(this);
             FragmentTransaction transact = getActivity().getSupportFragmentManager().beginTransaction();
-            transact.add(R.id.browserMainViewGroup,artistsFragment, "artistSearchFragment");
+            transact.add(R.id.mainViewGroup,artistsFragment, "artistSearchFragment");
+            // transact.add(R.id.browserMainViewGroup,artistsFragment, "artistSearchFragment");
             transact.addToBackStack(null);
             transact.commit();
         }

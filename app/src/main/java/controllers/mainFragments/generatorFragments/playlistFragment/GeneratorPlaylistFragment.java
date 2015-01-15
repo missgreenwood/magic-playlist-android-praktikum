@@ -88,7 +88,9 @@ public class GeneratorPlaylistFragment extends PlaylistFragment implements
     @Override
     public void generationFinished(final Playlist playlist) {
 
-        PlaylistsManager.getInstance().addPlaylist(playlist);
+        if (!PlaylistsManager.getInstance().addPlaylist(playlist)) {
+            Log.e("GENERATOR", "error while adding generated playlist to manager");
+        }
         Toast.makeText(getActivity().getApplicationContext(), "Playlist \"" + playlist.getName() + "\" successfully created!", Toast.LENGTH_SHORT).show();
 
         if (destroying) {

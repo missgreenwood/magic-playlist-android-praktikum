@@ -1,12 +1,9 @@
 package controllers.mainFragments.browserFragments.playlistFragment;
 
-import android.app.FragmentManager;
-import android.app.ProgressDialog;
 import android.content.Context;
 import android.os.Bundle;
 import android.support.v4.app.FragmentTransaction;
 import android.support.v4.app.ListFragment;
-import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -24,8 +21,6 @@ import controllers.MainActivity;
 import controllers.mainFragments.browserFragments.ResultPlaylistFragment;
 import models.mediaModels.Playlist;
 import models.playlist.PlaylistsManager;
-import rest.client.Client;
-import rest.client.ClientListener;
 import tests.R;
 
 /**
@@ -58,7 +53,8 @@ public class BrowserPlaylistFragment extends ListFragment {
         if (resultsFragment == null) {
             resultsFragment = new ResultPlaylistFragment();
             FragmentTransaction transact = getActivity().getSupportFragmentManager().beginTransaction();
-            transact.replace(R.id.browserMainViewGroup, resultsFragment, "ResultPlaylistFragment");
+            transact.replace(R.id.mainViewGroup, resultsFragment, "ResultPlaylistFragment");
+            // transact.replace(R.id.browserMainViewGroup, resultsFragment, "ResultPlaylistFragment");
             transact.addToBackStack(null);
             transact.commit();
         }

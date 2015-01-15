@@ -15,5 +15,5 @@
         android:name="controllers.mainFragments.myplaylistsFragments.MediaPlayerFragment"
         android:layout_width="fill_parent"
         android:layout_height="wrap_content"
-        tools:layout="@layout/fragment_media_player" />
+        tools:layout="@layout/fragment_media_player"/>
 </LinearLayout>
