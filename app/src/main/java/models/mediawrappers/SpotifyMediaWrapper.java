@@ -122,7 +122,7 @@ public class SpotifyMediaWrapper extends RemoteFileStreamingMediaWrapper impleme
             foregroundIntent.putExtra(FileStreamingMediaService.INFO_SONGNAME, getSong().getSongname());
             foregroundIntent.putExtra(FileStreamingMediaService.INFO_ARTIST, getSong().getArtist());
             foregroundIntent.putExtra(FileStreamingMediaService.INFO_MEDIA_WRAPPER, getSong().getMediaWrapperType());
-            context.startService(foregroundIntent);
+            //  context.startService(foregroundIntent);
 
         }
 
