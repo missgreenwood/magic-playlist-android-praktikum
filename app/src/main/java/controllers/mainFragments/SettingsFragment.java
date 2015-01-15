@@ -28,6 +28,7 @@ import tests.R;
  */
 public class SettingsFragment extends ListFragment {
     private Settings settings;
+    private Button confirmBtn;
     private ArrayList<String> usedMediaWrappers;
     private ArrayList<String> allMediaWrappers;
     public SettingsFragment() {
@@ -39,6 +40,13 @@ public class SettingsFragment extends ListFragment {
         ViewGroup rootView = (ViewGroup) inflater.inflate(R.layout.fragment_settings, container, false);
         ((MainActivity)getActivity()).getSupportActionBar().setTitle("Settings");
         settings = Settings.getInstance();
+        confirmBtn = (Button) rootView.findViewById(R.id.confirmBtn);
+        confirmBtn.setOnClickListener(new OnClickListener() {
+            @Override
+            public void onClick(View v) {
+
+            }
+        });
         usedMediaWrappers = settings.getMediaWrappers();
         allMediaWrappers = settings.getMediaWrappers(true);
         // Bind adapter to the ListFragment
@@ -124,7 +132,6 @@ public class SettingsFragment extends ListFragment {
                 holder.wrapper_name = (TextView) convertView.findViewById(R.id.wrapper_name);
                 holder.up_button = (Button) convertView.findViewById(R.id.upBtn);
                 holder.down_button = (Button) convertView.findViewById(R.id.downBtn);
-
                 //initialvalue should be set before Listener, otherwise unneeded actions are called
                 //also I removed  "all[position]" because the arrayAdapter should work with the given
                 //list at initialisation. This is important at this position, because when the List
