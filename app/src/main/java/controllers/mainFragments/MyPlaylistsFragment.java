@@ -3,10 +3,7 @@ package controllers.mainFragments;
 import android.app.AlertDialog;
 import android.content.Context;
 import android.content.DialogInterface;
-import android.graphics.Color;
-import android.graphics.Paint;
 import android.os.Bundle;
-import android.support.v4.app.FragmentActivity;
 import android.support.v4.app.FragmentTransaction;
 import android.support.v4.app.ListFragment;
 import android.view.LayoutInflater;
@@ -18,13 +15,8 @@ import android.widget.LinearLayout;
 import android.widget.ListView;
 import android.widget.TextView;
 
-import java.lang.reflect.Array;
-import java.util.ArrayList;
-import java.util.Arrays;
 import java.util.Comparator;
-import java.util.Iterator;
 import java.util.List;
-import java.util.TreeSet;
 
 import controllers.MainActivity;
 import controllers.mainFragments.generatorFragments.PlaylistFragment;
@@ -50,14 +42,8 @@ public class MyPlaylistsFragment extends ListFragment implements AdapterView.OnI
         ((MainActivity)getActivity()).getSupportActionBar().setTitle("My Playlists");
 
         // Bind adapter to the ListFragment
-        setListAdapter(
-                new PlaylistArrayAdapter(
-                        getActivity(),
-                        R.layout.rows,
-                        R.id.txtview,
-                        PlaylistsManager.getInstance().getPlaylists()
-                        )
-        );
+        setListAdapter(new PlaylistArrayAdapter(getActivity(),R.layout.rows,R.id.txtview,PlaylistsManager.getInstance().getPlaylists()));
+        // setListAdapter(new PlaylistArrayAdapter(getActivity(),android.R.layout.simple_list_item_1,android.R.id.text1,PlaylistsManager.getInstance().getPlaylists()));
         ((PlaylistArrayAdapter)getListAdapter()).sort(new Comparator<Playlist>() {
             @Override
             public int compare(Playlist lhs, Playlist rhs) {
@@ -145,6 +131,7 @@ public class MyPlaylistsFragment extends ListFragment implements AdapterView.OnI
         public View getView(int position, View convertView, ViewGroup parent)
         {
             LinearLayout view = (LinearLayout) super.getView(position, convertView, parent);
+            view.setLayoutParams(new ListView.LayoutParams(ListView.LayoutParams.MATCH_PARENT,100));
             TextView textView = (TextView)view.findViewById(R.id.txtview);
             textView.setText(getItem(position).getName());
             return view;
