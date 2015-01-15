@@ -10,8 +10,6 @@ import android.support.v7.app.ActionBarActivity;
 import android.util.Log;
 import android.view.Menu;
 import android.view.MenuItem;
-import android.view.View;
-import android.widget.Button;
 
 import com.spotify.sdk.android.authentication.AuthenticationResponse;
 import com.spotify.sdk.android.authentication.SpotifyAuthentication;
@@ -19,17 +17,12 @@ import com.spotify.sdk.android.playback.Config;
 
 import java.util.ArrayList;
 
-import controllers.mainFragments.BrowserFragment;
-import controllers.mainFragments.GeneratorFragment;
-import controllers.mainFragments.MyPlaylistsFragment;
-import controllers.mainFragments.SettingsFragment;
 import models.Settings;
 import models.mediawrappers.FileStreamingMediaService;
 import models.mediawrappers.PlayQueue;
-import models.playlist.LocalSongsManager;
 import models.mediawrappers.SpotifyLoginHandler;
+import models.playlist.LocalSongsManager;
 import models.playlist.PlaylistsManager;
-import models.playlist.database.Contracts;
 import rest.client.Client;
 import tests.R;
 
