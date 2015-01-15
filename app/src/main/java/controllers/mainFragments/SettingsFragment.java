@@ -44,7 +44,7 @@ public class SettingsFragment extends ListFragment {
         confirmBtn.setOnClickListener(new OnClickListener() {
             @Override
             public void onClick(View v) {
-
+                settings.confirmWrapperChanges();
             }
         });
         usedMediaWrappers = settings.getMediaWrappers();
