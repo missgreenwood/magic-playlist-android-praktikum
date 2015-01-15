@@ -6,12 +6,10 @@
     android:layout_height="match_parent"
     tools:context="controllers.mainFragments.SettingsFragment"
     android:background="@drawable/listening">
-    <LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
-        xmlns:tools="http://schemas.android.com/tools"
+    <RelativeLayout
         android:orientation="vertical"
         android:layout_height="fill_parent"
         android:layout_width="fill_parent"
-        tools:context=".controllers.mainFragments.SettingsFragment"
         android:background="#B3B3B3B3">
         <ListView
             android:id="@id/android:list"
@@ -19,5 +17,5 @@
             android:layout_height="wrap_content"
             android:choiceMode="multipleChoice">
         </ListView>
-    </LinearLayout>
+    </RelativeLayout>
 </FrameLayout>
