@@ -35,7 +35,7 @@ public class FileStreamingMediaService extends Service implements MediaPlayer.On
     public static final String INFO_PlAYPATH = "com.example.info.playpath";
     public static final String INFO_SONGNAME = "com.example.info.songname";
     public static final int NOTIFICATION_ID = 555;
-    public static final String TRACK_FINISHED = "track finished";
+    public static final String TRACK_FINISHED = "track_finished";
     public static final String INFO_ARTIST = "com.example.info.artist";
     public static final String INFO_MEDIA_WRAPPER = "com.example.info.mediawrapper";
     AudioState state;
@@ -173,9 +173,9 @@ public class FileStreamingMediaService extends Service implements MediaPlayer.On
         }
 
         //Was tun, wenn die Exception auftritt?
-        Intent broadcastIntent = new Intent();
-        broadcastIntent.setAction(TRACK_FINISHED);
-        sendBroadcast(broadcastIntent);
+        //  Intent broadcastIntent = new Intent();
+        //  broadcastIntent.setAction(TRACK_FINISHED);
+        //  sendBroadcast(broadcastIntent);
 
 
         //Intent broadcastIntent = new Intent("")
@@ -189,18 +189,19 @@ public class FileStreamingMediaService extends Service implements MediaPlayer.On
 
         if (PlayQueue.getInstance() != null) {
 
-            Log.d(TAG, "PlayQueue still visible!");
+            //     Log.d(TAG, "PlayQueue still visible!");
 
-            if (PlayQueue.getInstance().isAutoPilotMode()) {
-                Log.d(TAG, "application running in background! trying to play next song");
+            //    if (PlayQueue.getInstance().isAutoPilotMode()) {
+            //     Log.d(TAG, "application running in background! trying to play next song");
 
 
                 PlayQueue.getInstance().onTrackFinished();
 
-            }
+            // }
         }
     }
 
+    @Override
     public void onDestroy() {
 
         Log.v(TAG, "on destroyPlaylist?");
