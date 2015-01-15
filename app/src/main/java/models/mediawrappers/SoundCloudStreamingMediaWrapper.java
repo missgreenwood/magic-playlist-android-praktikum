@@ -101,7 +101,7 @@ public class SoundCloudStreamingMediaWrapper extends RemoteFileStreamingMediaWra
 
             }
 
-            //  intent.putExtra(PlayQueue.SONG_ID, getSong().getSongID());
+            //  intent.putExtra(PlayQueue.SONG_ID, getSongDb().getId());
             //  context.sendBroadcast(intent);
 
             // playState = false;

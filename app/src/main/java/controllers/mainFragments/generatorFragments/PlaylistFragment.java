@@ -222,7 +222,7 @@ public class PlaylistFragment extends ListFragment implements
     }
 
     private void dragItem(int position, float startX, float endX) {
-        if (dragCanceled) {
+        if (dragCanceled || position == -1) {
             return;
         }
         ListView listView = getListView();
@@ -339,16 +339,18 @@ public class PlaylistFragment extends ListFragment implements
     }
 
     @Override
-    public void onPlaylistChange() {
-        SongArrayAdapter adapter = (SongArrayAdapter)getListAdapter();
-        if (adapter != null) {
-            adapter.notifyDataSetChanged();
+    public void onPlaylistChange(Playlist playlist) {
+        if (playlist.equals(this.playlist)) {
+            SongArrayAdapter adapter = (SongArrayAdapter)getListAdapter();
+            if (adapter != null) {
+                adapter.notifyDataSetChanged();
+            }
         }
     }
 
     @Override
     public void onResume() {
-        onPlaylistChange();
+        onPlaylistChange(playlist);
         super.onResume();
     }
 

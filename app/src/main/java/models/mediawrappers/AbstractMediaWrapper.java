@@ -7,8 +7,6 @@ import models.mediaModels.Song;
 
 import org.json.JSONException;
 
-import java.util.List;
-
 /**
  * Created by lotta on 02.12.14.
  * @author charlotte
@@ -71,7 +69,7 @@ public abstract class AbstractMediaWrapper {
     public void sendSongAvailableIntent(boolean available) {
 
         Intent intent = new Intent();
-        intent.putExtra(PlayQueue.SONG_ID, getSong().getSongID());
+        intent.putExtra(PlayQueue.SONG_ID, getSong().getId());
 
         if (available) {
             intent.setAction(PlayQueue.SONG_AVAILABLE);

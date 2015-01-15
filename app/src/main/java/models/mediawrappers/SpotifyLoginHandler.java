@@ -26,7 +26,7 @@ import org.apache.http.message.BasicNameValuePair;
 
 import java.util.ArrayList;
 
-import de.lmu.playlist.domain.entity.SpotifyToken;
+//import de.lmu.playlist.domain.entity.SpotifyToken;
 import models.apiwrappers.APIWrapper;
 import models.apiwrappers.CallbackInterface;
 import rest.client.ClientConstants;

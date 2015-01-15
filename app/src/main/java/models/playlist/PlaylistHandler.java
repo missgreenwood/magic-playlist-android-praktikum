@@ -30,5 +30,5 @@ public interface PlaylistHandler {
 
     boolean savePlaylist(Playlist playlist);
 
-    boolean destroy(String name);
+    boolean destroyPlaylist(Playlist playlist);
 }

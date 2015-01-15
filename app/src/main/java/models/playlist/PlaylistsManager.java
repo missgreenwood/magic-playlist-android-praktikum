@@ -5,9 +5,11 @@ import android.content.Context;
 import java.util.ArrayList;
 
 import models.mediaModels.Playlist;
+import models.mediaModels.Song;
 
 /**
  * Created by TheDaAndy on 29.12.2014.
+ *
  */
 public class PlaylistsManager implements Playlist.Listener {
 
@@ -21,8 +23,8 @@ public class PlaylistsManager implements Playlist.Listener {
 
     private ArrayList<Playlist> playlists;
 
-    private PlaylistHandler databaseHandler;
-    private PlaylistHandler fileHandler = new PlaylistFileHandler();
+    private PlaylistDatabaseHandler databaseHandler;
+    private PlaylistFileHandler fileHandler = new PlaylistFileHandler();
 
     private PlaylistsManager() {
         observers = new ArrayList<>();
@@ -31,29 +33,39 @@ public class PlaylistsManager implements Playlist.Listener {
 
     public void loadPlaylists()
     {
-        ArrayList<Playlist> loadedPlaylists = fileHandler.loadPlaylists();
-//        ArrayList<Playlist> loadedPlaylists = databaseHandler.loadPlaylists();
+        ArrayList<Playlist> loadedPlaylists = databaseHandler.loadPlaylists();
+//        if (loadedPlaylists == null || loadedPlaylists.size() == 0) {
+//            loadedPlaylists = fileHandler.loadPlaylists();
+//        }
         if (loadedPlaylists != null) {
             playlists.clear();
-            for(Playlist playlist : loadedPlaylists) {
-                addPlaylist(playlist);
-                databaseHandler.savePlaylist(playlist);
+            for (Playlist playlist : loadedPlaylists) {
+                playlist.addObserver(this);
+                playlists.add(playlist);
             }
-
+            notifyOnPlaylistsListChange();
         }
+    }
+
+    public void closeDb()
+    {
+        databaseHandler.close();
     }
 
     public void setContext(Context context) {
         databaseHandler = new PlaylistDatabaseHandler(context);
     }
 
-    public void addPlaylist(Playlist playlist)
+    public boolean addPlaylist(Playlist playlist)
     {
+        boolean success = true;
         if (!playlists.contains(playlist)) {
             playlist.addObserver(this);
             playlists.add(playlist);
+            success = savePlaylist(playlist);
             notifyOnPlaylistsListChange();
         }
+        return success;
     }
 
     public ArrayList<Playlist> getPlaylists()
@@ -64,7 +76,7 @@ public class PlaylistsManager implements Playlist.Listener {
     public void removePlaylist(Playlist playlist) {
         playlists.remove(playlist);
         playlist.removeObserver(this);
-        databaseHandler.destroy(playlist.getName());
+        databaseHandler.destroyPlaylist(playlist);
         notifyOnPlaylistsListChange();
     }
 
@@ -117,7 +129,19 @@ public class PlaylistsManager implements Playlist.Listener {
 
     @Override
     public void onPlaylistChange(Playlist playlist) {
-        databaseHandler.savePlaylist(playlist);
+        savePlaylist(playlist);
+    }
+
+    public boolean savePlaylist(Playlist playlist) {
+        return databaseHandler.savePlaylist(playlist);
+    }
+
+    public Song getSong(String artist, String songname) {
+        return databaseHandler.getSong(artist, songname);
+    }
+
+    public Song getSong(int id) {
+        return databaseHandler.getSong(id);
     }
 
     public interface Listener {

@@ -5,7 +5,6 @@ import android.util.Log;
 
 import java.io.BufferedReader;
 import java.io.File;
-import java.io.FileFilter;
 import java.io.FileOutputStream;
 import java.io.FileReader;
 import java.io.FilenameFilter;
@@ -22,6 +21,7 @@ import models.mediaModels.Song;
 
 /**
  * Created by TheDaAndy on 30.12.2014.
+ *
  */
 public class PlaylistFileHandler implements PlaylistHandler{
 
@@ -92,8 +92,8 @@ public class PlaylistFileHandler implements PlaylistHandler{
         return success;
     }
 
-    public boolean destroy(String name) {
-        return new File(getFilePath(name)).delete();
+    public boolean destroyPlaylist(Playlist playlist) {
+        return new File(getFilePath(playlist.getName())).delete();
     }
 
 
@@ -124,7 +124,7 @@ public class PlaylistFileHandler implements PlaylistHandler{
 
             String line;
 
-            HashMap<Integer, Song> songs = new HashMap<>();
+            HashMap<Integer, SongInfo> songInfos = new HashMap<>();
             while ((line = reader.readLine()) != null) {
                 int songNumber;
                 Matcher matcher = Pattern.compile("^(file|title|length)(\\d+)=(.*)$", Pattern.CASE_INSENSITIVE).matcher(line);
@@ -134,38 +134,40 @@ public class PlaylistFileHandler implements PlaylistHandler{
                 String label = matcher.group(1).toLowerCase(),
                         value = matcher.group(3);
                 songNumber = Integer.parseInt(matcher.group(2));
-                Song song;
-                if (!songs.containsKey(songNumber)) {
-                    song = new Song();
-                    songs.put(songNumber, song);
-                } else {
-                    song = songs.get(songNumber);
+                SongInfo songInfo = songInfos.get(songNumber);
+                if (songInfo == null) {
+                    songInfo = new SongInfo();
+                    songInfos.put(songNumber, songInfo);
                 }
 
                 switch (label) {
                     case "file":
-                        song.setSongUrl(value);
+                        songInfo.setUrl(value);
                         break;
                     case "title":
                         String[] valueParts = value.split("-", 2);
                         if (valueParts.length == 2) {
-                            song.setArtist(valueParts[0].trim());
-                            song.setSongname(valueParts[1].trim());
+                            songInfo.setArtist(valueParts[0].trim());
+                            songInfo.setSongname(valueParts[1].trim());
                         } else {
-                            song.setArtist("Unknown");
-                            song.setSongname(value);
+                            songInfo.setArtist("Unknown");
+                            songInfo.setSongname(value);
                         }
                         break;
                     case "length":
-                        song.setLength(Integer.parseInt(value));
+                        songInfo.setLength(Integer.parseInt(value));
                         break;
                 }
 
             }
 
-            SortedSet<Integer> keys = new TreeSet<>(songs.keySet());
+            SortedSet<Integer> keys = new TreeSet<>(songInfos.keySet());
             for (int key : keys) {
-                newPlaylist.addSong(songs.get(key));
+                SongInfo songInfo = songInfos.get(key);
+                Song song = Song.Builder.getSong(songInfo.getArtist(), songInfo.getSongname());
+                song.setSongUrl(songInfo.getUrl());
+                song.setLength(songInfo.getLength());
+                newPlaylist.addSong(song);
             }
         } catch (Exception e) {
             e.printStackTrace();
@@ -188,7 +190,8 @@ public class PlaylistFileHandler implements PlaylistHandler{
         if (isExternalStorageWritable()) {
             String externalPath = Environment.getExternalStorageDirectory().getPath();
             directoryPath =  externalPath + "/Playlists/MagicPlaylists/";
-            new File (directoryPath).mkdirs();
+            File directory = new File (directoryPath);
+            directory.mkdirs();
             if (name == null) {
                 return directoryPath;
             }
@@ -202,5 +205,45 @@ public class PlaylistFileHandler implements PlaylistHandler{
     private boolean isExternalStorageWritable() {
         String state = Environment.getExternalStorageState();
         return Environment.MEDIA_MOUNTED.equals(state);
+    }
+
+    private class SongInfo {
+        private String artist = "";
+        private String songname = "";
+        private String url = "";
+        private int length = -1;
+
+
+        public String getArtist() {
+            return artist;
+        }
+
+        public void setArtist(String artist) {
+            this.artist = artist;
+        }
+
+        public String getSongname() {
+            return songname;
+        }
+
+        public void setSongname(String songname) {
+            this.songname = songname;
+        }
+
+        public int getLength() {
+            return length;
+        }
+
+        public void setLength(int length) {
+            this.length = length;
+        }
+
+        public String getUrl() {
+            return url;
+        }
+
+        public void setUrl(String url) {
+            this.url = url;
+        }
     }
 }

@@ -29,6 +29,7 @@ import models.mediawrappers.PlayQueue;
 import models.playlist.LocalSongsManager;
 import models.mediawrappers.SpotifyLoginHandler;
 import models.playlist.PlaylistsManager;
+import models.playlist.database.Contracts;
 import rest.client.Client;
 import tests.R;
 
@@ -131,6 +132,7 @@ public class MainActivity extends ActionBarActivity implements FragmentManager.O
 
         LocalSongsManager.getInstance().setContext(getApplicationContext());
 
+        PlaylistsManager.getInstance().setContext(getApplicationContext());
         PlaylistsManager.getInstance().loadPlaylists();
 
         super.onStart();
@@ -148,6 +150,12 @@ public class MainActivity extends ActionBarActivity implements FragmentManager.O
         PlayQueue.getInstance().setAutoPilotMode(true);
         unregisterReceiver(broadcastReceiver);
         super.onStop();
+    }
+
+    @Override
+    protected void onDestroy() {
+        super.onDestroy();
+        PlaylistsManager.getInstance().closeDb();
     }
 
     @Override
