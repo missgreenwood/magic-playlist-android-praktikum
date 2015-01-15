@@ -21,6 +21,7 @@ import models.Settings;
 import models.mediawrappers.FileStreamingMediaService;
 import models.mediawrappers.PlayQueue;
 import models.mediawrappers.SpotifyLoginHandler;
+import models.mediawrappers.SpotifyService;
 import models.playlist.LocalSongsManager;
 import models.playlist.PlaylistsManager;
 import rest.client.Client;
@@ -115,6 +116,7 @@ public class MainActivity extends ActionBarActivity implements FragmentManager.O
         Settings.getInstance().setOnMediaWrapperListChangeListener(new Settings.Listener() {
             @Override
             public void onMediaWrapperListChange(ArrayList<String> mediaWrappers) {
+                Log.d("MainActivity", "on media wrapper list change...set new media wrappers");
                 PlayQueue.getInstance().setMediaWrappers(mediaWrappers);
             }
         });
@@ -151,6 +153,9 @@ public class MainActivity extends ActionBarActivity implements FragmentManager.O
     protected void onDestroy() {
         super.onDestroy();
         PlaylistsManager.getInstance().closeDb();
+
+        stopService(new Intent(this, SpotifyService.class));
+        stopService(new Intent(this, FileStreamingMediaService.class));
     }
 
     @Override
