@@ -4,6 +4,7 @@ import android.content.Context;
 import android.os.AsyncTask;
 import android.os.Build;
 import android.os.Bundle;
+import android.os.Handler;
 import android.util.JsonReader;
 import android.util.Log;
 
@@ -56,25 +57,32 @@ public class SoundCloudStreamingMediaWrapper extends RemoteFileStreamingMediaWra
         BasicNameValuePair clientIDPair = new BasicNameValuePair(SOUNDCLOUD_CLIENT_ID_STRING, SOUNDCLOUD_CLIENT_ID);
 
         Log.v(TAG, "call process Web Call Result");
+
+        int trackID = 0;
+
+
         try {
-            JSONArray jsonArray = new JSONArray(result);
 
-            int trackID = 0;
+            if (result!=null) // result)
+            {
 
-            for (int i = 0; i < jsonArray.length(); i++) {
-                JSONObject row = jsonArray.getJSONObject(i);
-                if (row.getBoolean("streamable")) {
-                    trackID = row.getInt("id");
-                    break;
+                JSONArray jsonArray = new JSONArray(result);
+
+
+                for (int i = 0; i < jsonArray.length(); i++) {
+                    JSONObject row = jsonArray.getJSONObject(i);
+                    if (row.getBoolean("streamable")) {
+                        trackID = row.getInt("id");
+                        break;
+                    }
+
                 }
 
             }
-
-
             //JSONObject first = (JSONObject) jsonArray.get(0);
             //  = first.getInt("id");
 
-            Log.v(TAG, "trackid: " + trackID);
+           // Log.v(TAG, "trackid: " + trackID);
 
             String newURL = "";
             if (trackID != 0) {
@@ -117,52 +125,52 @@ public class SoundCloudStreamingMediaWrapper extends RemoteFileStreamingMediaWra
 
         //https://api.soundcloud.com/tracks/41772991/stream?client_id=9998e443138603b1b6be051350158448
 
+
+
         String url = SOUNDCLOUD_TRACKS_BASE_URL;
-
-
         BasicNameValuePair queryStringPair = new BasicNameValuePair(SOUNDCLOUD_QUERY_STRING, song.getArtist() + " " + song.getSongname());
         BasicNameValuePair clientIDPair = new BasicNameValuePair(SOUNDCLOUD_CLIENT_ID_STRING, SOUNDCLOUD_CLIENT_ID);
-
-
         ArrayList<NameValuePair> params = new ArrayList<NameValuePair>();
         params.add(clientIDPair);
         params.add(queryStringPair);
+        final String url2 = APIWrapper.encodeURL(url, params);
 
 
-        url = APIWrapper.encodeURL(url, params);
+       final AsyncHttpClient asyncHttpClient = new AsyncHttpClient();
+       final  Header[] headers = {new BasicHeader("Content-type", "application/json")};
 
-        //Log.d(TAG, url);
+        Handler handler = new Handler(getContext().getMainLooper());
 
-        //APIWrapper apiWrapper=new APIWrapper();
-        //String jsonArrayString = apiWrapper.getJSONCall(url, APIWrapper.GET);
-        /*
-        APIWrapper asyncHTTP = new APIWrapper(this, DEFAULT_CALLBACK, APIWrapper.GET_METHOD);
-        if(Build.VERSION.SDK_INT >= Build.VERSION_CODES.HONEYCOMB)
-            asyncHTTP.executeOnExecutor(AsyncTask.THREAD_POOL_EXECUTOR, url);
-        else
-            asyncHTTP.execute(url);
+        handler.post(new Runnable() {
 
-        */
-        //return playpath;
-
-
-        AsyncHttpClient asyncHttpClient = new AsyncHttpClient();
-        Header[] headers = {new BasicHeader("Content-type", "application/json")};
-        asyncHttpClient.get(getContext(), url, headers, null, new TextHttpResponseHandler() {
             @Override
-            public void onFailure(int i, Header[] headers, String s, Throwable throwable) {
-                processWebCallResult("", DEFAULT_CALLBACK, null);
+            public void run() {
+
+                TextHttpResponseHandler responseHandler = new TextHttpResponseHandler() {
+                    @Override
+                    public void onFailure(int i, Header[] headers, String s, Throwable throwable) {
+                        processWebCallResult(null, DEFAULT_CALLBACK, null);
+
+                    }
+
+                    @Override
+                    public void onSuccess(int i, Header[] headers, String s) {
+                        Log.d(TAG, "success! " + s);
+                        processWebCallResult(s, DEFAULT_CALLBACK, null);
+                    }
+
+                };
+                asyncHttpClient.get(getContext(), url2, headers, null, responseHandler);
 
             }
 
-            @Override
-            public void onSuccess(int i, Header[] headers, String s) {
-                Log.d(TAG, "success! " + s);
-                processWebCallResult(s, DEFAULT_CALLBACK, null);
-            }
 
 
-        });
+
+
+
+
+    });
 
     }
 

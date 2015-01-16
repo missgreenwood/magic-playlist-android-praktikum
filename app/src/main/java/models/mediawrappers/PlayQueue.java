@@ -1,6 +1,8 @@
 package models.mediawrappers;
 
 import android.content.Context;
+import android.os.AsyncTask;
+import android.text.TextUtils;
 import android.util.Log;
 
 import models.mediaModels.Playlist;
@@ -207,30 +209,31 @@ public class PlayQueue {
     }
 
     private void initializeSong(Song song) {
+      //  Log.d(TAG, "song "+song+" is initialized... mediawrappers are: "+TextUtils.join(", ", mediaWrappers));
+        String mediaWrapperType = song.getMediaWrapperType();
+        if (mediaWrapperType.equals(Song.MEDIA_WRAPPER_NOT_SET))
+        {
 
-
-        //  ArrayList<Song> songsTemp = new ArrayList<Song>();
-        //    songsTemp.add(getCurrentSong());
-
-        //  if (song.getMediaWrapper() == null) {
-
-        // ArrayList<String> mediaWrappers = Settings.getInstance().getMediaWrappers();
-        AbstractMediaWrapper abstractMediaWrapper = null;
-
-        if (!mediaWrappers.contains(song.getMediaWrapperType())) {
-            if (mediaWrappers.size() > 0) {
-                song.setMediaWrapperType(mediaWrappers.get(0));
-            } else {
-                onSongNotAvailable(song.getId());
-                return;
-            }
-
+            setDefaultMediaWrapperTypeInQueue(song);
         }
 
-        String mediaWrapperType = song.getMediaWrapperType();
+        setMediaWrapperForType(song);
 
 
-        //TODO: in Methode
+        if (song.getMediaWrapper() != null) {
+         Log.d(TAG, "no look for song: "+song);
+            song.getMediaWrapper().lookForSong();
+        }
+
+    }
+
+
+    public void setMediaWrapperForType(Song song) {
+
+
+        String mediaWrapperType=song.getMediaWrapperType();
+        AbstractMediaWrapper abstractMediaWrapper=null;
+
         if (mediaWrapperType.equals(Song.MEDIA_WRAPPER_LOCAL_FILE)) {
             abstractMediaWrapper = new LocalFileStreamingMediaWrapper(context, song);
 
@@ -242,39 +245,54 @@ public class PlayQueue {
             abstractMediaWrapper = new SpotifyMediaWrapper(context, song);
         }
 
+        else if (mediaWrapperType.equals((Song.MEDIA_WRAPPER_NONE)))
+        {
+
+            abstractMediaWrapper=null;
+            song.setNotPlayable(true);
+
+        }
 
         song.setMediaWrapper(abstractMediaWrapper);
 
-        //  }
+    }
 
-        if (song.getMediaWrapper() != null)
-            song.getMediaWrapper().lookForSong();
+    public void setDefaultMediaWrapperTypeInQueue(Song song)
+    {
 
-
+        song.setMediaWrapperType(mediaWrappers.get(0));
     }
 
     /**
      * @param overwrite Will overwrite existing media wrappers if true
      */
-    public void initializePlaylist(boolean overwrite) {
+    public void initializePlaylist(final boolean overwrite) {
 
-        if (songs != null) {
-            for (Song song : songs) {
 
-                Log.v(TAG, "initialize song: " + song.toString());
 
-                if (overwrite || (song.getMediaWrapper() == null))
-                    initializeSong(song);
 
-            }
+                if(songs!=null)
 
-        }
+                {
+                    for (Song song : songs) {
 
-        Log.d(TAG, "current song in initializePlaylist: " + getCurrentSong());
+                        Log.v(TAG, "initialize song: " + song.toString());
+
+                        if (overwrite)
+                            song.setMediaWrapperType(Song.MEDIA_WRAPPER_NOT_SET);
+                        initializeSong(song);
+
+                    }
+
+                }
+
+
+
+            //   Log.d(TAG, "current song in initializePlaylist: " + getCurrentSong());
+
+
 
     }
-
-
     /**
      * Can be used by the GUI to go to the next track (forward button).
      *
@@ -414,10 +432,10 @@ public class PlayQueue {
 
 
         if (type == null)
-            return false;
+           type=Song.MEDIA_WRAPPER_NONE;
 
 
-        song.setMediaWrapper(null);
+       // song.setMediaWrapper(null);
         song.setMediaWrapperType(type);
 
         Log.v(TAG, "new mediawrapper type: " + type);
@@ -494,7 +512,9 @@ public class PlayQueue {
     }
 
     public void setMediaWrappers(ArrayList<String> mediaWrappers) {
+        Log.d(TAG, "set media wrappers to: "+ TextUtils.join(", ",mediaWrappers));
         this.mediaWrappers = mediaWrappers;
+        Log.d(TAG, "media wrappers were set to: "+ TextUtils.join(", ", this.mediaWrappers));
     }
 
     public Playlist getCurrentPlaylist() {

@@ -6,8 +6,11 @@ import android.content.Context;
 import android.content.Intent;
 import android.content.SharedPreferences;
 import android.os.Bundle;
+import android.os.Handler;
+import android.os.Looper;
 import android.util.Log;
 
+import controllers.MainActivity;
 import models.apiwrappers.APIWrapper;
 import models.mediaModels.Song;
 
@@ -131,22 +134,14 @@ public class SpotifyMediaWrapper extends RemoteFileStreamingMediaWrapper impleme
     }
 
 
-    public boolean lookForSong() {
 
-
-        //TODO: Methode ernsthaft!
-        computePlayPath(getSong());
-
-
-        return true;
-    }
 
     public void computePlayPath(Song song) {
 
 
+
+
         String url = SPOTIFY_SEARCH_URL;
-
-
         String songQueryString = "";
         songQueryString += "title:" + song.getSongname() + " artist:" + song.getArtist();
 
@@ -156,35 +151,69 @@ public class SpotifyMediaWrapper extends RemoteFileStreamingMediaWrapper impleme
         ArrayList<NameValuePair> params = new ArrayList<NameValuePair>();
         params.add(queryStringPair);
         params.add(trackTypePair);
-        url = APIWrapper.encodeURL(url, params);
-        APIWrapper asyncHTTP = new APIWrapper(this, DEFAULT_CALLBACK, APIWrapper.GET_METHOD);
-        asyncHTTP.execute(url);
+       final String url2 = APIWrapper.encodeURL(url, params);
+        //APIWrapper asyncHTTP = new APIWrapper(this, DEFAULT_CALLBACK, APIWrapper.GET_METHOD);
+       // asyncHTTP.execute(url);
 
-        AsyncHttpClient asyncHttpClient = new AsyncHttpClient();
-        Header[] headers = {new BasicHeader("Content-type", "application/json")};
-        asyncHttpClient.get(getContext(), url, headers, null, new TextHttpResponseHandler() {
+        final AsyncHttpClient asyncHttpClient = new AsyncHttpClient();
+        final Header[] headers = {new BasicHeader("Content-type", "application/json")};
+
+        Handler handler = new Handler(getContext().getMainLooper());
+        handler.post(new Runnable() {
+
+
             @Override
-            public void onFailure(int i, Header[] headers, String s, Throwable throwable) {
-                Log.e(TAG, "onFailture ");
-                processWebCallResult("", DEFAULT_CALLBACK, null);
+            public void run() {
+
+                TextHttpResponseHandler responseHandler = new TextHttpResponseHandler() {
+
+
+                    @Override
+                    public void onFailure(int i, Header[] headers, String s, Throwable throwable) {
+                        Log.e(TAG, "onFailture ");
+                        processWebCallResult(null, DEFAULT_CALLBACK, null);
+
+                    }
+
+                    @Override
+                    public void onSuccess(int i, Header[] headers, String s) {
+                        Log.v(TAG, "success! " + s);
+                        processWebCallResult(s, DEFAULT_CALLBACK, null);
+                    }
+
+                };
+
+
+                // responseHandler.setUseSynchronousMode(false);
+
+
+                asyncHttpClient.get(getContext(),url2,headers,   null,responseHandler);
 
             }
 
-            @Override
-            public void onSuccess(int i, Header[] headers, String s) {
-                Log.v(TAG, "success! " + s);
-                processWebCallResult(s, DEFAULT_CALLBACK, null);
-            }
+
 
 
         });
 
     }
 
+    public boolean lookForSong() {
+
+
+        //TODO: Methode ernsthaft!
+        computePlayPath(getSong());
+
+        return true;
+    }
+
+
     @Override
     public void stopPlayer() {
+if (mPlayer!=null) {
+    mPlayer.pause();
 
-        // mPlayer.shutdown();
+}
     }
 
     @Override
@@ -269,20 +298,25 @@ public class SpotifyMediaWrapper extends RemoteFileStreamingMediaWrapper impleme
     @Override
     public void processWebCallResult(String result, String callback, Bundle data) {
         String uri = "";
-        try {
-            JSONObject spotifyJSONObject = new JSONObject(result);
-            JSONObject trackListObject = spotifyJSONObject.getJSONObject("tracks");
-            JSONArray trackListItems = trackListObject.getJSONArray("items");
-            if (trackListItems.length() > 0) {
-                JSONObject first = trackListItems.getJSONObject(0);
-                uri = first.getString("uri");
+
+        if (result!=null)
+
+        {
+
+            try {
+                JSONObject spotifyJSONObject = new JSONObject(result);
+                JSONObject trackListObject = spotifyJSONObject.getJSONObject("tracks");
+                JSONArray trackListItems = trackListObject.getJSONArray("items");
+                if (trackListItems.length() > 0) {
+                    JSONObject first = trackListItems.getJSONObject(0);
+                    uri = first.getString("uri");
+                }
+
+            } catch (JSONException e) {
+                e.printStackTrace();
             }
 
-        } catch (JSONException e) {
-            e.printStackTrace();
         }
-
-
 
         if ((uri != null) && !(uri.equals(""))) {
 

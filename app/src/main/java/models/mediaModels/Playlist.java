@@ -2,6 +2,7 @@ package models.mediaModels;
 
 import android.os.Parcel;
 import android.os.Parcelable;
+import android.util.Log;
 
 import java.util.ArrayList;
 
@@ -95,6 +96,8 @@ public class Playlist implements Parcelable {
 
     public void resetInitialization()
     {
+
+        Log.d("Playlist", "reset initialisation called for playlist " + getName());
         if (songs != null) {
             for (Song song : getSongsList()) {
                 // song.setMediaWrapper(null);

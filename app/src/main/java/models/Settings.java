@@ -2,6 +2,7 @@ package models;
 
 import android.content.Context;
 import android.content.SharedPreferences;
+import android.os.AsyncTask;
 import android.util.Log;
 
 import java.lang.reflect.Array;
@@ -146,21 +147,46 @@ public class Settings {
 
         }
         adjustUsedMediaWrappersOrder();
-        // saveSettings();
+        //saveSettings();
         // resetPlaylists();
     }
 
     private void resetPlaylists()
     {
 
-        Log.d("", "resetplaylists called");
-        for (Playlist playlist : PlaylistsManager.getInstance().getPlaylists()) {
-            playlist.resetInitialization();
-        }
+        new Thread(new Runnable() {
+            @Override
+            public void run() {
 
-        PlayQueue.getInstance().initializePlaylist(true);
-        PlayQueue.getInstance().pausePlayer();
-        PlayQueue.getInstance().setState(PlayQueue.STATE_IDLE);
+                Log.d("","resetplaylists called");
+                for(
+                        Playlist playlist
+                        :PlaylistsManager.getInstance().
+
+                        getPlaylists()
+
+                        )
+                {
+                    playlist.resetInitialization();
+                }
+
+                long startnow;
+                long endnow;
+
+                PlayQueue.getInstance().initializePlaylist(true);
+                PlayQueue.getInstance().pausePlayer();
+                PlayQueue.getInstance().setState(PlayQueue.STATE_IDLE);
+
+
+            }
+        }).start();
+
+
+
+
+
+
+
 
 
     }
@@ -177,8 +203,8 @@ public class Settings {
     }
 
     public void confirmWrapperChanges() {
-        saveSettings();
-        resetPlaylists();
+       saveSettings();
+       resetPlaylists();
     }
 
     public boolean isWrapperActive(String wrapper) {
