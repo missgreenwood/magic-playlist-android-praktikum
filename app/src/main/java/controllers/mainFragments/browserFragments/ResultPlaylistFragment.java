@@ -55,18 +55,15 @@ public class ResultPlaylistFragment extends PlaylistFragment implements ClientLi
                     alreadyLiked = true;
                     starBtn.setText("Loading likes...");
                     starBtn.setEnabled(false);
-                    requestHandle = Client.getInstance().likePlaylist(_this, playlist);
+                    requestHandle = Client.getInstance().likePlaylist(playlist, _this);
                 }
             }
         });
         saveBtn.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                if (PlaylistsManager.getInstance().addPlaylist(playlist)) {
-                    disableBtn(saveBtn, "Saved!");
-                } else {
-                    Toast.makeText(getActivity(), "Error while saving playlist!", Toast.LENGTH_LONG).show();
-                }
+                PlaylistsManager.getInstance().addPlaylist(playlist);
+                disableBtn(saveBtn, "Saved!");
             }
         });
         return v;

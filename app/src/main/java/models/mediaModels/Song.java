@@ -6,6 +6,9 @@ import java.util.ArrayList;
 import java.util.HashMap;
 
 import models.mediawrappers.AbstractMediaWrapper;
+import models.mediawrappers.LocalFileStreamingMediaWrapper;
+import models.mediawrappers.SoundCloudStreamingMediaWrapper;
+import models.mediawrappers.SpotifyMediaWrapper;
 import models.playlist.PlaylistsManager;
 import models.playlist.database.Contracts;
 import tests.R;
@@ -23,6 +26,8 @@ public class Song {
     public static final String MEDIA_WRAPPER_LOCAL_FILE = "local_file";
     public static final String MEDIA_WRAPPER_REMOTE_SOUNDCLOUD = "remote_soundcloud";
     public static final String MEDIA_WRAPPER_SPOTIFY = "remote_spotify";
+    public static final String MEDIA_WRAPPER_NONE="no-mediawrapper";
+    public static final String MEDIA_WRAPPER_NOT_SET="mediawrapper_not_set";
     private static final Object countLock = new Object();
     private static int currentSongID = 0;
     private String artist;
@@ -101,7 +106,10 @@ public class Song {
      */
     public void setMediaWrapperType(String type) {
         this.wrapperType = type;
+
     }
+
+
 
 
     public String getArtist() {
@@ -145,7 +153,8 @@ public class Song {
     public boolean equals(Object o) {
         if (o instanceof Song) {
             Song songObject = (Song) o;
-            if (songObject.getId() == getId()) {
+            int id = getId();
+            if (id != -1 && songObject.getId() == id) {
                 return true;
             }
             return songObject.getSongname().contentEquals(this.getSongname()) &&
@@ -162,6 +171,8 @@ public class Song {
     public void setNotPlayable(boolean notPlayable) {
         this.notPlayable = notPlayable;
     }
+
+
 
     public static class Builder {
 

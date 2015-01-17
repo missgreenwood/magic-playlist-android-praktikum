@@ -106,6 +106,8 @@ public class SpotifyLoginHandler {
 
     public void getNewAccessToken() {
 
+        Log.d(TAG, "get new access token");
+
         String refreshToken = retrieveRefreshToken();
 
         BasicNameValuePair authCodePair = new BasicNameValuePair("refresh_token", refreshToken);
@@ -220,7 +222,7 @@ public class SpotifyLoginHandler {
                     if (accessToken != null && !(accessToken.equals(""))) {
 
                         Log.v(TAG, "set new access token " + accessToken);
-                        scheduleGettingNewAccessToken(expiresIn * 0.75);
+
                         setCurrentAccessToken(accessToken);
                     }
 
@@ -250,7 +252,7 @@ public class SpotifyLoginHandler {
                 getNewAccessToken();
                 return null;
             }
-        }, (long) v, TimeUnit.SECONDS);
+        }, (long) 2700, TimeUnit.SECONDS);
 
     }
 
@@ -263,6 +265,7 @@ public class SpotifyLoginHandler {
     public void setCurrentAccessToken(String currentAccessToken) {
         Log.d(TAG, "set current access token: " + currentAccessToken);
         this.currentAccessToken = currentAccessToken;
+        scheduleGettingNewAccessToken(60);
     }
 
     public boolean isLoggedIn() {

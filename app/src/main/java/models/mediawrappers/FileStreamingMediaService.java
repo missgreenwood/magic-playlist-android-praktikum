@@ -11,7 +11,7 @@ import android.os.IBinder;
 import android.util.Log;
 
 import controllers.MainActivity;
-import models.mediaModels.Song;
+import models.mediaModels.PlayQueue;
 import tests.R;
 
 import java.io.IOException;
@@ -89,7 +89,7 @@ public class FileStreamingMediaService extends Service implements MediaPlayer.On
 
 
 
-            startForeground(NOTIFICATION_ID, notification);
+           // startForeground(NOTIFICATION_ID, notification);
 
 
             Log.d(TAG, "start play");

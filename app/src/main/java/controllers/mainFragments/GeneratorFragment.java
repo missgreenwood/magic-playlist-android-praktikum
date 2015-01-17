@@ -6,6 +6,7 @@ import android.content.DialogInterface;
 import android.graphics.Color;
 import android.os.Bundle;
 import android.support.v4.app.Fragment;
+import android.support.v4.app.FragmentManager;
 import android.support.v4.app.FragmentTransaction;
 import android.util.Log;
 import android.view.LayoutInflater;
@@ -52,6 +53,13 @@ public class GeneratorFragment extends Fragment implements
         view.findViewById(R.id.artistsBtn).setOnClickListener(this);
         view.findViewById(R.id.songsBtn).setOnClickListener(this);
         view.findViewById(R.id.startGeneratorBtn).setOnClickListener(this);
+
+        getActivity().getSupportFragmentManager().addOnBackStackChangedListener(new FragmentManager.OnBackStackChangedListener() {
+            @Override
+            public void onBackStackChanged() {
+
+            }
+        });
 
         return view;
     }

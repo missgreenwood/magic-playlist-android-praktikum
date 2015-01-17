@@ -10,6 +10,8 @@ public interface PlaylistDao {
 
     public Playlist findPlaylist(String name);
 
+    public List<Playlist> findAllPlaylists();
+
     public List<Playlist> findPlaylists(String genre);
 
     public Playlist update(Playlist playlist);

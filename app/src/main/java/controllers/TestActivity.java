@@ -12,11 +12,9 @@ import android.view.MenuItem;
 import android.view.View;
 import android.widget.Button;
 
-import models.mediaModels.Playlist;
 import models.mediaModels.Song;
 import models.mediawrappers.FileStreamingMediaService;
-import models.mediawrappers.PlayQueue;
-import models.mediawrappers.SpotifyMediaWrapper;
+import models.mediaModels.PlayQueue;
 import tests.R;
 
 import com.spotify.sdk.android.authentication.AuthenticationResponse;

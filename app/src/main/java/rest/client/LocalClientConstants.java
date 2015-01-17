@@ -6,5 +6,5 @@ package rest.client;
 public class LocalClientConstants {
 
 
-    public static final String serverIP = "192.168.1.12";
+    public static final String serverIP = "10.1.5.154";
 }

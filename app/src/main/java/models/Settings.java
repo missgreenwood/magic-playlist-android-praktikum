@@ -1,16 +1,13 @@
 package models;
 
-import android.content.Context;
 import android.content.SharedPreferences;
 import android.util.Log;
 
-import java.lang.reflect.Array;
 import java.util.ArrayList;
-import java.util.HashMap;
 
 import models.mediaModels.Playlist;
 import models.mediaModels.Song;
-import models.mediawrappers.PlayQueue;
+import models.mediaModels.PlayQueue;
 import models.mediawrappers.SpotifyLoginHandler;
 import models.playlist.PlaylistsManager;
 
@@ -35,8 +32,7 @@ public class Settings {
         return getMediaWrappers(false);
     }
 
-    public ArrayList<String> getMediaWrappers(boolean inclusiveInactive)
-    {
+    public ArrayList<String> getMediaWrappers(boolean inclusiveInactive) {
         Log.d("SETTINGS", "usedMediaWrappers: " + usedMediaWrappers);
         if (inclusiveInactive) {
             return mediaWrappers;
@@ -49,8 +45,7 @@ public class Settings {
         this.listener = listener;
     }
 
-    public void loadSettings(SharedPreferences preferences)
-    {
+    public void loadSettings(SharedPreferences preferences) {
         ArrayList<String> defWrapperList = getDefaultMediaWrappersList();
         usedMediaWrappers = new ArrayList<>();
 
@@ -64,24 +59,22 @@ public class Settings {
                 usedMediaWrappers.add(wrapper);
             }
         }
+
         //now we can init the ArrayList with the right order
         mediaWrappers = new ArrayList<>();
         for (String wrapper : wrappers) {
             mediaWrappers.add(wrapper);
         }
 
-        /*this is very ugly...   @author charlotte*/
-        if (mediaWrappers.contains(Song.MEDIA_WRAPPER_SPOTIFY)) {
+        if (usedMediaWrappers.contains(Song.MEDIA_WRAPPER_SPOTIFY)) {
             SpotifyLoginHandler.getInstance().startSpotifyLogin();
-
         }
 
 
         this.preferences = preferences;
     }
 
-    private ArrayList<String> getDefaultMediaWrappersList()
-    {
+    private ArrayList<String> getDefaultMediaWrappersList() {
         ArrayList<String> defaultWrappersList = new ArrayList<>();
         defaultWrappersList.add(Song.MEDIA_WRAPPER_LOCAL_FILE);
         defaultWrappersList.add(Song.MEDIA_WRAPPER_REMOTE_SOUNDCLOUD);
@@ -89,8 +82,7 @@ public class Settings {
         return defaultWrappersList;
     }
 
-    private void saveSettings()
-    {
+    private void saveSettings() {
         if (preferences == null) {
             return;
         }
@@ -107,8 +99,8 @@ public class Settings {
     public void increaseWrapperPriority(String wrapper) {
         int prio = mediaWrappers.indexOf(wrapper);
         if (prio > 0) { //its not already the first item
-            String upperWrapper = mediaWrappers.get(prio-1);
-            mediaWrappers.set(prio-1, mediaWrappers.get(prio));
+            String upperWrapper = mediaWrappers.get(prio - 1);
+            mediaWrappers.set(prio - 1, mediaWrappers.get(prio));
             mediaWrappers.set(prio, upperWrapper);
         }
         adjustUsedMediaWrappersOrder();
@@ -140,27 +132,32 @@ public class Settings {
         }
 
 
-        /*again very very ugly*/
         if (wrapper.equals(Song.MEDIA_WRAPPER_SPOTIFY)) {
             SpotifyLoginHandler.getInstance().startSpotifyLogin();
 
         }
         adjustUsedMediaWrappersOrder();
-        // saveSettings();
+        //saveSettings();
         // resetPlaylists();
     }
 
-    private void resetPlaylists()
-    {
+    private void resetPlaylists() {
 
-        Log.d("", "resetplaylists called");
-        for (Playlist playlist : PlaylistsManager.getInstance().getPlaylists()) {
-            playlist.resetInitialization();
-        }
+        new Thread(new Runnable() {
+            @Override
+            public void run() {
 
-        PlayQueue.getInstance().initializePlaylist(true);
-        PlayQueue.getInstance().pausePlayer();
-        PlayQueue.getInstance().setState(PlayQueue.STATE_IDLE);
+                for(Playlist playlist : PlaylistsManager.getInstance().getPlaylists()) {
+                    playlist.resetInitialization();
+                }
+
+//                PlayQueue.getInstance().stopCurrentSong();
+                PlayQueue.getInstance().initializePlaylist(true);
+//                PlayQueue.getInstance().setState(PlayQueue.STATE_IDLE);
+
+
+            }
+        }).start();
 
 
     }
@@ -193,8 +190,6 @@ public class Settings {
             return true;
 
         return SpotifyLoginHandler.getInstance().isLoggedIn();
-
-
 
 
     }

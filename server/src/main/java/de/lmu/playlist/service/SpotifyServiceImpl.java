@@ -19,20 +19,21 @@ public class SpotifyServiceImpl implements SpotifyService {
 
     @Override
     public SpotifyToken obtainTokenPair(String authCode) {
-        MultivaluedMap<String, String> payload = new MultivaluedMapImpl();
+        MultivaluedMap<String, String> params = new MultivaluedMapImpl();
         client.addFilter(new LoggingFilter(System.out));
-        payload.add("grant_type", "authorization_code");
-        payload.add("code", authCode);
-        payload.add("redirect_uri", SpotifyConstants.REDIRECT_URI);
-        payload.add("client_id", SpotifyConstants.CLIENT_ID);
-        payload.add("client_secret", SpotifyConstants.CLIENT_SECRET);
+        params.add("grant_type", "authorization_code");
+        params.add("code", authCode);
+        params.add("redirect_uri", SpotifyConstants.REDIRECT_URI);
+        params.add("client_id", SpotifyConstants.CLIENT_ID);
+        params.add("client_secret", SpotifyConstants.CLIENT_SECRET);
 
         SpotifyToken token;
         try {
-            WebResource resource = client.resource(SpotifyConstants.SPOTIFY_URL);
-            token = resource.type(MediaType.APPLICATION_FORM_URLENCODED_TYPE).post(SpotifyToken.class, payload);
+            token = client.resource(SpotifyConstants.SPOTIFY_URL)
+                    .queryParams(params)
+                    .type(MediaType.APPLICATION_FORM_URLENCODED_TYPE)
+                    .post(SpotifyToken.class);
         } catch (UniformInterfaceException | ClientHandlerException e) {
-            e.printStackTrace();
             throw new BadRequestException();
         }
 
@@ -41,18 +42,19 @@ public class SpotifyServiceImpl implements SpotifyService {
 
     @Override
     public SpotifyToken refreshTokenPair(String refreshToken) {
-        MultivaluedMap<String, String> payload = new MultivaluedMapImpl();
-        payload.add("grant_type", "refresh_token");
-        payload.add("refresh_token", refreshToken);
-        payload.add("client_id", SpotifyConstants.CLIENT_ID);
-        payload.add("client_secret", SpotifyConstants.CLIENT_SECRET);
+        MultivaluedMap<String, String> params = new MultivaluedMapImpl();
+        params.add("grant_type", "refresh_token");
+        params.add("refresh_token", refreshToken);
+        params.add("client_id", SpotifyConstants.CLIENT_ID);
+        params.add("client_secret", SpotifyConstants.CLIENT_SECRET);
 
         SpotifyToken token;
         try {
-            WebResource resource = client.resource(SpotifyConstants.SPOTIFY_URL);
-            token = resource.type(MediaType.APPLICATION_FORM_URLENCODED_TYPE).post(SpotifyToken.class, payload);
+            token = client.resource(SpotifyConstants.SPOTIFY_URL)
+                    .queryParams(params)
+                    .type(MediaType.APPLICATION_FORM_URLENCODED_TYPE)
+                    .post(SpotifyToken.class);
         } catch (UniformInterfaceException | ClientHandlerException e) {
-            e.printStackTrace();
             throw new BadRequestException();
         }
 

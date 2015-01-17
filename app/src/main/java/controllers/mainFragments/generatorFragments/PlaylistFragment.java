@@ -10,14 +10,12 @@ import android.graphics.Point;
 import android.os.Bundle;
 import android.support.v4.app.ListFragment;
 import android.util.Log;
-import android.view.Gravity;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.view.animation.AlphaAnimation;
 import android.view.animation.Animation;
 import android.view.animation.DecelerateInterpolator;
-import android.view.animation.ScaleAnimation;
 import android.widget.AdapterView;
 import android.widget.ArrayAdapter;
 import android.widget.Button;
@@ -32,7 +30,8 @@ import java.util.List;
 import controllers.mainFragments.generatorFragments.playlistFragment.OnSwipeListener;
 import models.mediaModels.Playlist;
 import models.mediaModels.Song;
-import models.mediawrappers.PlayQueue;
+import models.mediaModels.PlayQueue;
+import models.playlist.PlaylistsManager;
 import rest.client.Client;
 import rest.client.ClientListener;
 import tests.R;
@@ -44,8 +43,7 @@ public class PlaylistFragment extends ListFragment implements
         PlayQueue.Listener,
         AdapterView.OnItemLongClickListener,
         Playlist.Listener,
-        ClientListener.AddPlaylistListener
-{
+        ClientListener.AddPlaylistListener, ClientListener.FindSinglePlaylistListener {
 
     protected Playlist playlist;
     private View currentlyPlayingView;
@@ -59,7 +57,7 @@ public class PlaylistFragment extends ListFragment implements
     private TextView removedSongNotification;
     private boolean dragCanceled = false;
     private ProgressDialog loadingDialog;
-    private RequestHandle requestHandle;
+    private RequestHandle uploadRequestHandle;
 
     public PlaylistFragment() {
     }
@@ -69,12 +67,40 @@ public class PlaylistFragment extends ListFragment implements
         super.onCreate(savedInstanceState);
 
         if (playlist == null) {
-            playlist = new Playlist();
+            playlist = PlaylistsManager.getInstance().getCurrentPlaylist();
+            if (playlist == null) {
+                playlist = new Playlist();
+            }
         }
+        setPlaylist(playlist); // sets observer and himself into the global "currentPlaylist"
+
         setListAdapter(new SongArrayAdapter(getActivity(),
                 android.R.layout.simple_list_item_1, android.R.id.text1, playlist.getSongsList(true)));
 
         PlayQueue.getInstance().addObserver(this);
+    }
+
+    @Override
+    public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
+        View v = inflater.inflate(R.layout.fragment_playlist, container, false);
+        uploadBtn = (Button) v.findViewById(R.id.uploadBtn);
+        if (playlist.getSongsList().size() == 0) {
+            disableBtn(uploadBtn, "Cannot upload Playlist with no songs!");
+        }
+        Client.getInstance().findPlaylistByName(playlist.getName(), this);
+        if (playlist.isAlreadyUploaded()) {
+            disableBtn(uploadBtn, "already uploaded");
+        } else {
+            final PlaylistFragment _this = this;
+            uploadBtn.setOnClickListener(new View.OnClickListener() {
+                @Override
+                public void onClick(View v) {
+                    setLoading(true);
+                    uploadRequestHandle = Client.getInstance().addPlaylist(playlist, _this);
+                }
+            });
+        }
+        return v;
     }
 
     private void markAsCurrentlyPlaying(int index) {
@@ -91,25 +117,6 @@ public class PlaylistFragment extends ListFragment implements
         if (currentlyPlayingView != null) {
             currentlyPlayingView.setBackgroundColor(Color.TRANSPARENT);
         }
-    }
-
-    @Override
-    public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
-        View v = inflater.inflate(R.layout.fragment_playlist, container, false);
-        uploadBtn = (Button) v.findViewById(R.id.uploadBtn);
-        if (playlist.isAlreadyUploaded()) {
-            disableBtn(uploadBtn, "already uploaded");
-        } else {
-            final PlaylistFragment _this = this;
-            uploadBtn.setOnClickListener(new View.OnClickListener() {
-                @Override
-                public void onClick(View v) {
-                    setLoading(true);
-                    requestHandle = Client.getInstance().addPlaylist(_this, playlist);
-                }
-            });
-        }
-        return v;
     }
 
     protected void disableBtn(Button btn, String text) {
@@ -131,8 +138,8 @@ public class PlaylistFragment extends ListFragment implements
             loadingDialog.setOnDismissListener(new DialogInterface.OnDismissListener() {
                 @Override
                 public void onDismiss(DialogInterface dialog) {
-                    if (requestHandle != null && !requestHandle.isFinished()) {
-                        requestHandle.cancel(true);
+                    if (uploadRequestHandle != null && !uploadRequestHandle.isFinished()) {
+                        uploadRequestHandle.cancel(true);
                         Toast.makeText(getActivity(), "Uploading request canceled!", Toast.LENGTH_SHORT).show();
                     }
                 }
@@ -176,6 +183,7 @@ public class PlaylistFragment extends ListFragment implements
 
             @Override
             public void onLeftSwipe() {
+
                 dragItem(listView.pointToPosition((int) endX, (int) endY), startX, endX);
             }
 
@@ -299,6 +307,7 @@ public class PlaylistFragment extends ListFragment implements
 
     public void setPlaylist(Playlist playlist) {
         this.playlist = playlist;
+        PlaylistsManager.getInstance().setCurrentPlaylist(playlist);
         playlist.addObserver(this);
         SongArrayAdapter adapter = (SongArrayAdapter)getListAdapter();
         if (adapter != null) {
@@ -341,6 +350,9 @@ public class PlaylistFragment extends ListFragment implements
     @Override
     public void onPlaylistChange(Playlist playlist) {
         if (playlist.equals(this.playlist)) {
+            if (playlist.getSongsList().size() == 0) {
+                disableBtn(uploadBtn, "Cannot upload Playlist with no songs!");
+            }
             SongArrayAdapter adapter = (SongArrayAdapter)getListAdapter();
             if (adapter != null) {
                 adapter.notifyDataSetChanged();
@@ -365,6 +377,23 @@ public class PlaylistFragment extends ListFragment implements
         setLoading(false);
         String alreadyExistsString = alreadyExists ? " Playlist name already exists." : "Error occured while trying to upload playlist!";
         Toast.makeText(getActivity(), alreadyExistsString, Toast.LENGTH_SHORT).show();
+    }
+
+    @Override
+    public void onFindSinglePlaylistSuccess(Playlist onlinePlaylist) {
+        if (playlist.getName() != onlinePlaylist.getName()) {
+            return;
+        }
+        if (onlinePlaylist.equals(playlist)) {
+            disableBtn(uploadBtn, "already uploaded!");
+        } else {
+            disableBtn(uploadBtn, "Not uploadable, playlist with this name already exists!");
+        }
+    }
+
+    @Override
+    public void onFindSinglePlaylistError() {
+        Log.w("PlaylistFragment", "error while searching playlist with name");
     }
 
     private class SongArrayAdapter extends ArrayAdapter<Song>
