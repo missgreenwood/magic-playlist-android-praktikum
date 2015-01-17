@@ -139,7 +139,7 @@ public class MainActivity extends ActionBarActivity implements FragmentManager.O
     public void onResume() {
         PlayQueue.getInstance().setAutoPilotMode(false);
         super.onResume();
-        this.setTitle("Magic Playlist");
+        // this.setTitle("Magic Playlist");
     }
 
     @Override
