@@ -3,7 +3,10 @@ package de.lmu.playlist.service;
 import com.google.inject.Inject;
 
 import java.util.ArrayList;
+import java.util.Collections;
+import java.util.Comparator;
 import java.util.List;
+import java.util.PriorityQueue;
 
 import de.lmu.playlist.domain.dao.PlaylistDao;
 import de.lmu.playlist.domain.entity.Playlist;
@@ -49,6 +52,23 @@ public class PlaylistServiceImpl implements PlaylistService {
         }
 
         return playlists;
+    }
+
+    @Override
+    public List<Playlist> findSimilarPlaylists(final Playlist referencePlaylist, int quantity) {
+        List<Playlist> playlists = playlistDao.findAllPlaylists();
+        Collections.sort(playlists, new Comparator<Playlist>() {
+            @Override
+            public int compare(Playlist lhs, Playlist rhs) {
+                return rhs.compareTo(referencePlaylist) - lhs.compareTo(referencePlaylist);
+            }
+        });
+
+        List<Playlist> similarPlaylists = new ArrayList<>();
+        for (int i = 0; i < quantity; i++) {
+            similarPlaylists.add(playlists.get(i));
+        }
+        return similarPlaylists;
     }
 
     @Override

@@ -31,6 +31,15 @@ public interface PlaylistService {
     List<Playlist> findPlaylists(String genre, String artist);
 
     /**
+     * Returns playlists similar to the given reference playlist.
+     *
+     * @param referencePlaylist the playlist to find similar ones for
+     * @param quantity the quantity of similar lists
+     * @return the most similar playlists.
+     */
+    List<Playlist> findSimilarPlaylists(Playlist referencePlaylist, int quantity);
+
+    /**
      * Increments the Playlist's like count and persists that change.
      *
      * @param name the playlist to like.
