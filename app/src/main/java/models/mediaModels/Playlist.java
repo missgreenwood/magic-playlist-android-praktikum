@@ -168,7 +168,7 @@ public class Playlist implements Parcelable, Song.Listener {
 
     @Override
     public void onSongChange() {
-//        notifyChange();
+        notifyChange();
     }
 
     public interface Listener {
