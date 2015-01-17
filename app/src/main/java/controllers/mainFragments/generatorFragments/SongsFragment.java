@@ -6,6 +6,7 @@ import android.os.Bundle;
 import android.support.v4.app.ListFragment;
 import android.text.Editable;
 import android.text.TextWatcher;
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -65,8 +66,10 @@ public class SongsFragment extends ListFragment {
     @Override
     public void onDetach() {
         super.onDetach();
-        listener.onSongsSelection(selectedSongs);
-        listener = null;
+        if (listener != null) {
+            listener.onSongsSelection(selectedSongs);
+            listener = null;
+        }
     }
 
 
@@ -74,11 +77,13 @@ public class SongsFragment extends ListFragment {
     public void onListItemClick(ListView l, View v, int position, long id) {
         super.onListItemClick(l, v, position, id);
         Song song = songs.get(position);
+        Log.d("SongsFragment", "selected: " + selectedSongs);
         if (selectedSongs.contains(song)) {
             selectedSongs.remove(song);
         } else {
             selectedSongs.add(song);
         }
+        Log.d("SongsFragment", "selected afterwards: " + selectedSongs);
         ((SongArrayAdapter)getListAdapter()).notifyDataSetChanged();
     }
 
@@ -109,8 +114,9 @@ public class SongsFragment extends ListFragment {
             if (song != null) {
                 view.setText(song.getSongname());
             } else {
-                view.setText("error");
+                view.setText("no song...");
             }
+            Log.d("SongsFragment", "rendering song: " + song);
             if (selectedSongs.contains(song)) {
                 view.setBackgroundColor(Color.argb(100, 100, 100, 100));
             } else {

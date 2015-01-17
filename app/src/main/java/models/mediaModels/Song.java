@@ -153,7 +153,8 @@ public class Song {
     public boolean equals(Object o) {
         if (o instanceof Song) {
             Song songObject = (Song) o;
-            if (songObject.getId() == getId()) {
+            int id = getId();
+            if (id != -1 && songObject.getId() == id) {
                 return true;
             }
             return songObject.getSongname().contentEquals(this.getSongname()) &&
