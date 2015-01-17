@@ -3,12 +3,14 @@ package de.lmu.playlist.domain.entity;
 import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 
 import java.util.ArrayList;
+import java.util.HashSet;
+import java.util.Set;
 
 import javax.xml.bind.annotation.XmlRootElement;
 
 @XmlRootElement
 @JsonIgnoreProperties(ignoreUnknown = true)
-public class Playlist {
+public class Playlist implements Comparable<Playlist> {
 
     public static final String NAME = "name";
 
@@ -56,5 +58,22 @@ public class Playlist {
 
     public void setGenre(String genre) {
         this.genre = genre;
+    }
+
+    @Override
+    public int compareTo(Playlist that) {
+        if (getSongs() == null || that == null || that.getSongs() == null) {
+            return 0;
+        }
+        Set<String> thisArtists = new HashSet<>();
+        for (Song song : this.getSongs()) {
+            thisArtists.add(song.getArtist());
+        }
+        Set<String> thatArtists = new HashSet<>();
+        for (Song song : that.getSongs()) {
+            thatArtists.add(song.getArtist());
+        }
+        thisArtists.retainAll(thatArtists);
+        return thisArtists.size();
     }
 }

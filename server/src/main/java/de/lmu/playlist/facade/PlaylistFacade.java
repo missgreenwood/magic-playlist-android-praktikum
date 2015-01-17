@@ -39,6 +39,12 @@ public interface PlaylistFacade {
     @Produces(MediaType.APPLICATION_JSON)
     public List<Playlist> findPlaylists(@QueryParam("genre") String genre, @QueryParam("artist") String artist);
 
+    @POST
+    @Path("/similar")
+    @Consumes(MediaType.APPLICATION_JSON)
+    @Produces(MediaType.APPLICATION_JSON)
+    public List<Playlist> findSimilar(Playlist playlist);
+
     @GET
     @Path("/like")
     public String likePlaylist(@QueryParam("name") String name);

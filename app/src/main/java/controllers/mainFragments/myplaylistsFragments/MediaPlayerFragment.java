@@ -1,5 +1,6 @@
 package controllers.mainFragments.myplaylistsFragments;
 
+import android.content.res.Resources;
 import android.os.Bundle;
 import android.support.v4.app.Fragment;
 import android.util.Log;
@@ -94,7 +95,8 @@ public class MediaPlayerFragment extends Fragment implements View.OnClickListene
 
     @Override
     public void onNewSongPlaying(Song song) {
-        songInfo.setText(song.getArtist() + " - " + song.getSongname());
+
+        songInfo.setText(song.getArtist() + " - " + song.getSongname()+" in "+song.getMediaWrapperType());
     }
 
     @Override

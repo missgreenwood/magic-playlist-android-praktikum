@@ -493,7 +493,7 @@ public class PlayQueue {
         }
     }
 
-    private void stopCurrentSong()
+    public void stopCurrentSong()
     {
         Song currentSong = getCurrentSong();
         if (currentSong != null) {

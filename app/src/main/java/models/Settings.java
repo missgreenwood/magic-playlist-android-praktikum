@@ -173,8 +173,8 @@ public class Settings {
                 long startnow;
                 long endnow;
 
+                PlayQueue.getInstance().stopCurrentSong();
                 PlayQueue.getInstance().initializePlaylist(true);
-                PlayQueue.getInstance().pausePlayer();
                 PlayQueue.getInstance().setState(PlayQueue.STATE_IDLE);
 
 
