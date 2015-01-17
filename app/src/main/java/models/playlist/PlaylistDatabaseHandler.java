@@ -50,8 +50,9 @@ public class PlaylistDatabaseHandler extends SQLiteOpenHelper implements Playlis
                 "SELECT p." + pId + ", p." + pName + ", p." + pGenre + ", p." + pLikes + ", p." + pAlreadyLiked + ", p." + pAlreadyUploaded +
                       ", s." + sId + ", s." + sName + ", s." + sArtist + ", s." + sMediaType + ", s." + sUrl + ", s." + sLength +
                       " FROM "       + Contracts.Playlists.TABLE_NAME         + " p" +
-                      " LEFT JOIN " + Contracts.PlaylistSongLinks.TABLE_NAME + " l ON p." + pId  + "=l." + lPId +
-                      " INNER JOIN " + Contracts.Songs.TABLE_NAME             + " s ON l." + lSId + "=s." + sId  +
+                      " LEFT JOIN (" + Contracts.PlaylistSongLinks.TABLE_NAME + " l" +
+                        " INNER JOIN " + Contracts.Songs.TABLE_NAME             + " s ON l." + lSId + "=s." + sId  +
+                      ") s  ON p." + pId  + "=s." + lPId +
                 " ORDER BY " + sortOrder,
                 new String[] {}
         );
@@ -157,7 +158,10 @@ public class PlaylistDatabaseHandler extends SQLiteOpenHelper implements Playlis
                         playlist.setAlreadyUploaded(pAlreadyUploaded == 1);
                         playlists.add(playlist);
                     }
-                    playlist.addSong(Song.Builder.getSongDb(sId, sArtist, sName, sMediaType, sUrl, sLength));
+                    Song song = Song.Builder.getSongDb(sId, sArtist, sName, sMediaType, sUrl, sLength);
+                    if (song != null) {
+                        playlist.addSong(song);
+                    }
                 }
             }
         }
@@ -166,7 +170,6 @@ public class PlaylistDatabaseHandler extends SQLiteOpenHelper implements Playlis
 
     private boolean createNewPlaylist(Playlist playlist) {
         SQLiteDatabase db = getWritableDatabase();
-//        db.beginTransaction();
         boolean success;
         try {
             long rowId = db.insert(
@@ -184,17 +187,12 @@ public class PlaylistDatabaseHandler extends SQLiteOpenHelper implements Playlis
             }
         } catch (Exception e) {
             success = false;
-        } finally {
-//            db.endTransaction();
         }
-        Log.d("PlaylistDatabaseHandler", "Playlist create success=" + success);
         return success;
     }
 
     private boolean saveSong(Song song, Playlist playlist) {
         boolean success = true;
-        SQLiteDatabase db = getWritableDatabase();
-//        db.beginTransaction();
         if (!updateSong(song)) {
             success = createNewSong(song);
         }
@@ -202,7 +200,6 @@ public class PlaylistDatabaseHandler extends SQLiteOpenHelper implements Playlis
         if (success && song.getId() == -1) {
             song.setSongID(getSongId(song.getArtist(), song.getSongname()));
         }
-//        db.endTransaction();
         return success;
     }
 
@@ -300,7 +297,6 @@ public class PlaylistDatabaseHandler extends SQLiteOpenHelper implements Playlis
     private boolean updatePlaylist(Playlist playlist) {
         String[] selectionArgs = {String.valueOf(playlist.getId())};
         SQLiteDatabase db = getWritableDatabase();
-//        db.beginTransaction();
         int affectedRowsCount = db.update(
                 Contracts.Playlists.TABLE_NAME,
                 getPlaylistValues(playlist),
@@ -309,13 +305,12 @@ public class PlaylistDatabaseHandler extends SQLiteOpenHelper implements Playlis
         );
         boolean success = affectedRowsCount > 0;
         if (success) {
-            int deleted = db.delete(
+            db.delete(
                     Contracts.PlaylistSongLinks.TABLE_NAME,
                     Contracts.PlaylistSongLinks.COLUMN_NAME_PLAYLIST_ID + "=?",
                     selectionArgs
             );
 
-            Log.d("PlaylistDatabaseHandler", "Playlist deleted songs amount=" + deleted);
             for (Song song : playlist.getSongsList()) {
                 if (!saveSong(song, playlist)) {
                     success = false;
@@ -323,8 +318,6 @@ public class PlaylistDatabaseHandler extends SQLiteOpenHelper implements Playlis
             }
             removeUnusedSongs();
         }
-//        db.endTransaction();
-        Log.d("PlaylistDatabaseHandler", "Playlist update success=" + success);
         return success;
     }
 
@@ -391,7 +384,7 @@ public class PlaylistDatabaseHandler extends SQLiteOpenHelper implements Playlis
     }
 
     private void removeUnusedLinks() {
-        int removedLinks = getWritableDatabase().delete(
+        getWritableDatabase().delete(
                 Contracts.PlaylistSongLinks.TABLE_NAME,
                 Contracts.PlaylistSongLinks.COLUMN_NAME_PLAYLIST_ID + " NOT IN (SELECT " +
                         Contracts.Playlists._ID +
@@ -402,7 +395,6 @@ public class PlaylistDatabaseHandler extends SQLiteOpenHelper implements Playlis
                         " FROM " + Contracts.Songs.TABLE_NAME + ")",
                 new String[0]
         );
-        Log.d("PlaylistDatabaseHandler", "removed unused Links: " + removedLinks);
     }
 
     private void removeUnusedSongs() {
@@ -414,7 +406,6 @@ public class PlaylistDatabaseHandler extends SQLiteOpenHelper implements Playlis
                         ")",
                 new String[0]
         );
-        Log.d("PlaylistDatabaseHandler", " removed " + removedSongs + " unused songs!");
     }
 
 
@@ -439,7 +430,6 @@ public class PlaylistDatabaseHandler extends SQLiteOpenHelper implements Playlis
 
     @Override
     public void onUpgrade(SQLiteDatabase db, int oldVersion, int newVersion) {
-        Log.d("PlaylistDatabaseHandler", "drop tables!");
         db.execSQL(Contracts.getDropEntrySQL(Contracts.PlaylistSongLinks.TABLE_NAME));
         db.execSQL(Contracts.getDropEntrySQL(Contracts.Songs.TABLE_NAME));
         db.execSQL(Contracts.getDropEntrySQL(Contracts.Playlists.TABLE_NAME));
@@ -448,7 +438,6 @@ public class PlaylistDatabaseHandler extends SQLiteOpenHelper implements Playlis
 
     @Override
     public void onDowngrade(SQLiteDatabase db, int oldVersion, int newVersion) {
-        Log.d("PlaylistDatabaseHandler", "drop tables!");
         db.execSQL(Contracts.getDropEntrySQL(Contracts.PlaylistSongLinks.TABLE_NAME));
         db.execSQL(Contracts.getDropEntrySQL(Contracts.Songs.TABLE_NAME));
         db.execSQL(Contracts.getDropEntrySQL(Contracts.Playlists.TABLE_NAME));

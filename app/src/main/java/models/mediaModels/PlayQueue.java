@@ -1,12 +1,15 @@
-package models.mediawrappers;
+package models.mediaModels;
 
 import android.content.Context;
-import android.os.AsyncTask;
 import android.text.TextUtils;
 import android.util.Log;
 
 import models.mediaModels.Playlist;
 import models.mediaModels.Song;
+import models.mediawrappers.AbstractMediaWrapper;
+import models.mediawrappers.LocalFileStreamingMediaWrapper;
+import models.mediawrappers.SoundCloudStreamingMediaWrapper;
+import models.mediawrappers.SpotifyMediaWrapper;
 
 import java.util.ArrayList;
 import java.util.ListIterator;
@@ -22,7 +25,7 @@ import java.util.Random;
 public class PlayQueue {
 
 
-    public static final String TAG = "main.java.models.mediawrappers.PlayQueue";
+    public static final String TAG = "main.java.models.mediaModels.PlayQueue";
 
     //TODO: muss in FileStreamingMediaService
     public static final String SONG_AVAILABLE = "com.example.song_available";
@@ -213,14 +216,11 @@ public class PlayQueue {
     private void initializeSong(Song song) {
       //  Log.d(TAG, "song "+song+" is initialized... mediawrappers are: "+TextUtils.join(", ", mediaWrappers));
         String mediaWrapperType = song.getMediaWrapperType();
-        if (mediaWrapperType.equals(Song.MEDIA_WRAPPER_NOT_SET))
-        {
-
+        if (mediaWrapperType.equals(Song.MEDIA_WRAPPER_NOT_SET)) {
             setDefaultMediaWrapperTypeInQueue(song);
         }
 
         setMediaWrapperForType(song);
-
 
         if (song.getMediaWrapper() != null) {
          Log.d(TAG, "no look for song: "+song);
@@ -233,37 +233,29 @@ public class PlayQueue {
     public void setMediaWrapperForType(Song song) {
 
 
-        String mediaWrapperType=song.getMediaWrapperType();
+        String mediaWrapperType = song.getMediaWrapperType();
         AbstractMediaWrapper abstractMediaWrapper=null;
 
         switch (mediaWrapperType) {
             case Song.MEDIA_WRAPPER_LOCAL_FILE:
                 abstractMediaWrapper = new LocalFileStreamingMediaWrapper(context, song);
-
                 break;
             case Song.MEDIA_WRAPPER_REMOTE_SOUNDCLOUD:
                 abstractMediaWrapper = new SoundCloudStreamingMediaWrapper(context, song);
-
                 break;
             case Song.MEDIA_WRAPPER_SPOTIFY:
-
                 abstractMediaWrapper = new SpotifyMediaWrapper(context, song);
                 break;
             case (Song.MEDIA_WRAPPER_NONE):
-
                 abstractMediaWrapper = null;
                 song.setNotPlayable(true);
-
                 break;
         }
-
         song.setMediaWrapper(abstractMediaWrapper);
-
     }
 
     public void setDefaultMediaWrapperTypeInQueue(Song song)
     {
-
         song.setMediaWrapperType(mediaWrappers.get(0));
     }
 
@@ -283,14 +275,8 @@ public class PlayQueue {
                     }
 
                 }
-
-
-
-            //   Log.d(TAG, "current song in initializePlaylist: " + getCurrentSong());
-
-
-
     }
+
     /**
      * Can be used by the GUI to go to the next track (forward button).
      *

@@ -96,8 +96,6 @@ public class Playlist implements Parcelable {
 
     public void resetInitialization()
     {
-
-        Log.d("Playlist", "reset initialisation called for playlist " + getName());
         if (songs != null) {
             for (Song song : getSongsList()) {
                 // song.setMediaWrapper(null);

@@ -16,6 +16,7 @@ public class PlaylistsManager implements Playlist.Listener {
     private ArrayList<Listener> observers;
 
     private final static PlaylistsManager instance = new PlaylistsManager();
+    private boolean initialized;
 
     public static PlaylistsManager getInstance() {
         return instance;
@@ -47,6 +48,7 @@ public class PlaylistsManager implements Playlist.Listener {
             }
             notifyOnPlaylistsListChange();
         }
+        initialized = true;
     }
 
     public void setCurrentPlaylist(Playlist playlist) {
@@ -66,16 +68,14 @@ public class PlaylistsManager implements Playlist.Listener {
         databaseHandler = new PlaylistDatabaseHandler(context);
     }
 
-    public boolean addPlaylist(Playlist playlist)
+    public void addPlaylist(Playlist playlist)
     {
-        boolean success = true;
         if (!playlists.contains(playlist)) {
             playlist.addObserver(this);
             playlists.add(playlist);
-            success = savePlaylist(playlist);
+            savePlaylist(playlist);
             notifyOnPlaylistsListChange();
         }
-        return success;
     }
 
     public ArrayList<Playlist> getPlaylists()
@@ -142,9 +142,14 @@ public class PlaylistsManager implements Playlist.Listener {
         savePlaylist(playlist);
     }
 
-    public boolean savePlaylist(Playlist playlist) {
-        fileHandler.savePlaylist(playlist);
-        return databaseHandler.savePlaylist(playlist);
+    public void savePlaylist(final Playlist playlist) {
+        new Thread(new Runnable() {
+            @Override
+            public void run() {
+                fileHandler.savePlaylist(playlist);
+                databaseHandler.savePlaylist(playlist);
+            }
+        }).start();
     }
 
     public Song getSong(String artist, String songname) {
@@ -153,6 +158,10 @@ public class PlaylistsManager implements Playlist.Listener {
 
     public Song getSong(int id) {
         return databaseHandler.getSong(id);
+    }
+
+    public boolean alreadyInitialized() {
+        return initialized;
     }
 
     public interface Listener {

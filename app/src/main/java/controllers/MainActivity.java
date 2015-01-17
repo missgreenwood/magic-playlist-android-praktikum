@@ -4,6 +4,7 @@ import android.content.Intent;
 import android.content.IntentFilter;
 import android.net.Uri;
 import android.os.Bundle;
+import android.support.v4.app.Fragment;
 import android.support.v4.app.FragmentManager;
 import android.support.v4.app.FragmentTransaction;
 import android.support.v7.app.ActionBarActivity;
@@ -19,7 +20,7 @@ import java.util.ArrayList;
 
 import models.Settings;
 import models.mediawrappers.FileStreamingMediaService;
-import models.mediawrappers.PlayQueue;
+import models.mediaModels.PlayQueue;
 import models.mediawrappers.SpotifyLoginHandler;
 import models.mediawrappers.SpotifyService;
 import models.playlist.LocalSongsManager;
@@ -35,6 +36,7 @@ public class MainActivity extends ActionBarActivity implements FragmentManager.O
     private static boolean hasAlreadySentRequest = false;
     private Config spotifyConfig;
     private MyBroadcastReceiver broadcastReceiver = null;
+    private static int lastFragmentId = -1;
 
     public Config getSpotifyConfig() {
         return spotifyConfig;
@@ -121,6 +123,7 @@ public class MainActivity extends ActionBarActivity implements FragmentManager.O
             }
         });
 
+
         PlayQueue.getInstance().setMediaWrappers(Settings.getInstance().getMediaWrappers());
         PlayQueue.getInstance().setAutoPilotMode(false);
 
@@ -130,7 +133,10 @@ public class MainActivity extends ActionBarActivity implements FragmentManager.O
         LocalSongsManager.getInstance().setContext(getApplicationContext());
 
         PlaylistsManager.getInstance().setContext(getApplicationContext());
-        PlaylistsManager.getInstance().loadPlaylists();
+
+        if (!PlaylistsManager.getInstance().alreadyInitialized()) {
+            PlaylistsManager.getInstance().loadPlaylists();
+        }
 
         super.onStart();
     }
@@ -156,6 +162,8 @@ public class MainActivity extends ActionBarActivity implements FragmentManager.O
 
         stopService(new Intent(this, SpotifyService.class));
         stopService(new Intent(this, FileStreamingMediaService.class));
+
+        getSupportFragmentManager().removeOnBackStackChangedListener(this);
     }
 
     @Override

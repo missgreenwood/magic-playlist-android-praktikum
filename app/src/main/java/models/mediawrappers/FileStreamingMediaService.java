@@ -11,7 +11,7 @@ import android.os.IBinder;
 import android.util.Log;
 
 import controllers.MainActivity;
-import models.mediaModels.Song;
+import models.mediaModels.PlayQueue;
 import tests.R;
 
 import java.io.IOException;

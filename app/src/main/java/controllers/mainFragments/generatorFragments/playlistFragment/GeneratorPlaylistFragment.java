@@ -17,20 +17,20 @@ import models.mediaModels.Song;
 import models.playlist.PlaylistGenerator;
 import models.playlist.PlaylistsManager;
 import rest.client.Client;
-import rest.client.ClientListener;
 
 /**
  * created by Andreas 08.01.2015
+ *
  */
 public class GeneratorPlaylistFragment extends PlaylistFragment implements
         PlaylistGenerator.Listener
 {
 
-    private static final String TAG = "main.java.controllers.mainFragments.generatorFragments.playlistFragment.GeneratorPlaylistFragment";
-    private PlaylistGenerator generator;
+    private static PlaylistGenerator generator;
     private ProgressDialog loadingDialog;
     private boolean uploading = false;
     private boolean destroying = false;
+
 
 
     public void setGeneratorData(String genre, int songsCountLimit, ArrayList<String> artists, String playlistName) {
@@ -41,16 +41,22 @@ public class GeneratorPlaylistFragment extends PlaylistFragment implements
     @Override
     public void onViewCreated(View view, Bundle savedInstanceState) {
         super.onViewCreated(view, savedInstanceState);
-        setLoading(true);
-        generator.generatePlaylist();
+        if (loadingDialog == null) {
+            setLoading(true);
+        }
+        if (!generator.isRunning() && !generator.hasFinished()) {
+            generator.generatePlaylist();
+        } else {
+            setPlaylist(generator.getPlaylist());
+        }
     }
 
     @Override
     public void onDestroy() {
+        loadingDialog = null;
         destroying = true;
         generator.finishGeneration();
         generator = null;
-        loadingDialog = null;
         super.onDestroy();
     }
 
@@ -82,15 +88,13 @@ public class GeneratorPlaylistFragment extends PlaylistFragment implements
 
     @Override
     public void callbackError(int errorStatus) {
-        Log.e(TAG, "error while generation, statuscode: " + errorStatus);
+        Log.e("GeneratorPlaylistFragment", "error while generation, statuscode: " + errorStatus);
     }
 
     @Override
     public void generationFinished(final Playlist playlist) {
 
-        if (!PlaylistsManager.getInstance().addPlaylist(playlist)) {
-            Log.e("GENERATOR", "error while adding generated playlist to manager");
-        }
+        PlaylistsManager.getInstance().addPlaylist(playlist);
         Toast.makeText(getActivity().getApplicationContext(), "Playlist \"" + playlist.getName() + "\" successfully created!", Toast.LENGTH_SHORT).show();
 
         if (destroying) {
@@ -140,4 +144,5 @@ public class GeneratorPlaylistFragment extends PlaylistFragment implements
     public void setInitSongs(ArrayList<Song> initSongs) {
         generator.setInitSongs(initSongs);
     }
+
 }

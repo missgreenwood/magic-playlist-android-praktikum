@@ -1,17 +1,13 @@
 package models;
 
-import android.content.Context;
 import android.content.SharedPreferences;
-import android.os.AsyncTask;
 import android.util.Log;
 
-import java.lang.reflect.Array;
 import java.util.ArrayList;
-import java.util.HashMap;
 
 import models.mediaModels.Playlist;
 import models.mediaModels.Song;
-import models.mediawrappers.PlayQueue;
+import models.mediaModels.PlayQueue;
 import models.mediawrappers.SpotifyLoginHandler;
 import models.playlist.PlaylistsManager;
 
@@ -63,16 +59,15 @@ public class Settings {
                 usedMediaWrappers.add(wrapper);
             }
         }
+
         //now we can init the ArrayList with the right order
         mediaWrappers = new ArrayList<>();
         for (String wrapper : wrappers) {
             mediaWrappers.add(wrapper);
         }
 
-        /*this is very ugly...   @author charlotte*/
         if (usedMediaWrappers.contains(Song.MEDIA_WRAPPER_SPOTIFY)) {
             SpotifyLoginHandler.getInstance().startSpotifyLogin();
-
         }
 
 
@@ -137,7 +132,6 @@ public class Settings {
         }
 
 
-        /*again very very ugly*/
         if (wrapper.equals(Song.MEDIA_WRAPPER_SPOTIFY)) {
             SpotifyLoginHandler.getInstance().startSpotifyLogin();
 
@@ -153,17 +147,13 @@ public class Settings {
             @Override
             public void run() {
 
-                Log.d("", "resetplaylists called");
-                for (Playlist playlist : PlaylistsManager.getInstance().getPlaylists()) {
+                for(Playlist playlist : PlaylistsManager.getInstance().getPlaylists()) {
                     playlist.resetInitialization();
                 }
 
-                long startnow;
-                long endnow;
-
-                //   PlayQueue.getInstance().stopCurrentSong();
+//                PlayQueue.getInstance().stopCurrentSong();
                 PlayQueue.getInstance().initializePlaylist(true);
-                // PlayQueue.getInstance().setState(PlayQueue.STATE_IDLE);
+//                PlayQueue.getInstance().setState(PlayQueue.STATE_IDLE);
 
 
             }
