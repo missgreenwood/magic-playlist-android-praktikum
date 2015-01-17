@@ -78,33 +78,7 @@ public class APIWrapper extends AsyncTask<String, Void, String> {
 
     @Override
     protected void onPostExecute(String response) {
-        Log.v(TAG, "onpostexecute");
-        Log.v(TAG, "json array string: " + response);
-
-        //   parent.processWebCallResult(response, true);
-
-        /*
-        Method method=null;
-        try {
-            method=parent.getClass().getMethod(callback, String.class);
-        } catch (NoSuchMethodException e) {
-            e.printStackTrace();
-        }
-
-
-        try {
-            if (method != null) {
-                method.invoke(parent, response);
-            }
-        } catch (IllegalAccessException e) {
-            e.printStackTrace();
-        } catch (InvocationTargetException e) {
-            e.printStackTrace();
-        }*/
-
-
         parent.processWebCallResult(response, callback, data);
-
     }
 
 
@@ -118,13 +92,9 @@ public class APIWrapper extends AsyncTask<String, Void, String> {
 
 
         if (method.equals(GET_METHOD)) {
-
             httpMessage = new HttpGet(url[0]);
-
         } else if (method.equals(POST_METHOD)) {
-
             httpMessage = new HttpPost(url[0]);
-
         }
 
 
@@ -141,37 +111,14 @@ public class APIWrapper extends AsyncTask<String, Void, String> {
 
         if (httpResponse != null) {
             httpEntity = httpResponse.getEntity();
-          //  Log.d(TAG, "length: " + httpEntity.getContentLength());
-          //  Log.d(TAG, "teeest: " + httpEntity.toString());
-
 
             try {
                 response = EntityUtils.toString(httpEntity);
-
-
-              //  Log.d(TAG, "response: " + response);
             } catch (IOException e) {
                 e.printStackTrace();
             }
 
         }
-
-
-
-
-
-
-
-
-
-            /*if (response!=null &&  (httpResponse.getStatusLine().getStatusCode() == HttpStatus.SC_OK))
-            {
-
-                Log.d("", "create json obj");
-
-
-            }*/
-
         return response;
     }
 

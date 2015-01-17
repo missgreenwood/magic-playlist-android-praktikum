@@ -45,6 +45,7 @@ public class PlaylistGenerator implements LastFmListener {
     private int songsCountLimit = 20;
     private boolean waiting;
     private boolean finished = false;
+    private boolean running = false;
     private boolean noSongFound = false;
 
 
@@ -83,6 +84,7 @@ public class PlaylistGenerator implements LastFmListener {
     }
 
     private void startGeneration() {
+        running = true;
         while (getRequestsCount() == 0) {
             if (finished || playlist.getSongsList().size() == songsCountLimit) {
                 finishGeneration();
@@ -107,6 +109,7 @@ public class PlaylistGenerator implements LastFmListener {
     public void finishGeneration()
     {
         if (!finished) {
+            running = false;
             finished = true;
             listener.generationFinished(playlist);
         }
@@ -333,6 +336,14 @@ public class PlaylistGenerator implements LastFmListener {
             getArtistInfo(artistName);
         }
         callbackFinished();
+    }
+
+    public boolean isRunning() {
+        return running;
+    }
+
+    public boolean hasFinished() {
+        return finished;
     }
 
     public interface Listener {

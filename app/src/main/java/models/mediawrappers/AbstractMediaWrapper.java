@@ -3,6 +3,7 @@ package models.mediawrappers;
 import android.content.Context;
 import android.content.Intent;
 
+import models.mediaModels.PlayQueue;
 import models.mediaModels.Song;
 
 import org.json.JSONException;
