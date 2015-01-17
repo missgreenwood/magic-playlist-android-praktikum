@@ -12,7 +12,7 @@ import models.playlist.PlaylistsManager;
  * Created by TheDaAndy on 27.12.2014.
  *
  */
-public class Playlist implements Parcelable {
+public class Playlist implements Parcelable, Song.Listener {
     //TODO save in DB
     private static int uniqueId = 0;
 
@@ -55,11 +55,13 @@ public class Playlist implements Parcelable {
 
     public void addSong(Song newSong) {
         songs.add(newSong);
+        newSong.setListener(this);
         notifyChange();
     }
 
     public void removeSong(Song song) {
         songs.remove(song);
+        song.setListener(null);
         notifyChange();
     }
 
@@ -162,6 +164,11 @@ public class Playlist implements Parcelable {
     public void setAlreadyUploaded(boolean alreadyUploaded) {
         this.alreadyUploaded = alreadyUploaded;
         notifyChange();
+    }
+
+    @Override
+    public void onSongChange() {
+//        notifyChange();
     }
 
     public interface Listener {

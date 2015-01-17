@@ -70,6 +70,7 @@ public class Settings {
             SpotifyLoginHandler.getInstance().startSpotifyLogin();
         }
 
+        adjustUsedMediaWrappersOrder();
 
         this.preferences = preferences;
     }
