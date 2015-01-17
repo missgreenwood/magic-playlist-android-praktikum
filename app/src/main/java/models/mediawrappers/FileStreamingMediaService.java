@@ -89,7 +89,7 @@ public class FileStreamingMediaService extends Service implements MediaPlayer.On
 
 
 
-            startForeground(NOTIFICATION_ID, notification);
+           // startForeground(NOTIFICATION_ID, notification);
 
 
             Log.d(TAG, "start play");
