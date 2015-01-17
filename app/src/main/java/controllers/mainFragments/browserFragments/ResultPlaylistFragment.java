@@ -55,7 +55,7 @@ public class ResultPlaylistFragment extends PlaylistFragment implements ClientLi
                     alreadyLiked = true;
                     starBtn.setText("Loading likes...");
                     starBtn.setEnabled(false);
-                    requestHandle = Client.getInstance().likePlaylist(_this, playlist);
+                    requestHandle = Client.getInstance().likePlaylist(playlist, _this);
                 }
             }
         });

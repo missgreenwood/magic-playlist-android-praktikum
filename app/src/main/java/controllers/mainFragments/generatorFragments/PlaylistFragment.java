@@ -33,6 +33,7 @@ import controllers.mainFragments.generatorFragments.playlistFragment.OnSwipeList
 import models.mediaModels.Playlist;
 import models.mediaModels.Song;
 import models.mediawrappers.PlayQueue;
+import models.playlist.PlaylistsManager;
 import rest.client.Client;
 import rest.client.ClientListener;
 import tests.R;
@@ -44,8 +45,7 @@ public class PlaylistFragment extends ListFragment implements
         PlayQueue.Listener,
         AdapterView.OnItemLongClickListener,
         Playlist.Listener,
-        ClientListener.AddPlaylistListener
-{
+        ClientListener.AddPlaylistListener, ClientListener.FindSinglePlaylistListener {
 
     protected Playlist playlist;
     private View currentlyPlayingView;
@@ -69,12 +69,36 @@ public class PlaylistFragment extends ListFragment implements
         super.onCreate(savedInstanceState);
 
         if (playlist == null) {
-            playlist = new Playlist();
+            playlist = PlaylistsManager.getInstance().getCurrentPlaylist();
+            if (playlist == null) {
+                playlist = new Playlist();
+            }
         }
+        setPlaylist(playlist); // sets observer and himself into the global "currentPlaylist"
         setListAdapter(new SongArrayAdapter(getActivity(),
                 android.R.layout.simple_list_item_1, android.R.id.text1, playlist.getSongsList(true)));
 
         PlayQueue.getInstance().addObserver(this);
+    }
+
+    @Override
+    public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
+        View v = inflater.inflate(R.layout.fragment_playlist, container, false);
+        uploadBtn = (Button) v.findViewById(R.id.uploadBtn);
+        Client.getInstance().findPlaylistByName(playlist.getName(), this);
+        if (playlist.isAlreadyUploaded()) {
+            disableBtn(uploadBtn, "already uploaded");
+        } else {
+            final PlaylistFragment _this = this;
+            uploadBtn.setOnClickListener(new View.OnClickListener() {
+                @Override
+                public void onClick(View v) {
+                    setLoading(true);
+                    requestHandle = Client.getInstance().addPlaylist(playlist, _this);
+                }
+            });
+        }
+        return v;
     }
 
     private void markAsCurrentlyPlaying(int index) {
@@ -91,25 +115,6 @@ public class PlaylistFragment extends ListFragment implements
         if (currentlyPlayingView != null) {
             currentlyPlayingView.setBackgroundColor(Color.TRANSPARENT);
         }
-    }
-
-    @Override
-    public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
-        View v = inflater.inflate(R.layout.fragment_playlist, container, false);
-        uploadBtn = (Button) v.findViewById(R.id.uploadBtn);
-        if (playlist.isAlreadyUploaded()) {
-            disableBtn(uploadBtn, "already uploaded");
-        } else {
-            final PlaylistFragment _this = this;
-            uploadBtn.setOnClickListener(new View.OnClickListener() {
-                @Override
-                public void onClick(View v) {
-                    setLoading(true);
-                    requestHandle = Client.getInstance().addPlaylist(_this, playlist);
-                }
-            });
-        }
-        return v;
     }
 
     protected void disableBtn(Button btn, String text) {
@@ -299,6 +304,7 @@ public class PlaylistFragment extends ListFragment implements
 
     public void setPlaylist(Playlist playlist) {
         this.playlist = playlist;
+        PlaylistsManager.getInstance().setCurrentPlaylist(playlist);
         playlist.addObserver(this);
         SongArrayAdapter adapter = (SongArrayAdapter)getListAdapter();
         if (adapter != null) {
@@ -365,6 +371,23 @@ public class PlaylistFragment extends ListFragment implements
         setLoading(false);
         String alreadyExistsString = alreadyExists ? " Playlist name already exists." : "Error occured while trying to upload playlist!";
         Toast.makeText(getActivity(), alreadyExistsString, Toast.LENGTH_SHORT).show();
+    }
+
+    @Override
+    public void onFindSinglePlaylistSuccess(Playlist onlinePlaylist) {
+        if (playlist.getName() != onlinePlaylist.getName()) {
+            return;
+        }
+        if (onlinePlaylist.equals(playlist)) {
+            disableBtn(uploadBtn, "already uploaded!");
+        } else {
+            disableBtn(uploadBtn, "Not uploadable, playlist with this name already exists!");
+        }
+    }
+
+    @Override
+    public void onFindSinglePlaylistError() {
+        Log.w("PlaylistFragment", "error while searching playlist with name");
     }
 
     private class SongArrayAdapter extends ArrayAdapter<Song>

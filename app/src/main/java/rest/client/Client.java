@@ -42,7 +42,7 @@ public class Client {
         this.context = context;
     }
 
-    public RequestHandle addPlaylist(final ClientListener.AddPlaylistListener listener, final Playlist playlist) {
+    public RequestHandle addPlaylist(final Playlist playlist, final ClientListener.AddPlaylistListener listener) {
         AsyncHttpClient asyncHttpClient = new AsyncHttpClient();
         try {
             String json = gson.toJson(playlist);
@@ -74,7 +74,7 @@ public class Client {
         }
     }
 
-    public RequestHandle findPlaylistByName(final ClientListener.FindSinglePlaylistListener listener, final String name) {
+    public RequestHandle findPlaylistByName(final String name, final ClientListener.FindSinglePlaylistListener listener) {
         AsyncHttpClient asyncHttpClient = new AsyncHttpClient();
 
         return asyncHttpClient.get(context, ClientConstants.FIND_PLAYLIST_URL, new RequestParams("name", name), new TextHttpResponseHandler() {
@@ -101,7 +101,7 @@ public class Client {
         });
     }
 
-    public RequestHandle findPlaylistsByGenreAndArtist(final ClientListener.FindPlaylistsListener listener , String genre, String artist) {
+    public RequestHandle findPlaylistsByGenreAndArtist(String genre, String artist, final ClientListener.FindPlaylistsListener listener) {
         AsyncHttpClient asyncHttpClient = new AsyncHttpClient();
 
         RequestParams params = new RequestParams(ClientConstants.GENRE_PARAM, genre);
@@ -132,7 +132,7 @@ public class Client {
         });
     }
 
-    public RequestHandle likePlaylist(final ClientListener.LikePlaylistListener listener, final Playlist playlist) {
+    public RequestHandle likePlaylist(final Playlist playlist, final ClientListener.LikePlaylistListener listener) {
         AsyncHttpClient asyncHttpClient = new AsyncHttpClient();
         return asyncHttpClient.get(
                 context,

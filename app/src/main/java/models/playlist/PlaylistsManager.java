@@ -21,6 +21,8 @@ public class PlaylistsManager implements Playlist.Listener {
         return instance;
     }
 
+    private Playlist currentPlaylist;
+
     private ArrayList<Playlist> playlists;
 
     private PlaylistDatabaseHandler databaseHandler;
@@ -45,6 +47,14 @@ public class PlaylistsManager implements Playlist.Listener {
             }
             notifyOnPlaylistsListChange();
         }
+    }
+
+    public void setCurrentPlaylist(Playlist playlist) {
+        currentPlaylist = playlist;
+    }
+
+    public Playlist getCurrentPlaylist() {
+        return currentPlaylist;
     }
 
     public void closeDb()

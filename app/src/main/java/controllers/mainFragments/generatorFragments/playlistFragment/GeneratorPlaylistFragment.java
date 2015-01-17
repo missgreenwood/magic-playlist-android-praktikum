@@ -110,7 +110,7 @@ public class GeneratorPlaylistFragment extends PlaylistFragment implements
                         "Uploading playlist \"" + generator.getPlaylist().getName() + "\"",
                         "uploading...");
                 uploading = true;
-                Client.getInstance().addPlaylist(_this, playlist);
+                Client.getInstance().addPlaylist(playlist, _this);
             }
         });
         uploadDialog.setNegativeButton("no", null);

@@ -126,7 +126,7 @@ public class BrowserFragment extends android.support.v4.app.Fragment implements
             return;
         }
         setLoading(true);
-        requestHandle = Client.getInstance().findPlaylistsByGenreAndArtist(this, genre, artist);
+        requestHandle = Client.getInstance().findPlaylistsByGenreAndArtist(genre, artist, this);
     }
 
     @Override
