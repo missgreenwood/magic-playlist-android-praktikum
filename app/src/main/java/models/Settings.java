@@ -36,8 +36,7 @@ public class Settings {
         return getMediaWrappers(false);
     }
 
-    public ArrayList<String> getMediaWrappers(boolean inclusiveInactive)
-    {
+    public ArrayList<String> getMediaWrappers(boolean inclusiveInactive) {
         Log.d("SETTINGS", "usedMediaWrappers: " + usedMediaWrappers);
         if (inclusiveInactive) {
             return mediaWrappers;
@@ -50,8 +49,7 @@ public class Settings {
         this.listener = listener;
     }
 
-    public void loadSettings(SharedPreferences preferences)
-    {
+    public void loadSettings(SharedPreferences preferences) {
         ArrayList<String> defWrapperList = getDefaultMediaWrappersList();
         usedMediaWrappers = new ArrayList<>();
 
@@ -72,7 +70,7 @@ public class Settings {
         }
 
         /*this is very ugly...   @author charlotte*/
-        if (mediaWrappers.contains(Song.MEDIA_WRAPPER_SPOTIFY)) {
+        if (usedMediaWrappers.contains(Song.MEDIA_WRAPPER_SPOTIFY)) {
             SpotifyLoginHandler.getInstance().startSpotifyLogin();
 
         }
@@ -81,8 +79,7 @@ public class Settings {
         this.preferences = preferences;
     }
 
-    private ArrayList<String> getDefaultMediaWrappersList()
-    {
+    private ArrayList<String> getDefaultMediaWrappersList() {
         ArrayList<String> defaultWrappersList = new ArrayList<>();
         defaultWrappersList.add(Song.MEDIA_WRAPPER_LOCAL_FILE);
         defaultWrappersList.add(Song.MEDIA_WRAPPER_REMOTE_SOUNDCLOUD);
@@ -90,8 +87,7 @@ public class Settings {
         return defaultWrappersList;
     }
 
-    private void saveSettings()
-    {
+    private void saveSettings() {
         if (preferences == null) {
             return;
         }
@@ -108,8 +104,8 @@ public class Settings {
     public void increaseWrapperPriority(String wrapper) {
         int prio = mediaWrappers.indexOf(wrapper);
         if (prio > 0) { //its not already the first item
-            String upperWrapper = mediaWrappers.get(prio-1);
-            mediaWrappers.set(prio-1, mediaWrappers.get(prio));
+            String upperWrapper = mediaWrappers.get(prio - 1);
+            mediaWrappers.set(prio - 1, mediaWrappers.get(prio));
             mediaWrappers.set(prio, upperWrapper);
         }
         adjustUsedMediaWrappersOrder();
@@ -151,42 +147,27 @@ public class Settings {
         // resetPlaylists();
     }
 
-    private void resetPlaylists()
-    {
+    private void resetPlaylists() {
 
         new Thread(new Runnable() {
             @Override
             public void run() {
 
-                Log.d("","resetplaylists called");
-                for(
-                        Playlist playlist
-                        :PlaylistsManager.getInstance().
-
-                        getPlaylists()
-
-                        )
-                {
+                Log.d("", "resetplaylists called");
+                for (Playlist playlist : PlaylistsManager.getInstance().getPlaylists()) {
                     playlist.resetInitialization();
                 }
 
                 long startnow;
                 long endnow;
 
-                PlayQueue.getInstance().stopCurrentSong();
+                //   PlayQueue.getInstance().stopCurrentSong();
                 PlayQueue.getInstance().initializePlaylist(true);
-                PlayQueue.getInstance().setState(PlayQueue.STATE_IDLE);
+                // PlayQueue.getInstance().setState(PlayQueue.STATE_IDLE);
 
 
             }
         }).start();
-
-
-
-
-
-
-
 
 
     }
@@ -203,8 +184,8 @@ public class Settings {
     }
 
     public void confirmWrapperChanges() {
-       saveSettings();
-       resetPlaylists();
+        saveSettings();
+        resetPlaylists();
     }
 
     public boolean isWrapperActive(String wrapper) {
@@ -219,8 +200,6 @@ public class Settings {
             return true;
 
         return SpotifyLoginHandler.getInstance().isLoggedIn();
-
-
 
 
     }
