@@ -108,7 +108,10 @@ public class ArtistsFragment extends ListFragment {
 
             artists.clear();
             artists.addAll(sortedArtists);
-            ((ArtistsArrayAdapter)getListAdapter()).notifyDataSetChanged();
+            ArtistsArrayAdapter adapter =(ArtistsArrayAdapter)getListAdapter();
+            if (adapter != null) {
+                adapter.notifyDataSetChanged();
+            }
         }
     }
 
