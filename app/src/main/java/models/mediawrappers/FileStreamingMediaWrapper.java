@@ -63,6 +63,7 @@ public abstract class FileStreamingMediaWrapper extends AbstractMediaWrapper {
 
 
     public void stopPlayer() {
+        Log.d(TAG, "sent stop intent to media service...");
         Intent stopIntent = new Intent(context, FileStreamingMediaService.class);
         stopIntent.setAction(FileStreamingMediaService.ACTION_STOP);
         context.stopService(stopIntent);
