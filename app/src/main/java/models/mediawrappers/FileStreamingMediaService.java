@@ -114,7 +114,7 @@ public class FileStreamingMediaService extends Service implements MediaPlayer.On
             }
         } else if (intent.getAction().equals(ACTION_RESUME)) {
 
-            if (state == AudioState.Paused) {
+            if ((state == AudioState.Paused) && (mediaPlayer != null)) {
 
                 try {
                     mediaPlayer.start();
@@ -129,7 +129,14 @@ public class FileStreamingMediaService extends Service implements MediaPlayer.On
             {
                 Log.d(TAG, "stop media player");
                 if (mediaPlayer != null) {
-                    mediaPlayer.stop();
+                    try {
+                        mediaPlayer.stop();
+                    } catch (IllegalStateException e) {
+                        Log.e(TAG, "could not stop...");
+                    } finally {
+                        mediaPlayer.release();
+                        mediaPlayer = null;
+                    }
                 }
                 state = AudioState.Stopped;
             }
