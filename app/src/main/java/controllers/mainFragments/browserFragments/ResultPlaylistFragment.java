@@ -38,8 +38,9 @@ public class ResultPlaylistFragment extends PlaylistFragment implements ClientLi
         starBtn = (Button) v.findViewById(R.id.starBtn);
         saveBtn = (Button) v.findViewById(R.id.saveBtn);
 
+
         if (playlist.isAlreadyUploaded()) {
-            disableBtn(saveBtn, "Already uploaded!");
+            disableBtn(saveBtn, "Not Downloadable!");
         } else if (PlaylistsManager.getInstance().containsPlaylistName(playlist)) {
             disableBtn(saveBtn, "Playlist with name already exists");
         }
@@ -62,6 +63,7 @@ public class ResultPlaylistFragment extends PlaylistFragment implements ClientLi
         saveBtn.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
+                playlist.setAlreadyUploaded(true);
                 PlaylistsManager.getInstance().addPlaylist(playlist);
                 disableBtn(saveBtn, "Saved!");
             }

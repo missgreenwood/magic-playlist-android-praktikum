@@ -134,18 +134,42 @@ public class Playlist implements Parcelable, Song.Listener {
     public boolean equals(Object o) {
         if (o instanceof Playlist) {
             Playlist p = (Playlist) o;
-            boolean genresEqual = true;
+            boolean genresEqual;
             if (p.getGenre() == null) {
-                genresEqual = genre == null;
+                genresEqual = getGenre() == null;
             } else {
-                genresEqual = p.getGenre().equals(genre);
+                genresEqual = p.getGenre().equals(getGenre());
             }
+
             return p.getName().equals(getName()) &&
-                    p.getSongsList().equals(getSongsList()) &&
+                    hasSameSongsList(p) &&
                     genresEqual;
 
         }
         return false;
+    }
+
+    private boolean hasSameSongsList(Playlist playlist) {
+        ArrayList<Song> ownTracks = getSongsList(),
+                        otherTracks = playlist.getSongsList();
+
+        Log.d("P", "size " + ownTracks.size() + " = " + otherTracks.size());
+        if (ownTracks.size() != otherTracks.size()) {
+            return false;
+        }
+        Log.d("P", "other in own");
+        for (Song song : otherTracks) {
+            if (!ownTracks.contains(song)) {
+                return false;
+            }
+        }
+        Log.d("P", "own in other");
+        for (Song song : ownTracks) {
+            if (!otherTracks.contains(song)) {
+                return false;
+            }
+        }
+        return true;
     }
 
     public boolean isAlreadyLiked() {

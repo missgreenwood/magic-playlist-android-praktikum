@@ -230,10 +230,10 @@ public class PlaylistDatabaseHandler extends SQLiteOpenHelper implements Playlis
             if (!updateSong(song)) {
                 success = createNewSong(song);
             }
+            //has to be synchronous with db, so to be shure, set SongId
+            song.setSongID(getSongId(song.getArtist(), song.getSongname()));
+            //otherwise, links could be set to wrong or non existing id and we have an empty playlist afterwards
             success = linkSongWithPlaylist(song, playlist) && success;
-            if (success && song.getId() == -1) {
-                song.setSongID(getSongId(song.getArtist(), song.getSongname()));
-            }
             db.setTransactionSuccessful();
         } finally {
             db.endTransaction();

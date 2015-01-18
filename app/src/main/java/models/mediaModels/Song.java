@@ -217,7 +217,7 @@ public class Song {
                 song.setLength(length);
                 //save unloaded songs to hashmap
                 songs.put(song.getId(), song);
-                Log.v("Song.Builder", "create new (DB: " + songs.size() + "): " + song.getArtist() + " - " + song.getSongname() );
+                Log.v("Song.Builder", "create new (DB: " + id + "): " + song.getArtist() + " - " + song.getSongname() );
             }
             return song;
         }

@@ -36,6 +36,9 @@ public class PlaylistsManager implements Playlist.Listener {
 
     public void loadPlaylists()
     {
+        if (initialized) {
+            return;
+        }
         ArrayList<Playlist> loadedPlaylists = databaseHandler.loadPlaylists();
         if (loadedPlaylists == null || loadedPlaylists.size() == 0) {
             loadedPlaylists = fileHandler.loadPlaylists();

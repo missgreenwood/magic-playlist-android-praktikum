@@ -18,6 +18,7 @@ import controllers.mainFragments.browserFragments.playlistFragment.BrowserPlayli
 import controllers.mainFragments.generatorFragments.GenresListFragment;
 import controllers.mainFragments.generatorFragments.SingleArtistFragment;
 import models.mediaModels.Playlist;
+import models.playlist.PlaylistsManager;
 import rest.client.Client;
 import rest.client.ClientListener;
 import tests.R;
@@ -151,6 +152,7 @@ public class BrowserFragment extends android.support.v4.app.Fragment implements
     @Override
     public void onFindPlaylistsSuccess(List<Playlist> playlists) {
         setLoading(false);
+        playlists.removeAll(PlaylistsManager.getInstance().getPlaylists());
         if (playlists != null && playlists.size() > 0) {
             createSearchView(playlists);
         } else {
