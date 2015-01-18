@@ -203,7 +203,8 @@ public class FileStreamingMediaService extends Service implements MediaPlayer.On
 
             mediaPlayer.reset();
             mediaPlayer.release();
-            mediaPlayer = null;
+
+            PlayQueue.getInstance().cancelCurrentSong();
 
             //TODO: should I send a song completed or a song not available intent??
             // mediaPlayer = null;
