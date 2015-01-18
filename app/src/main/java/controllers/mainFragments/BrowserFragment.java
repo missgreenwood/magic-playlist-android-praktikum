@@ -5,6 +5,7 @@ import android.app.ProgressDialog;
 import android.content.DialogInterface;
 import android.os.Bundle;
 import android.support.v4.app.FragmentTransaction;
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -138,15 +139,16 @@ public class BrowserFragment extends android.support.v4.app.Fragment implements
             createPlaylists.create().show();
             return;
         } else {
+            Log.d("BrowserFragment", "ownPlaylists: " + ownPlaylists.size() + " " + ownPlaylists);
             final BrowserFragment _this = this;
             final AlertDialog.Builder createPlaylists = new AlertDialog.Builder(getActivity());
             createPlaylists.setTitle("Select one of your playlists!");
-            createPlaylists.setMessage("Please select one of you playlists, to find similar ones!");
-            createPlaylists.setSingleChoiceItems(new PlaylistArrayAdapter(createPlaylists.getContext(), R.layout.rows, R.id.txtview, ownPlaylists), 0, new DialogInterface.OnClickListener() {
+            createPlaylists.setSingleChoiceItems(new PlaylistArrayAdapter(createPlaylists.getContext(), R.layout.rows, R.id.txtview, ownPlaylists), -1, new DialogInterface.OnClickListener() {
                 @Override
                 public void onClick(DialogInterface dialog, int which) {
                     setLoading(true);
-                    requestHandle = Client.getInstance().findSimilarPlaylists(ownPlaylists.get(which), _this);
+                    Playlist p = ownPlaylists.get(which);
+                    requestHandle = Client.getInstance().findSimilarPlaylists(p, _this);
                 }
             });
             createPlaylists.create().show();
