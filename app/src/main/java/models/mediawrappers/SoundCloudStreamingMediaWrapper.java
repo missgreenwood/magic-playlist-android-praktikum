@@ -53,7 +53,7 @@ public class SoundCloudStreamingMediaWrapper extends RemoteFileStreamingMediaWra
 
     public SoundCloudStreamingMediaWrapper(Context context, Song songs) {
         super(context, songs);
-        MainActivity.asyncHttpClient.setMaxConnections(50);
+        //  MainActivity.asyncHttpClient.setMaxConnections(50);
 
     }
 
