@@ -1,8 +1,14 @@
 package controllers.mainFragments;
 
+import android.app.Activity;
+import android.app.ProgressDialog;
 import android.content.Context;
+import android.content.DialogInterface;
 import android.os.Bundle;
+import android.os.Handler;
+import android.os.Looper;
 import android.support.v4.app.ListFragment;
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.View.OnClickListener;
@@ -27,9 +33,10 @@ import tests.R;
  */
 public class SettingsFragment extends ListFragment {
     private Settings settings;
-    private Button confirmBtn;
     private ArrayList<String> usedMediaWrappers;
     private ArrayList<String> allMediaWrappers;
+    private ProgressDialog loadingDialog;
+
     public SettingsFragment() {
 
     }
@@ -38,11 +45,21 @@ public class SettingsFragment extends ListFragment {
     public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
         ViewGroup rootView = (ViewGroup) inflater.inflate(R.layout.fragment_settings, container, false);
         settings = Settings.getInstance();
-        confirmBtn = (Button) rootView.findViewById(R.id.confirmBtn);
-        confirmBtn.setOnClickListener(new OnClickListener() {
+        rootView.findViewById(R.id.confirmBtn).setOnClickListener(new OnClickListener() {
             @Override
             public void onClick(View v) {
-                settings.confirmWrapperChanges();
+                setLoading(true);
+                settings.confirmWrapperChanges(new Settings.finishReinitListener() {
+                    @Override
+                    public void onFinishReinitPlaylists() {
+                        new Handler(Looper.getMainLooper()).post(new Runnable() {
+                                @Override
+                                public void run() {
+                                    setLoading(false);
+                                }
+                            });
+                    }
+                });
             }
         });
         usedMediaWrappers = settings.getMediaWrappers();
@@ -52,6 +69,20 @@ public class SettingsFragment extends ListFragment {
         // Retain the ListFragment instance across Activity re-creation
         setRetainInstance(true);
         return rootView;
+    }
+
+    private void setLoading(boolean visible) {
+        if (visible) {
+            if (loadingDialog != null) {
+                loadingDialog = null;
+            }
+            loadingDialog = new ProgressDialog(getActivity());
+            loadingDialog.setMessage("Initializing play queue");
+            loadingDialog.setTitle("Loading");
+            loadingDialog.show();
+        } else if(loadingDialog != null) {
+            loadingDialog.dismiss();
+        }
     }
 
     private OnClickListener priorityDownListener = new OnClickListener() {
@@ -94,11 +125,11 @@ public class SettingsFragment extends ListFragment {
                 if (isChecked) {
                     // Activate selected wrapper
                     Settings.getInstance().activateWrapper(allMediaWrappers.get(position));
-                    Toast.makeText(getActivity(), allMediaWrappers.get(position).toString() + " activated!", Toast.LENGTH_LONG).show();
+                    Toast.makeText(getActivity(), allMediaWrappers.get(position) + " activated!", Toast.LENGTH_LONG).show();
                 } else {
                     // Deactivate selected wrapper
                     Settings.getInstance().deactivateWrapper(allMediaWrappers.get(position));
-                    Toast.makeText(getActivity(), allMediaWrappers.get(position).toString() + " deactivated!", Toast.LENGTH_LONG).show();
+                    Toast.makeText(getActivity(), allMediaWrappers.get(position) + " deactivated!", Toast.LENGTH_LONG).show();
                 }
             }
         }

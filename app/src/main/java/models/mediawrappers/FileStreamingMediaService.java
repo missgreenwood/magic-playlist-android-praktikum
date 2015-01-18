@@ -94,21 +94,23 @@ public class FileStreamingMediaService extends Service implements MediaPlayer.On
             }
             mediaPlayer.prepareAsync(); // prepare async to not block main thread
         } else if (intent.getAction().equals(ACTION_PAUSE)) {
-
-            Log.d(TAG, "has received intent with action pause, state is " + state);
+            if (mediaPlayer != null) {
+                Log.d(TAG, "has received intent with action pause, state is " + state + " is playing: " + mediaPlayer.isPlaying());
 //            Log.d(TAG, "media player is playing: "+mediaPlayer.isPlaying());
 
-            if (state == AudioState.Playing || mediaPlayer.isPlaying()) {
-                Log.d(TAG, "set state to paused");
+                if (state == AudioState.Playing || mediaPlayer.isPlaying()) {
+                    Log.d(TAG, "set state to paused");
 
-                try {
+                    try {
 
-                    mediaPlayer.pause();
-                    state = AudioState.Paused;
-                } catch (IllegalStateException e) {
-
-                    e.printStackTrace();
+                        mediaPlayer.pause();
+                        state = AudioState.Paused;
+                    } catch (IllegalStateException e) {
+                        Log.e(TAG, "pause failed! " + e.getMessage());
+                    }
                 }
+            } else {
+                Log.d(TAG, "has received intent with action pause, state is " + state);
             }
         } else if (intent.getAction().equals(ACTION_RESUME)) {
 
@@ -118,26 +120,18 @@ public class FileStreamingMediaService extends Service implements MediaPlayer.On
                     mediaPlayer.start();
                     state = AudioState.Playing;
                 } catch (IllegalStateException e) {
-
-                    e.printStackTrace();
+                    Log.e(TAG, "resume failed! " + e.getMessage());
                 }
             } else Log.d(TAG, "state is NOT paused...");
 
 
         } else if (intent.getAction().equals(ACTION_STOP)) {
             {
-
                 Log.d(TAG, "stop media player");
-
-
-                if (mediaPlayer != null)
-                        mediaPlayer.stop();
-                        state = AudioState.Stopped;
-
-
-                // }
-
-
+                if (mediaPlayer != null) {
+                    mediaPlayer.stop();
+                }
+                state = AudioState.Stopped;
             }
 
         }
@@ -158,8 +152,7 @@ public class FileStreamingMediaService extends Service implements MediaPlayer.On
             mediaPlayer.start();
             state = AudioState.Playing;
         } catch (IllegalStateException e) {
-
-            e.printStackTrace();
+            Log.e(TAG, "resume failed! " + e.getMessage());
         }
     }
 
@@ -170,22 +163,13 @@ public class FileStreamingMediaService extends Service implements MediaPlayer.On
             state = AudioState.Stopped;
             Log.v(TAG, "on completion");
         } catch (IllegalStateException e) {
-
-            e.printStackTrace();
+            Log.e(TAG, "resume failed! " + e.getMessage());
         }
-
 
         if (PlayQueue.getInstance() != null) {
-
             PlayQueue.getInstance().onTrackFinished();
-
         }
-
         this.stopSelf();
-
-
-
-
     }
 
     @Override
@@ -199,9 +183,9 @@ public class FileStreamingMediaService extends Service implements MediaPlayer.On
         // }
         state = AudioState.Stopped;
 
-        if (mediaPlayer != null)
-
+        if (mediaPlayer != null) {
             mediaPlayer.release();
+        }
     }
 
     @Override

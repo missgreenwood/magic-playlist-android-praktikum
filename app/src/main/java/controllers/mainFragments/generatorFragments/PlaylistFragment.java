@@ -277,6 +277,7 @@ public class PlaylistFragment extends ListFragment implements
     public void onDetach() {
         super.onDetach();
         PlayQueue.getInstance().removeObserver(this);
+        playlist.removeObserver(this);
     }
 
 
@@ -355,8 +356,7 @@ public class PlaylistFragment extends ListFragment implements
         if (playlist.getId() == this.playlist.getId()) {
             Activity activity = getActivity();
             if (activity == null) {
-                Log.d("PlaylistFragment", "what...?");
-                return;
+                return;// possibly fragment not loaded...
             }
             activity.runOnUiThread(new Runnable() {
                 @Override

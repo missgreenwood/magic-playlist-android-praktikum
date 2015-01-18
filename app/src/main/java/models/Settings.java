@@ -20,6 +20,8 @@ public class Settings {
     private ArrayList<String> usedMediaWrappers;
     private ArrayList<String> mediaWrappers;
     private SharedPreferences preferences;
+    private boolean reinitializing = false;
+    private Thread initThread;
 
     private Settings() {
     }
@@ -142,12 +144,11 @@ public class Settings {
         // resetPlaylists();
     }
 
-    private void resetPlaylists() {
+    private void resetPlaylists(final finishReinitListener reinitListener) {
 
         new Thread(new Runnable() {
             @Override
             public void run() {
-
                 for(Playlist playlist : PlaylistsManager.getInstance().getPlaylists()) {
                     playlist.resetInitialization();
                 }
@@ -156,11 +157,11 @@ public class Settings {
                 PlayQueue.getInstance().initializePlaylist(true);
 //                PlayQueue.getInstance().setState(PlayQueue.STATE_IDLE);
 
-
+                if (reinitListener != null) {
+                    reinitListener.onFinishReinitPlaylists();
+                }
             }
         }).start();
-
-
     }
 
     private void adjustUsedMediaWrappersOrder() {
@@ -174,9 +175,9 @@ public class Settings {
         usedMediaWrappers.addAll(newUsedOrder);
     }
 
-    public void confirmWrapperChanges() {
+    public void confirmWrapperChanges(finishReinitListener listener) {
         saveSettings();
-        resetPlaylists();
+        resetPlaylists(listener);
     }
 
     public boolean isWrapperActive(String wrapper) {
@@ -197,5 +198,9 @@ public class Settings {
 
     public interface Listener {
         void onMediaWrapperListChange(ArrayList<String> mediaWrappers);
+    }
+
+    public interface finishReinitListener {
+        void onFinishReinitPlaylists();
     }
 }
