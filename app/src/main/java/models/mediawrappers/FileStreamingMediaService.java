@@ -134,21 +134,36 @@ public class FileStreamingMediaService extends Service implements MediaPlayer.On
 
                     e.printStackTrace();
                 }
-            }
+            } else Log.d(TAG, "state is NOT paused...");
 
 
         } else if (intent.getAction().equals(ACTION_STOP)) {
             {
 
                 Log.d(TAG, "stop media player");
+        /*
+                try {
+                    if (mediaPlayer != null && (mediaPlayer.isPlaying()||mediaPlayer.) {
+                        mediaPlayer.stop();
+                        state = AudioState.Stopped;
+                    }
+                }
+                catch (IllegalStateException e)
+                {
+
+                    e.printStackTrace();
+                }
+                */
+
+                // }
 
                 if (mediaPlayer != null) {
-                    mediaPlayer.stop();
-                    state = AudioState.Stopped;
+                    mediaPlayer.reset();
+                    mediaPlayer.release();
+                    mediaPlayer = null;
+
                 }
             }
-            // }
-
 
         }
 
