@@ -31,7 +31,6 @@ public class GenresListFragment extends ListFragment {
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
         ViewGroup rootView = (ViewGroup) inflater.inflate(R.layout.fragment_genres, container, false);
-        // ((MainActivity)getActivity()).getSupportActionBar().setTitle("Genres");
         String[] selectedItems = new String[]{"Acoustic", "Ambient", "Blues", "Classical", "Country", "Dance", "Electronic", "Female Vocalists", "Folk", "Hardcore", "Hip Hop", "Indie", "Industrial", "Instrumental", "Jazz", "Latin", "Metal", "Pop", "Punk", "R&B", "Soul", "Reggae", "Rock", "World"};
         GenresArrayAdapter adapter=new GenresArrayAdapter(getActivity(),R.layout.rows,R.id.txtview,selectedItems);
         // Bind adapter to the ListFragment
@@ -41,7 +40,7 @@ public class GenresListFragment extends ListFragment {
         return rootView;
     }
 
-    // Handle Item click event
+    // Handle item click event
     public void onListItemClick(ListView l, View view, int position, long id) {
         ViewGroup viewg = (ViewGroup) view;
         TextView tv = (TextView) viewg.findViewById(R.id.txtview);

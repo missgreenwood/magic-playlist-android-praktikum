@@ -46,7 +46,6 @@ public class BrowserFragment extends android.support.v4.app.Fragment implements
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
                              Bundle savedInstanceState) {
         View view = inflater.inflate(R.layout.fragment_browser, container, false);
-        // ((MainActivity) getActivity()).getSupportActionBar().setTitle("Playlist Browser");
         view.findViewById(R.id.fastSearch).setOnClickListener(this);
         view.findViewById(R.id.searchGenre).setOnClickListener(this);
         view.findViewById(R.id.searchArtist).setOnClickListener(this);
@@ -60,7 +59,6 @@ public class BrowserFragment extends android.support.v4.app.Fragment implements
             browserPlaylistFragment = new BrowserPlaylistFragment();
             FragmentTransaction transact = getActivity().getSupportFragmentManager().beginTransaction();
             transact.replace(R.id.mainViewGroup, browserPlaylistFragment, "browserPlaylistFragment");
-            //transact.add(R.id.browserMainViewGroup,browserPlaylistFragment,"browserPlaylistFragment");
             transact.addToBackStack(null);
             transact.commit();
         }
@@ -99,7 +97,6 @@ public class BrowserFragment extends android.support.v4.app.Fragment implements
             genresFragment.setListener(this);
             FragmentTransaction transact = getActivity().getSupportFragmentManager().beginTransaction();
             transact.replace(R.id.mainViewGroup, genresFragment, "genresSearchFragment");
-            // transact.add(R.id.browserMainViewGroup,genresFragment,"genresSearchFragment");
             transact.addToBackStack(null);
             transact.commit();
         }
@@ -112,7 +109,6 @@ public class BrowserFragment extends android.support.v4.app.Fragment implements
             artistsFragment.setListener(this);
             FragmentTransaction transact = getActivity().getSupportFragmentManager().beginTransaction();
             transact.replace(R.id.mainViewGroup, artistsFragment, "artistSearchFragment");
-            // transact.add(R.id.browserMainViewGroup,artistsFragment, "artistSearchFragment");
             transact.addToBackStack(null);
             transact.commit();
         }

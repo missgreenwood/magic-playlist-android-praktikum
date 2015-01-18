@@ -1,7 +1,6 @@
 package controllers.mainFragments;
 
 import android.app.AlertDialog;
-import android.content.Context;
 import android.content.DialogInterface;
 import android.os.Bundle;
 import android.support.v4.app.FragmentTransaction;
@@ -11,12 +10,9 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.widget.AdapterView;
 import android.widget.ArrayAdapter;
-import android.widget.LinearLayout;
 import android.widget.ListView;
-import android.widget.TextView;
 
 import java.util.Comparator;
-import java.util.List;
 
 import controllers.mainFragments.generatorFragments.PlaylistFragment;
 import controllers.mainFragments.myplaylistsFragments.PlaylistArrayAdapter;
@@ -39,11 +35,8 @@ public class MyPlaylistsFragment extends ListFragment implements AdapterView.OnI
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
         ViewGroup rootView = (ViewGroup) inflater.inflate(R.layout.fragment_playlists, container, false);
-        // ((MainActivity)getActivity()).getSupportActionBar().setTitle("My Playlists");
-
         // Bind adapter to the ListFragment
         setListAdapter(new PlaylistArrayAdapter(getActivity(),R.layout.rows,R.id.txtview,PlaylistsManager.getInstance().getPlaylists()));
-        // setListAdapter(new PlaylistArrayAdapter(getActivity(),android.R.layout.simple_list_item_1,android.R.id.text1,PlaylistsManager.getInstance().getPlaylists()));
         ((PlaylistArrayAdapter)getListAdapter()).sort(new Comparator<Playlist>() {
             @Override
             public int compare(Playlist lhs, Playlist rhs) {
@@ -67,7 +60,6 @@ public class MyPlaylistsFragment extends ListFragment implements AdapterView.OnI
     @Override
     public void onResume() {
         super.onResume();
-        // ((MainActivity)getActivity()).getSupportActionBar().setTitle("My Playlists");
     }
 
     @Override
@@ -76,7 +68,7 @@ public class MyPlaylistsFragment extends ListFragment implements AdapterView.OnI
         super.onDestroy();
     }
 
-    // Handle Item click event
+    // Handle item click event
     public void onListItemClick(ListView l, View view, int position, long id) {
         playlistClicked(position);
     }

@@ -17,7 +17,6 @@ import java.util.Comparator;
 import java.util.List;
 import java.util.TreeSet;
 
-import controllers.MainActivity;
 import controllers.mainFragments.browserFragments.ResultPlaylistFragment;
 import models.mediaModels.Playlist;
 import models.playlist.PlaylistsManager;
@@ -29,21 +28,16 @@ import tests.R;
 public class BrowserPlaylistFragment extends ListFragment {
 
     private ArrayList<Playlist> playlists = new ArrayList<>();
-
     private ResultPlaylistFragment resultsFragment;
 
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
         ViewGroup rootView = (ViewGroup) inflater.inflate(R.layout.fragment_search_results, container, false);
-        // ((MainActivity)getActivity()).getSupportActionBar().setTitle("Search Results");
-
         setListAdapter(new PlaylistArrayAdapter(getActivity(),R.layout.rows,R.id.txtview, playlists));
-
         setRetainInstance(true);
         return rootView;
     }
 
-    // Handle Item click event
     public void onListItemClick(ListView l, View view, int position, long id) {
         playlistClicked(position);
     }
@@ -54,7 +48,6 @@ public class BrowserPlaylistFragment extends ListFragment {
             resultsFragment = new ResultPlaylistFragment();
             FragmentTransaction transact = getActivity().getSupportFragmentManager().beginTransaction();
             transact.replace(R.id.mainViewGroup, resultsFragment, "ResultPlaylistFragment");
-            // transact.replace(R.id.browserMainViewGroup, resultsFragment, "ResultPlaylistFragment");
             transact.addToBackStack(null);
             transact.commit();
         }
@@ -70,7 +63,7 @@ public class BrowserPlaylistFragment extends ListFragment {
         });
         treeSet.addAll(playlists);
         for (Playlist playlist : treeSet) {
-            //add only extern playlist, if we don't have the same locally! Otherwise, add rating info
+            //Only add external playlist if we don't have the same locally! Otherwise add rating info
             Playlist ownPlaylist = PlaylistsManager.getInstance().getEqualPlaylist(playlist);
             if (ownPlaylist != null) {
                 ownPlaylist.setLikes(playlist.getLikes());

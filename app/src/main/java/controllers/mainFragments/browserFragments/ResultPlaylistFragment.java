@@ -1,7 +1,6 @@
 package controllers.mainFragments.browserFragments;
 
 import android.app.ProgressDialog;
-import android.graphics.Color;
 import android.os.Bundle;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -73,7 +72,7 @@ public class ResultPlaylistFragment extends PlaylistFragment implements ClientLi
 
     @Override
     protected void initListeners(View view) {
-        //important to override, because otherwise, you can delete songs from playlist!
+        //Important to override because otherwise you can delete songs from playlist!
     }
 
     @Override
