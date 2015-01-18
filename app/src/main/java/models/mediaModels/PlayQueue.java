@@ -548,6 +548,15 @@ public class PlayQueue {
         this.currentSongMediaWrapper = currentSongMediaWrapper;
     }
 
+    public void cancelCurrentSong() {
+
+        if (currentSong != null) {
+            currentSong.setNotPlayable(true);
+            notifyCannotInitializeSong(getCurrentSong());
+
+        }
+    }
+
     public interface Listener {
         void onNewSongPlaying(Song song);
         void onCannotInitializeSong(Song song);
