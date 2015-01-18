@@ -139,8 +139,6 @@ public class SpotifyMediaWrapper extends RemoteFileStreamingMediaWrapper impleme
     public void computePlayPath(Song song) {
 
 
-
-
         String url = SPOTIFY_SEARCH_URL;
         String songQueryString = "";
         songQueryString += "title:" + song.getSongname() + " artist:" + song.getArtist();
@@ -208,19 +206,16 @@ public class SpotifyMediaWrapper extends RemoteFileStreamingMediaWrapper impleme
 
     @Override
     public void stopPlayer() {
-if (mPlayer!=null) {
-    mPlayer.pause();
-
-}
+        if (mPlayer!=null) {
+            mPlayer.pause();
+        }
     }
 
     @Override
     public void pausePlayer() {
 
         Log.d(TAG, "calling pause player...");
-        if (mPlayer != null)
-
-        {
+        if (mPlayer != null) {
 
             mPlayer.removePlayerNotificationCallback(SpotifyMediaWrapper.this);
             Log.d(TAG, "mplayer is being paused");
@@ -233,13 +228,14 @@ if (mPlayer!=null) {
     @Override
     public void resumePlayer() {
 
-        mPlayer.removePlayerNotificationCallback(SpotifyMediaWrapper.this);
+        if (mPlayer != null) {
+            mPlayer.removePlayerNotificationCallback(SpotifyMediaWrapper.this);
 
-        if (mPlayer != null)
-            mPlayer.resume();
+            if (mPlayer != null)
+                mPlayer.resume();
 
-        mPlayer.addPlayerNotificationCallback(SpotifyMediaWrapper.this);
-
+            mPlayer.addPlayerNotificationCallback(SpotifyMediaWrapper.this);
+        }
     }
 
 
