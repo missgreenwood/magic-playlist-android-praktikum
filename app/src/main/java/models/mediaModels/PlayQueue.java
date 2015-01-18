@@ -351,12 +351,12 @@ public class PlayQueue {
     public synchronized void jumpToTrack(int index) {
 
 
-        StackTraceElement[] stacktrace = Thread.currentThread().getStackTrace();
-        StackTraceElement e = stacktrace[2];//maybe this number needs to be corrected
-        String methodName = e.getMethodName();
+        //StackTraceElement[] stacktrace = Thread.currentThread().getStackTrace();
+        // StackTraceElement e = stacktrace[2];//maybe this number needs to be corrected
+        // String methodName = e.getMethodName();
 
 
-        Log.v(TAG, "is jumping to " + index + " method was called by: " + methodName);
+        Log.v(TAG, "is jumping to " + index);
 
         stopCurrentSong();
 
