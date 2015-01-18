@@ -11,8 +11,8 @@ public class ClientConstants {
 
     public final static String FIND_PLAYLISTS_URL = BASE_URL + "/find?";
     public final static String LIKE_PLAYLIST_URL = BASE_URL + "/like";
+    public static final String SEARCH_SIMILAR = BASE_URL + "/similar";
     public final static String CLEAN_DB = BASE_URL + "/clean";
     public final static String GENRE_PARAM = "genre";
     public final static String ARTIST_PARAM = "artist";
-    public static final String SEARCH_SIMILAR = "/similar";
 }
