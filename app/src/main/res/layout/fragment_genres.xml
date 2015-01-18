@@ -4,8 +4,7 @@
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    tools:context="controllers.mainFragments.generatorFragments.GenresListFragment"
-    android:background="@drawable/listening">
+    tools:context="controllers.mainFragments.generatorFragments.GenresListFragment">
     <LinearLayout
         android:orientation="vertical"
         android:layout_height="fill_parent"

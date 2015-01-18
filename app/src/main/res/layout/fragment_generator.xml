@@ -6,8 +6,7 @@
     android:layout_height="fill_parent"
     android:layout_width="fill_parent"
     android:orientation="horizontal"
-    android:baselineAligned="false"
-    android:background="@drawable/listening">
+    android:baselineAligned="false">
     <LinearLayout
         android:orientation="vertical"
         android:layout_height="fill_parent"
