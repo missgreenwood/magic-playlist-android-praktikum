@@ -37,9 +37,9 @@ public class PlaylistsManager implements Playlist.Listener {
     public void loadPlaylists()
     {
         ArrayList<Playlist> loadedPlaylists = databaseHandler.loadPlaylists();
-//        if (loadedPlaylists == null || loadedPlaylists.size() == 0) {
-//            loadedPlaylists = fileHandler.loadPlaylists();
-//        }
+        if (loadedPlaylists == null || loadedPlaylists.size() == 0) {
+            loadedPlaylists = fileHandler.loadPlaylists();
+        }
         if (loadedPlaylists != null) {
             playlists.clear();
             for (Playlist playlist : loadedPlaylists) {

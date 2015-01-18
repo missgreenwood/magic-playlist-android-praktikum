@@ -65,8 +65,8 @@ public class Contracts {
                 _ID + INT_TYPE + " PRIMARY KEY" + AUTOINCREMENT + COMMA_SEP +
                 COLUMN_NAME_PLAYLIST_ID + INT_TYPE + NOTNULL + COMMA_SEP +
                 COLUMN_NAME_SONG_ID     + INT_TYPE + NOTNULL + COMMA_SEP +
-                "FOREIGN KEY(" + COLUMN_NAME_PLAYLIST_ID + ") REFERENCES " + Playlists.TABLE_NAME + "(" + _ID + ")" + COMMA_SEP +
-                "FOREIGN KEY(" + COLUMN_NAME_SONG_ID     + ") REFERENCES " + Songs.TABLE_NAME     + "(" + _ID + ")" + COMMA_SEP +
+                "FOREIGN KEY(" + COLUMN_NAME_PLAYLIST_ID + ") REFERENCES " + Playlists.TABLE_NAME + "(" + Playlists._ID + ")" + COMMA_SEP +
+                "FOREIGN KEY(" + COLUMN_NAME_SONG_ID     + ") REFERENCES " + Songs.TABLE_NAME     + "(" + Songs._ID + ")" + COMMA_SEP +
                 "UNIQUE(" + COLUMN_NAME_PLAYLIST_ID + ", " + COLUMN_NAME_SONG_ID + ")";
     }
 

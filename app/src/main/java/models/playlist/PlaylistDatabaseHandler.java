@@ -18,7 +18,7 @@ import models.playlist.database.Contracts;
  */
 public class PlaylistDatabaseHandler extends SQLiteOpenHelper implements PlaylistHandler {
 
-    public static final int DATABASE_VERSION = 1;
+    public static final int DATABASE_VERSION = 2;
     public static final String DATABASE_NAME = "magic-playlist.db";
 
     public PlaylistDatabaseHandler(Context context) {
@@ -46,14 +46,14 @@ public class PlaylistDatabaseHandler extends SQLiteOpenHelper implements Playlis
 
         String sortOrder = pName + " ASC";
 
+        String query = "SELECT p." + pId + ", p." + pName + ", p." + pGenre + ", p." + pLikes + ", p." + pAlreadyLiked + ", p." + pAlreadyUploaded +
+                ", s." + sId + ", s." + sName + ", s." + sArtist + ", s." + sMediaType + ", s." + sUrl + ", s." + sLength +
+                " FROM "       + Contracts.Playlists.TABLE_NAME         + " p" +
+                " LEFT JOIN " + Contracts.PlaylistSongLinks.TABLE_NAME + " l ON p." + pId + "=l." + lPId +
+                " LEFT OUTER JOIN " + Contracts.Songs.TABLE_NAME + " s ON l." + lSId + "=s." + sId + " ORDER BY " + sortOrder;
+
         Cursor c = getReadableDatabase().rawQuery(
-                "SELECT p." + pId + ", p." + pName + ", p." + pGenre + ", p." + pLikes + ", p." + pAlreadyLiked + ", p." + pAlreadyUploaded +
-                      ", s." + sId + ", s." + sName + ", s." + sArtist + ", s." + sMediaType + ", s." + sUrl + ", s." + sLength +
-                      " FROM "       + Contracts.Playlists.TABLE_NAME         + " p" +
-                      " LEFT JOIN (" + Contracts.PlaylistSongLinks.TABLE_NAME + " l" +
-                        " INNER JOIN " + Contracts.Songs.TABLE_NAME             + " s ON l." + lSId + "=s." + sId  +
-                      ") s  ON p." + pId  + "=s." + lPId +
-                " ORDER BY " + sortOrder,
+                query,
                 new String[] {}
         );
 
@@ -196,7 +196,7 @@ public class PlaylistDatabaseHandler extends SQLiteOpenHelper implements Playlis
         if (!updateSong(song)) {
             success = createNewSong(song);
         }
-        linkSongWithPlaylist(song, playlist);
+        success = success && linkSongWithPlaylist(song, playlist);
         if (success && song.getId() == -1) {
             song.setSongID(getSongId(song.getArtist(), song.getSongname()));
         }
@@ -305,12 +305,13 @@ public class PlaylistDatabaseHandler extends SQLiteOpenHelper implements Playlis
         );
         boolean success = affectedRowsCount > 0;
         if (success) {
-            db.delete(
+            int deleted = db.delete(
                     Contracts.PlaylistSongLinks.TABLE_NAME,
                     Contracts.PlaylistSongLinks.COLUMN_NAME_PLAYLIST_ID + "=?",
                     selectionArgs
             );
 
+            Log.d("PlaylistDatabaseHandler", "Playlist deleted songs amount=" + deleted);
             for (Song song : playlist.getSongsList()) {
                 if (!saveSong(song, playlist)) {
                     success = false;
@@ -318,6 +319,7 @@ public class PlaylistDatabaseHandler extends SQLiteOpenHelper implements Playlis
             }
             removeUnusedSongs();
         }
+        Log.d("PlaylistDatabaseHandler", "Playlist update success=" + success);
         return success;
     }
 
@@ -384,7 +386,7 @@ public class PlaylistDatabaseHandler extends SQLiteOpenHelper implements Playlis
     }
 
     private void removeUnusedLinks() {
-        getWritableDatabase().delete(
+        int removedLinks = getWritableDatabase().delete(
                 Contracts.PlaylistSongLinks.TABLE_NAME,
                 Contracts.PlaylistSongLinks.COLUMN_NAME_PLAYLIST_ID + " NOT IN (SELECT " +
                         Contracts.Playlists._ID +
@@ -395,6 +397,7 @@ public class PlaylistDatabaseHandler extends SQLiteOpenHelper implements Playlis
                         " FROM " + Contracts.Songs.TABLE_NAME + ")",
                 new String[0]
         );
+        Log.d("PlaylistDatabaseHandler", "removed unused Links: " + removedLinks);
     }
 
     private void removeUnusedSongs() {
@@ -406,6 +409,7 @@ public class PlaylistDatabaseHandler extends SQLiteOpenHelper implements Playlis
                         ")",
                 new String[0]
         );
+        Log.d("PlaylistDatabaseHandler", " removed " + removedSongs + " unused songs!");
     }
 
 
@@ -430,6 +434,7 @@ public class PlaylistDatabaseHandler extends SQLiteOpenHelper implements Playlis
 
     @Override
     public void onUpgrade(SQLiteDatabase db, int oldVersion, int newVersion) {
+        Log.d("PlaylistDatabaseHandler", "drop tables!");
         db.execSQL(Contracts.getDropEntrySQL(Contracts.PlaylistSongLinks.TABLE_NAME));
         db.execSQL(Contracts.getDropEntrySQL(Contracts.Songs.TABLE_NAME));
         db.execSQL(Contracts.getDropEntrySQL(Contracts.Playlists.TABLE_NAME));
@@ -438,6 +443,7 @@ public class PlaylistDatabaseHandler extends SQLiteOpenHelper implements Playlis
 
     @Override
     public void onDowngrade(SQLiteDatabase db, int oldVersion, int newVersion) {
+        Log.d("PlaylistDatabaseHandler", "drop tables!");
         db.execSQL(Contracts.getDropEntrySQL(Contracts.PlaylistSongLinks.TABLE_NAME));
         db.execSQL(Contracts.getDropEntrySQL(Contracts.Songs.TABLE_NAME));
         db.execSQL(Contracts.getDropEntrySQL(Contracts.Playlists.TABLE_NAME));
