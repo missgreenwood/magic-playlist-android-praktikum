@@ -64,7 +64,7 @@ public class Song {
         this.length = length;
     }
 
-    public void addObservers(Listener observer) {
+    public void addObserver(Listener observer) {
         if (observers == null) observers = new ArrayList<>();
         this.observers.add(observer);
     }

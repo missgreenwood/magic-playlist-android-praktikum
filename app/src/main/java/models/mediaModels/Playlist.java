@@ -63,19 +63,19 @@ public class Playlist implements Parcelable, Song.Listener {
 
     public void addSong(Song newSong) {
         songs.add(newSong);
-        newSong.addObservers(this);
+        newSong.addObserver(this);
         PlaylistsManager.getInstance().playlistAddSong(this, newSong);
         notifyChange();
     }
 
     public void addSong(Song song, boolean fromDB) {
         songs.add(song);
-        song.addObservers(this);
+        song.addObserver(this);
     }
 
     public void removeSong(Song song) {
         songs.remove(song);
-        song.addObservers(null);
+        song.removeObserver(this);
         PlaylistsManager.getInstance().playlistRemoveSong(this, song);
         notifyChange();
     }

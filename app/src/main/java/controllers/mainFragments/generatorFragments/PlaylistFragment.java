@@ -352,7 +352,7 @@ public class PlaylistFragment extends ListFragment implements
     @Override
     public void onPlaylistChange(final Playlist playlist) {
         if (playlist.getId() == this.playlist.getId()) {
-            new Handler(getActivity().getMainLooper()).post(new Runnable() {
+            getActivity().runOnUiThread(new Runnable() {
                 @Override
                 public void run() {
                     if (playlist.getSongsList().size() == 0) {
