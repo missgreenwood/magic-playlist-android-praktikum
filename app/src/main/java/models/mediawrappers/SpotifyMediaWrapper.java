@@ -7,6 +7,7 @@ import android.os.Bundle;
 import android.os.Handler;
 import android.util.Log;
 
+import controllers.MainActivity;
 import models.apiwrappers.APIWrapper;
 import models.mediaModels.PlayQueue;
 import models.mediaModels.Song;
@@ -22,6 +23,7 @@ import com.spotify.sdk.android.playback.PlayerState;
 
 import org.apache.http.Header;
 import org.apache.http.NameValuePair;
+import org.apache.http.conn.ssl.SSLSocketFactory;
 import org.apache.http.message.BasicHeader;
 import org.apache.http.message.BasicNameValuePair;
 import org.json.JSONArray;
@@ -54,6 +56,7 @@ public class SpotifyMediaWrapper extends RemoteFileStreamingMediaWrapper impleme
     private Spotify spotify;
     private SharedPreferences preferences;
     private SpotifyLoginHandler spotifyLoginHandler;
+    //  private static AsyncHttpClient asyncHttpClient=new AsyncHttpClient();
 
 
     public SpotifyMediaWrapper(Context context, Song songsTemp) {
@@ -64,6 +67,8 @@ public class SpotifyMediaWrapper extends RemoteFileStreamingMediaWrapper impleme
         //  setSong(songsTemp);
         spotifyLoginHandler = SpotifyLoginHandler.getInstance();
         //  this.spotifyLoginHandler.setContext(getContext());
+        //  MainActivity.asyncHttpClient.setMaxConnections(50);
+        //  Log.d(TAG, "get max connections: "+asyncHttpClient.getMaxConnections()+" "+asyncHttpClient);
 
     }
 
@@ -182,11 +187,9 @@ public class SpotifyMediaWrapper extends RemoteFileStreamingMediaWrapper impleme
                 // responseHandler.setUseSynchronousMode(false);
 
 
-                asyncHttpClient.get(getContext(),url2,headers,   null,responseHandler);
+                MainActivity.asyncHttpClient.get(getContext(), url2, headers, null, responseHandler);
 
             }
-
-
 
 
         });
