@@ -56,15 +56,14 @@ public class FileStreamingMediaService extends Service implements MediaPlayer.On
             String artist = intent.getStringExtra(INFO_ARTIST);
             String mediaWrapperType = intent.getStringExtra(INFO_MEDIA_WRAPPER);
 
-            //TODO: should do something
 
 
             //   PendingIntent pi = PendingIntent.getActivity(getApplicationContext(), 0,
             //          new Intent(getApplicationContext(), TestActivity.class),
             //          PendingIntent.FLAG_UPDATE_CURRENT);
-            //TODO: durch andere Activity ersetzen
 
 
+            /*
             Notification notification = new Notification();
             notification.tickerText = "MagicPlaylist";
             notification.icon = R.drawable.metrodroid_music;
@@ -76,7 +75,7 @@ public class FileStreamingMediaService extends Service implements MediaPlayer.On
 
             PendingIntent intentBack = PendingIntent.getActivity(getApplicationContext(), 0, toLaunch, PendingIntent.FLAG_UPDATE_CURRENT);
 
-            String displayMediaWrapper = "";
+            String displayMediaWrapper = "";*/
 
             Log.d(TAG, "start play");
 
@@ -87,6 +86,7 @@ public class FileStreamingMediaService extends Service implements MediaPlayer.On
             mediaPlayer.setOnErrorListener(this);
             mediaPlayer.setOnBufferingUpdateListener(this);
             mediaPlayer.setAudioStreamType(AudioManager.STREAM_MUSIC);
+            state = AudioState.Preparing;
             try {
                 mediaPlayer.setDataSource(playPath);
             } catch (IOException e) {
@@ -96,8 +96,6 @@ public class FileStreamingMediaService extends Service implements MediaPlayer.On
         } else if (intent.getAction().equals(ACTION_PAUSE)) {
             if (mediaPlayer != null) {
                 Log.d(TAG, "has received intent with action pause, state is " + state + " is playing: " + mediaPlayer.isPlaying());
-//            Log.d(TAG, "media player is playing: "+mediaPlayer.isPlaying());
-
                 if (state == AudioState.Playing || mediaPlayer.isPlaying()) {
                     Log.d(TAG, "set state to paused");
 
@@ -134,6 +132,7 @@ public class FileStreamingMediaService extends Service implements MediaPlayer.On
                     } catch (IllegalStateException e) {
                         Log.e(TAG, "could not process stop: " + e.getMessage());
                     } finally {
+                        mediaPlayer.reset();
                         mediaPlayer.release();
                         mediaPlayer = null;
                     }
@@ -143,7 +142,7 @@ public class FileStreamingMediaService extends Service implements MediaPlayer.On
 
         }
 
-        return START_NOT_STICKY; //TODO: sinnvoller return-Wert
+        return START_NOT_STICKY;
     }
 
     @Override
@@ -156,8 +155,14 @@ public class FileStreamingMediaService extends Service implements MediaPlayer.On
         Log.v(TAG, "on prepared called, set state to playing");
 
         try {
-            mediaPlayer.start();
-            state = AudioState.Playing;
+            if (state != AudioState.Stopped && state != AudioState.Paused) {
+                mediaPlayer.start();
+                state = AudioState.Playing;
+
+            } else {
+
+                Log.d(TAG, "media player was stopped and should therefore not begin to play");
+            }
         } catch (IllegalStateException e) {
             Log.e(TAG, "resume failed! " + e.getMessage());
         }
@@ -166,6 +171,7 @@ public class FileStreamingMediaService extends Service implements MediaPlayer.On
     @Override
     public void onCompletion(MediaPlayer mp) {
         try {
+            mediaPlayer.reset();
             mediaPlayer.release();
             state = AudioState.Stopped;
             Log.v(TAG, "on completion");
@@ -183,14 +189,10 @@ public class FileStreamingMediaService extends Service implements MediaPlayer.On
     public void onDestroy() {
 
         Log.v(TAG, "on destroyPlaylist?");
-
-
-        //  if (mediaPlayer.isPlaying()) {
-        //   mediaPlayer.stop();
-        // }
         state = AudioState.Stopped;
 
         if (mediaPlayer != null) {
+            mediaPlayer.reset();
             mediaPlayer.release();
         }
     }
@@ -199,15 +201,10 @@ public class FileStreamingMediaService extends Service implements MediaPlayer.On
     public boolean onError(MediaPlayer mediaPlayer, int i, int i2) {
         {
 
-            Log.e(TAG, "Media Player Error");
-
+            Log.e(TAG, "Media Player Error " + i + " " + i2);
             mediaPlayer.reset();
             mediaPlayer.release();
-
             PlayQueue.getInstance().cancelCurrentSong();
-
-            //TODO: should I send a song completed or a song not available intent??
-            // mediaPlayer = null;
         }
 
         return true;
@@ -215,10 +212,7 @@ public class FileStreamingMediaService extends Service implements MediaPlayer.On
 
     @Override
     public void onBufferingUpdate(MediaPlayer mp, int percent) {
-        //  Log.d(TAG, "onBufferingUpdate percent:" + percent);
 
-        /*I had to implement this listener because otherwise Android complained...
-        but we don't need it now*/
     }
 
     public void createNotification(String artist, String songname, String mediaWrapperType) {
