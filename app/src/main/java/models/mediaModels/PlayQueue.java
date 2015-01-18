@@ -391,9 +391,10 @@ public class PlayQueue {
         Song currentSong = getCurrentSong();
 
         if (currentSong != null) {
-            AbstractMediaWrapper wrapper = currentSong.getMediaWrapper();
+            //    AbstractMediaWrapper wrapper = currentSong.getMediaWrapper();
+            AbstractMediaWrapper wrapper = currentSongMediaWrapper;
             if (wrapper != null) {
-                wrapper.pausePlayer();
+                currentSongMediaWrapper.pausePlayer();
                 setState(STATE_PAUSED);
             }
         }
@@ -404,7 +405,8 @@ public class PlayQueue {
      */
     public void resumePlayer() {
         if (getState() == STATE_PAUSED) {
-            getCurrentSong().getMediaWrapper().resumePlayer();
+            currentSongMediaWrapper.resumePlayer();
+            // getCurrentSong().getMediaWrapper().resumePlayer();
         } else if (getState() == STATE_IDLE) {
             playCurrentSong();
         }
