@@ -4,7 +4,10 @@ import android.content.Context;
 import android.text.TextUtils;
 import android.util.Log;
 
+import org.json.JSONException;
+
 import models.mediawrappers.AbstractMediaWrapper;
+import models.mediawrappers.FileStreamingMediaWrapper;
 import models.mediawrappers.LocalFileStreamingMediaWrapper;
 import models.mediawrappers.SoundCloudStreamingMediaWrapper;
 import models.mediawrappers.SpotifyMediaWrapper;
@@ -62,10 +65,6 @@ public class PlayQueue {
 
     public static PlayQueue getInstance() {
         return instance;
-    }
-
-    public boolean isAutoPilotMode() {
-        return autoPilotMode;
     }
 
     public void setAutoPilotMode(boolean autoPilotMode) {
@@ -129,7 +128,6 @@ public class PlayQueue {
         return null;
     }
 
-    //TODO: should rather be in class Song?
     public String getNextType(Song song) {
 
 
@@ -214,7 +212,6 @@ public class PlayQueue {
     }
 
     private void initializeSong(final Song song) {
-      //  Log.d(TAG, "song "+song+" is initialized... mediawrappers are: "+TextUtils.join(", ", mediaWrappers));
         String mediaWrapperType = song.getMediaWrapperType();
         if (mediaWrapperType.equals(Song.MEDIA_WRAPPER_NOT_SET)) {
             setDefaultMediaWrapperTypeInQueue(song);
@@ -223,13 +220,10 @@ public class PlayQueue {
         setMediaWrapperForType(song);
 
         if (song.getMediaWrapper() != null) {
-//            new Thread(new Runnable() {
-//                @Override
-//                public void run() {
-                    Log.d(TAG, "no look for song: " + song);
+
+            Log.d(TAG, "no look for song: " + song);
                     song.getMediaWrapper().lookForSong();
-//                }
-//            }).start();
+
         }
     }
 
@@ -496,7 +490,18 @@ public class PlayQueue {
         if (currentSongMediaWrapper != null) {
 
             Log.d(TAG, "no it should STOP current song: " + currentSongMediaWrapper);
-            currentSongMediaWrapper.stopPlayer();
+            //currentSongMediaWrapper.stopPlayer();
+            SpotifyMediaWrapper dummy = new SpotifyMediaWrapper(context, null);
+            dummy.stopPlayer();
+            LocalFileStreamingMediaWrapper dummy2 = new LocalFileStreamingMediaWrapper(context, null);
+            dummy2.stopPlayer();
+
+            AbstractMediaWrapper dummy3 = new SoundCloudStreamingMediaWrapper(context, null);
+            dummy3.stopPlayer();
+
+
+
+
 
         } else {
 
