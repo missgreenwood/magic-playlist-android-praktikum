@@ -14,6 +14,11 @@ import javax.ws.rs.core.MediaType;
 import de.lmu.playlist.domain.entity.Playlist;
 import de.lmu.playlist.domain.entity.SpotifyToken;
 
+/**
+ * @author martin
+ *         <p/>
+ *         this facade contains all end points for incoming rest calls.
+ */
 @Path("/playlist")
 public interface PlaylistFacade {
 
@@ -47,7 +52,8 @@ public interface PlaylistFacade {
 
     @GET
     @Path("/like")
-    public String likePlaylist(@QueryParam("name") String name);
+    @Produces(MediaType.APPLICATION_JSON)
+    public Playlist likePlaylist(@QueryParam("name") String name);
 
     @DELETE
     @Path("/clean")

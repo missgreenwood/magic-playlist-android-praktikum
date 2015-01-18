@@ -5,6 +5,9 @@ import com.mongodb.MongoClient;
 
 import java.net.UnknownHostException;
 
+/**
+ * @author martin
+ */
 public class MongoServiceImpl implements MongoService {
 
     private final MongoClient mongoClient;

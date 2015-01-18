@@ -1,5 +1,9 @@
 package de.lmu.playlist;
 
+/**
+ * @author martin
+ */
+
 import com.google.inject.Guice;
 import com.google.inject.servlet.GuiceFilter;
 import com.sun.jersey.spi.container.servlet.ServletContainer;

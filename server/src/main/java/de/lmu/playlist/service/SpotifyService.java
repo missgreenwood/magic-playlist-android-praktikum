@@ -2,6 +2,11 @@ package de.lmu.playlist.service;
 
 import de.lmu.playlist.domain.entity.SpotifyToken;
 
+/**
+ * @author martin
+ *         <p/>
+ *         this service provides methods for the server to server oauth of spotify
+ */
 public interface SpotifyService {
 
     /**

@@ -3,7 +3,6 @@ package de.lmu.playlist.service;
 import com.sun.jersey.api.client.Client;
 import com.sun.jersey.api.client.ClientHandlerException;
 import com.sun.jersey.api.client.UniformInterfaceException;
-import com.sun.jersey.api.client.WebResource;
 import com.sun.jersey.api.client.filter.LoggingFilter;
 import com.sun.jersey.core.util.MultivaluedMapImpl;
 
@@ -13,6 +12,9 @@ import javax.ws.rs.core.MultivaluedMap;
 import de.lmu.playlist.domain.entity.SpotifyToken;
 import de.lmu.playlist.facade.BadRequestException;
 
+/**
+ * @author martin
+ */
 public class SpotifyServiceImpl implements SpotifyService {
 
     private final Client client = Client.create();

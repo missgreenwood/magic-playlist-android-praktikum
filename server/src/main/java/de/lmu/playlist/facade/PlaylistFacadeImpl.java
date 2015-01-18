@@ -10,6 +10,9 @@ import de.lmu.playlist.domain.entity.SpotifyToken;
 import de.lmu.playlist.service.PlaylistService;
 import de.lmu.playlist.service.SpotifyService;
 
+/**
+ * @author martin
+ */
 public class PlaylistFacadeImpl implements PlaylistFacade {
 
     private final PlaylistService playlistService;
@@ -52,8 +55,8 @@ public class PlaylistFacadeImpl implements PlaylistFacade {
     }
 
     @Override
-    public String likePlaylist(String name) {
-        return String.valueOf(playlistService.likePlaylist(name).getLikes());
+    public Playlist likePlaylist(String name) {
+        return playlistService.likePlaylist(name);
     }
 
     @Override

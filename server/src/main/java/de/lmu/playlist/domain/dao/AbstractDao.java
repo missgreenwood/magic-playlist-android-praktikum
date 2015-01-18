@@ -6,6 +6,9 @@ import org.mongojack.JacksonDBCollection;
 
 import de.lmu.playlist.service.MongoService;
 
+/**
+ * @author martin
+ */
 abstract class AbstractDao<T> {
 
     private JacksonDBCollection<T, String> dbCollection;
