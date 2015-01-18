@@ -291,12 +291,12 @@ public class PlayQueue {
 
         do {
             counter++;
+            if (counter >= songs.size()) {
+                counter = 0;
+            }
         }
         while (songs.get(counter).isNotPlayable());
 
-        if (counter >= songs.size()) {
-            counter = 0;
-        }
         jumpToTrack(counter);
 
     }
@@ -316,12 +316,12 @@ public class PlayQueue {
 
         do {
             counter--;
-
+            if (counter < 0)
+                counter = songs.size() - 1;
         }
         while (songs.get(counter).isNotPlayable());
 
-            if (counter < 0)
-                counter = songs.size() - 1;
+
 
         jumpToTrack(counter);
 

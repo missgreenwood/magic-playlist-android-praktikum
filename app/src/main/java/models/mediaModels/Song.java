@@ -38,6 +38,8 @@ public class Song {
     private int songID = -1;
     private int length = -1;
 
+    private Listener listener;
+
     /**
      * Constructor for Song with songname and artist.
      *
@@ -62,6 +64,10 @@ public class Song {
         this.wrapperType = wrapperType;
     }
 
+    public void setListener (Listener listener) {
+        this.listener = listener;
+    }
+
     @Override
     public String toString() {
         return "Song{" +
@@ -78,6 +84,7 @@ public class Song {
 
     public void setSongID(int songID) {
         this.songID = songID;
+        notifyChange();
     }
 
     public AbstractMediaWrapper getMediaWrapper() {
@@ -109,15 +116,13 @@ public class Song {
 
     }
 
-
-
-
     public String getArtist() {
         return artist;
     }
 
     public void setArtist(String artist) {
         this.artist = artist;
+        notifyChange();
     }
 
     public String getSongname() {
@@ -126,6 +131,7 @@ public class Song {
 
     public void setSongname(String songname) {
         this.songname = songname;
+        notifyChange();
     }
 
     public String getSongUrl()
@@ -139,6 +145,7 @@ public class Song {
      */
     public void setSongUrl(String url) {
 //        this.url = url;
+//        notifyChange();
     }
 
     public int getLength() {
@@ -147,6 +154,7 @@ public class Song {
 
     public void setLength(int length) {
         this.length = length;
+        notifyChange();
     }
 
     @Override
@@ -170,8 +178,18 @@ public class Song {
 
     public void setNotPlayable(boolean notPlayable) {
         this.notPlayable = notPlayable;
+        notifyChange();
     }
 
+    private void notifyChange() {
+        if (listener != null) {
+            listener.onSongChange();
+        }
+    }
+
+    public interface Listener {
+        void onSongChange();
+    }
 
 
     public static class Builder {

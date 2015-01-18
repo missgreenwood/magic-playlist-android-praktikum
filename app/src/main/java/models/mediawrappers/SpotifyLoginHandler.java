@@ -136,7 +136,7 @@ public class SpotifyLoginHandler {
                     JSONObject tokens = new JSONObject(s);
                     String accessToken = tokens.getString("access_token");
                     int expiresIn = tokens.getInt("expires_in");
-                    setCurrentAccessToken(accessToken);
+                    setCurrentAccessToken(accessToken, expiresIn);
                 } catch (JSONException e) {
                     e.printStackTrace();
                 }
@@ -223,7 +223,7 @@ public class SpotifyLoginHandler {
 
                         Log.v(TAG, "set new access token " + accessToken);
 
-                        setCurrentAccessToken(accessToken);
+                        setCurrentAccessToken(accessToken, expiresIn);
                     }
 
 
@@ -252,7 +252,7 @@ public class SpotifyLoginHandler {
                 getNewAccessToken();
                 return null;
             }
-        }, (long) 2700, TimeUnit.SECONDS);
+        }, (long) (v * 0.8), TimeUnit.SECONDS);
 
     }
 
@@ -262,10 +262,10 @@ public class SpotifyLoginHandler {
 
     }
 
-    public void setCurrentAccessToken(String currentAccessToken) {
+    public void setCurrentAccessToken(String currentAccessToken, long expiryTime) {
         Log.d(TAG, "set current access token: " + currentAccessToken);
         this.currentAccessToken = currentAccessToken;
-        scheduleGettingNewAccessToken(60);
+        scheduleGettingNewAccessToken(expiryTime);
     }
 
     public boolean isLoggedIn() {
