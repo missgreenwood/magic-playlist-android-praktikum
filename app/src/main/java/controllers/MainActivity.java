@@ -37,6 +37,12 @@ public class MainActivity extends ActionBarActivity implements FragmentManager.O
     private Config spotifyConfig;
     private MyBroadcastReceiver broadcastReceiver = null;
     private static int lastFragmentId = -1;
+    private FrameLayout layout;
+    /* private Bitmap backgroundBmp;
+    private int dstWidth;
+    private int dstHeight;
+    private DisplayMetrics metrics;
+    private BitmapDrawable scaledBackground; */
 
     public Config getSpotifyConfig() {
         return spotifyConfig;
@@ -51,8 +57,19 @@ public class MainActivity extends ActionBarActivity implements FragmentManager.O
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
-        FrameLayout layout = (FrameLayout)findViewById(R.id.mainViewGroup);
+
+        /* metrics = new DisplayMetrics();
+        getWindowManager().getDefaultDisplay().getMetrics(metrics);
+        dstHeight = metrics.heightPixels;
+        dstWidth = metrics.widthPixels; */
+
+        layout = (FrameLayout)findViewById(R.id.mainViewGroup);
         layout.setBackgroundResource(R.drawable.listening);
+
+        /* backgroundBmp = (BitmapFactory.decodeResource(getResources(), R.drawable.listening));
+        backgroundBmp = Bitmap.createScaledBitmap(backgroundBmp, dstWidth, dstHeight, true);
+        scaledBackground = new BitmapDrawable(this.getResources(), backgroundBmp);
+        layout.setBackgroundDrawable(scaledBackground); */
 
         loadInitFragment();
 
