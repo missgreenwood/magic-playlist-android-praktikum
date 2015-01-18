@@ -39,14 +39,17 @@ public class PlaylistsManager implements Playlist.Listener {
         ArrayList<Playlist> loadedPlaylists = databaseHandler.loadPlaylists();
         if (loadedPlaylists == null || loadedPlaylists.size() == 0) {
             loadedPlaylists = fileHandler.loadPlaylists();
-        }
-        if (loadedPlaylists != null) {
+            if (loadedPlaylists != null) {
+                for (Playlist playlist : loadedPlaylists) {
+                    addPlaylist(playlist);
+                }
+            }
+        } else {
             playlists.clear();
             for (Playlist playlist : loadedPlaylists) {
                 playlist.addObserver(this);
                 playlists.add(playlist);
             }
-            notifyOnPlaylistsListChange();
         }
         initialized = true;
     }
@@ -143,13 +146,13 @@ public class PlaylistsManager implements Playlist.Listener {
     }
 
     public void savePlaylist(final Playlist playlist) {
-        new Thread(new Runnable() {
-            @Override
-            public void run() {
+//        new Thread(new Runnable() {
+//            @Override
+//            public void run() {
                 fileHandler.savePlaylist(playlist);
                 databaseHandler.savePlaylist(playlist);
-            }
-        }).start();
+//            }
+//        }).start();
     }
 
     public Song getSong(String artist, String songname) {

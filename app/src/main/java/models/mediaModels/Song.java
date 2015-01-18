@@ -84,7 +84,6 @@ public class Song {
 
     public void setSongID(int songID) {
         this.songID = songID;
-        notifyChange();
     }
 
     public AbstractMediaWrapper getMediaWrapper() {

@@ -18,7 +18,7 @@ import models.playlist.database.Contracts;
  */
 public class PlaylistDatabaseHandler extends SQLiteOpenHelper implements PlaylistHandler {
 
-    public static final int DATABASE_VERSION = 2;
+    public static final int DATABASE_VERSION = 3;
     public static final String DATABASE_NAME = "magic-playlist.db";
 
     public PlaylistDatabaseHandler(Context context) {
@@ -94,16 +94,26 @@ public class PlaylistDatabaseHandler extends SQLiteOpenHelper implements Playlis
     public boolean destroyPlaylist(Playlist playlist) {
 
         String[] selectionArgs = {String.valueOf(playlist.getId())};
-        int affectedRowsCount = getWritableDatabase().delete(
-                Contracts.Playlists.TABLE_NAME,
-                Contracts.Playlists._ID + "=?",
-                selectionArgs
-        );
+        boolean success = false;
 
-        removeUnusedLinks();
-        removeUnusedSongs();
+        SQLiteDatabase db = getWritableDatabase();
+        db.beginTransaction();
+        try {
+            int affectedRowsCount = getWritableDatabase().delete(
+                    Contracts.Playlists.TABLE_NAME,
+                    Contracts.Playlists._ID + "=?",
+                    selectionArgs
+            );
 
-        return affectedRowsCount > 0;
+            removeUnusedLinks();
+            removeUnusedSongs();
+            success = affectedRowsCount > 0;
+            db.setTransactionSuccessful();
+        } finally {
+            db.endTransaction();
+        }
+
+        return success;
     }
 
     public Song getSong(String artist, String songname) {
@@ -170,7 +180,8 @@ public class PlaylistDatabaseHandler extends SQLiteOpenHelper implements Playlis
 
     private boolean createNewPlaylist(Playlist playlist) {
         SQLiteDatabase db = getWritableDatabase();
-        boolean success;
+        boolean success = false;
+        db.beginTransaction();
         try {
             long rowId = db.insert(
                     Contracts.Playlists.TABLE_NAME,
@@ -185,21 +196,30 @@ public class PlaylistDatabaseHandler extends SQLiteOpenHelper implements Playlis
                     success = false;
                 }
             }
-        } catch (Exception e) {
-            success = false;
+            db.setTransactionSuccessful();
+        } finally {
+            db.endTransaction();
         }
         return success;
     }
 
     private boolean saveSong(Song song, Playlist playlist) {
         boolean success = true;
-        if (!updateSong(song)) {
-            success = createNewSong(song);
+        SQLiteDatabase db = getWritableDatabase();
+        db.beginTransaction();
+        try {
+            if (!updateSong(song)) {
+                success = createNewSong(song);
+            }
+            success = linkSongWithPlaylist(song, playlist) && success;
+            if (success && song.getId() == -1) {
+                song.setSongID(getSongId(song.getArtist(), song.getSongname()));
+            }
+            db.setTransactionSuccessful();
+        } finally {
+            db.endTransaction();
         }
-        success = success && linkSongWithPlaylist(song, playlist);
-        if (success && song.getId() == -1) {
-            song.setSongID(getSongId(song.getArtist(), song.getSongname()));
-        }
+
         return success;
     }
 
@@ -213,6 +233,107 @@ public class PlaylistDatabaseHandler extends SQLiteOpenHelper implements Playlis
             return rowId != -1;
         } else {
             return true;
+        }
+    }
+
+    private boolean updatePlaylist(Playlist playlist) {
+        String[] selectionArgs = {String.valueOf(playlist.getId())};
+        boolean success = false;
+
+        SQLiteDatabase db = getWritableDatabase();
+        db.beginTransaction();
+        try {
+            int affectedRowsCount = db.update(
+                    Contracts.Playlists.TABLE_NAME,
+                    getPlaylistValues(playlist),
+                    Contracts.Playlists._ID + "=?",
+                    selectionArgs
+            );
+            success = affectedRowsCount > 0;
+            if (success) {
+                int deleted = db.delete(
+                        Contracts.PlaylistSongLinks.TABLE_NAME,
+                        Contracts.PlaylistSongLinks.COLUMN_NAME_PLAYLIST_ID + "=?",
+                        selectionArgs
+                );
+
+                Log.d("PlaylistDatabaseHandler", "Playlist deleted songs amount=" + deleted);
+                for (Song song : playlist.getSongsList()) {
+                    if (!saveSong(song, playlist)) {
+                        success = false;
+                    }
+                }
+                removeUnusedSongs();
+            }
+            db.setTransactionSuccessful();
+        } finally {
+            db.endTransaction();
+        }
+        Log.d("PlaylistDatabaseHandler", "Playlist update success=" + success);
+        return success;
+    }
+
+
+    // single operation functions
+
+
+    private boolean createNewSong(Song song) {
+        long rowId = getWritableDatabase().insert(
+                Contracts.Songs.TABLE_NAME,
+                Contracts.Songs.COLUMN_NAME_MEDIA_WRAPPER_TYPE,
+                getSongValues(song)
+        );
+        return rowId != -1;
+    }
+
+    private boolean updateSong(Song song) {
+        String[] selectionArgs = {String.valueOf(song.getId())};
+        int affectedRowsCount = getWritableDatabase().update(
+                Contracts.Songs.TABLE_NAME,
+                getSongValues(song),
+                Contracts.Songs._ID + "=?",
+                selectionArgs
+        );
+        return affectedRowsCount > 0;
+    }
+
+    //getter
+
+    private int getPlaylistId(Playlist playlist) {
+        if (playlist.getId() != -1) {
+            return playlist.getId();
+        }
+        Cursor c = getReadableDatabase().query(
+                Contracts.Playlists.TABLE_NAME,
+                new String[]{Contracts.Playlists._ID},
+                Contracts.Playlists.COLUMN_NAME_NAME + "=?",
+                new String[]{playlist.getName()},
+                null, null, null);
+
+        int id = -1;
+
+        if (c != null) {
+            if (c.getCount() > 0) {
+                c.moveToFirst();
+                id = c.getInt(c.getColumnIndex(Contracts.Playlists._ID));
+            }
+            c.close();
+        }
+        return id;
+    }
+
+    private int getSongId(String artist, String songname) {
+        Cursor c = getReadableDatabase().query(
+                Contracts.Songs.TABLE_NAME,
+                new String[] {Contracts.Songs._ID},
+                Contracts.Songs.COLUMN_NAME_ARTIST+"=? and " + Contracts.Songs.COLUMN_NAME_NAME+"=?",
+                new String[] {artist, songname},
+                null, null, null);
+        if (c != null && c.getCount() > 0) {
+            c.moveToFirst();
+            return Integer.parseInt(c.getString(c.getColumnIndex(Contracts.Songs._ID)));
+        } else {
+            return -1;
         }
     }
 
@@ -271,92 +392,37 @@ public class PlaylistDatabaseHandler extends SQLiteOpenHelper implements Playlis
         return exists;
     }
 
-    private int getPlaylistId(Playlist playlist) {
-        if (playlist.getId() != -1) {
-            return playlist.getId();
-        }
-        Cursor c = getReadableDatabase().query(
-                Contracts.Playlists.TABLE_NAME,
-                new String[]{Contracts.Playlists._ID},
-                Contracts.Playlists.COLUMN_NAME_NAME + "=?",
-                new String[]{playlist.getName()},
-                null, null, null);
+    // garbage collection
 
-        int id = -1;
-
-        if (c != null) {
-            if (c.getCount() > 0) {
-                c.moveToFirst();
-                id = c.getInt(c.getColumnIndex(Contracts.Playlists._ID));
-            }
-            c.close();
-        }
-        return id;
-    }
-
-    private boolean updatePlaylist(Playlist playlist) {
-        String[] selectionArgs = {String.valueOf(playlist.getId())};
-        SQLiteDatabase db = getWritableDatabase();
-        int affectedRowsCount = db.update(
-                Contracts.Playlists.TABLE_NAME,
-                getPlaylistValues(playlist),
-                Contracts.Playlists._ID + "=?",
-                selectionArgs
+    private void removeUnusedLinks() {
+        int removedLinks = getWritableDatabase().delete(
+                Contracts.PlaylistSongLinks.TABLE_NAME,
+                Contracts.PlaylistSongLinks.COLUMN_NAME_PLAYLIST_ID + " NOT IN (SELECT " +
+                        Contracts.Playlists._ID +
+                        " FROM " + Contracts.Playlists.TABLE_NAME +
+                        ") OR " +
+                        Contracts.PlaylistSongLinks.COLUMN_NAME_SONG_ID + " NOT IN (SELECT " +
+                        Contracts.Songs._ID +
+                        " FROM " + Contracts.Songs.TABLE_NAME + ")",
+                new String[0]
         );
-        boolean success = affectedRowsCount > 0;
-        if (success) {
-            int deleted = db.delete(
-                    Contracts.PlaylistSongLinks.TABLE_NAME,
-                    Contracts.PlaylistSongLinks.COLUMN_NAME_PLAYLIST_ID + "=?",
-                    selectionArgs
-            );
-
-            Log.d("PlaylistDatabaseHandler", "Playlist deleted songs amount=" + deleted);
-            for (Song song : playlist.getSongsList()) {
-                if (!saveSong(song, playlist)) {
-                    success = false;
-                }
-            }
-            removeUnusedSongs();
-        }
-        Log.d("PlaylistDatabaseHandler", "Playlist update success=" + success);
-        return success;
+        Log.d("PlaylistDatabaseHandler", "removed unused Links: " + removedLinks);
     }
 
-    private boolean createNewSong(Song song) {
-        long rowId = getWritableDatabase().insert(
+    private void removeUnusedSongs() {
+        int removedSongs = getWritableDatabase().delete(
                 Contracts.Songs.TABLE_NAME,
-                Contracts.Songs.COLUMN_NAME_MEDIA_WRAPPER_TYPE,
-                getSongValues(song)
+                Contracts.Songs._ID + " NOT IN (SELECT " +
+                        Contracts.PlaylistSongLinks.COLUMN_NAME_SONG_ID +
+                        " FROM " + Contracts.PlaylistSongLinks.TABLE_NAME +
+                        ")",
+                new String[0]
         );
-        return rowId != -1;
+        Log.d("PlaylistDatabaseHandler", " removed " + removedSongs + " unused songs!");
     }
 
-    private boolean updateSong(Song song) {
-        String[] selectionArgs = {String.valueOf(song.getId())};
-        int affectedRowsCount = getWritableDatabase().update(
-                Contracts.Songs.TABLE_NAME,
-                getSongValues(song),
-                Contracts.Songs._ID + "=?",
-                selectionArgs
-        );
-        return affectedRowsCount > 0;
-    }
 
-    private int getSongId(String artist, String songname) {
-        Cursor c = getReadableDatabase().query(
-                Contracts.Songs.TABLE_NAME,
-                new String[] {Contracts.Songs._ID},
-                Contracts.Songs.COLUMN_NAME_ARTIST+"=? and " + Contracts.Songs.COLUMN_NAME_NAME+"=?",
-                new String[] {artist, songname},
-                null, null, null);
-        if (c != null && c.getCount() > 0) {
-            c.moveToFirst();
-            return Integer.parseInt(c.getString(c.getColumnIndex(Contracts.Songs._ID)));
-        } else {
-            return -1;
-        }
-    }
+    // values
 
     private ContentValues getLinkValues(Song song, Playlist playlist) {
         ContentValues values = new ContentValues();
@@ -385,32 +451,6 @@ public class PlaylistDatabaseHandler extends SQLiteOpenHelper implements Playlis
         return values;
     }
 
-    private void removeUnusedLinks() {
-        int removedLinks = getWritableDatabase().delete(
-                Contracts.PlaylistSongLinks.TABLE_NAME,
-                Contracts.PlaylistSongLinks.COLUMN_NAME_PLAYLIST_ID + " NOT IN (SELECT " +
-                        Contracts.Playlists._ID +
-                        " FROM " + Contracts.Playlists.TABLE_NAME +
-                        ") OR " +
-                        Contracts.PlaylistSongLinks.COLUMN_NAME_SONG_ID + " NOT IN (SELECT " +
-                        Contracts.Songs._ID +
-                        " FROM " + Contracts.Songs.TABLE_NAME + ")",
-                new String[0]
-        );
-        Log.d("PlaylistDatabaseHandler", "removed unused Links: " + removedLinks);
-    }
-
-    private void removeUnusedSongs() {
-        int removedSongs = getWritableDatabase().delete(
-                Contracts.Songs.TABLE_NAME,
-                Contracts.Songs._ID + " NOT IN (SELECT " +
-                        Contracts.PlaylistSongLinks.COLUMN_NAME_SONG_ID +
-                        " FROM " + Contracts.PlaylistSongLinks.TABLE_NAME +
-                        ")",
-                new String[0]
-        );
-        Log.d("PlaylistDatabaseHandler", " removed " + removedSongs + " unused songs!");
-    }
 
 
 
