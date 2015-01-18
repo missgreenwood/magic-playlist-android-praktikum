@@ -38,7 +38,7 @@ public class FileStreamingMediaService extends Service implements MediaPlayer.On
     public static final String TRACK_FINISHED = "track_finished";
     public static final String INFO_ARTIST = "com.example.info.artist";
     public static final String INFO_MEDIA_WRAPPER = "com.example.info.mediawrapper";
-    AudioState state;
+    private static AudioState state;
     private String playPath;
     private MediaPlayer mediaPlayer = null;
     private boolean isPlaying;
@@ -78,14 +78,14 @@ public class FileStreamingMediaService extends Service implements MediaPlayer.On
 
             String displayMediaWrapper = "";
             Resources resources = getApplicationContext().getResources();
-            int resId = resources.getIdentifier(mediaWrapperType, "string", getPackageName());
-            displayMediaWrapper = resources.getString(resId);
-            String notificationText = artist + " - " + songname + " in " + displayMediaWrapper;
+            //  int resId = resources.getIdentifier(mediaWrapperType, "string", getPackageName());
+//            displayMediaWrapper = resources.getString(resId);
+            //      String notificationText = artist + " - " + songname + " in " + displayMediaWrapper;
 
 
-            notification.setLatestEventInfo(getApplicationContext(), "MagicPlaylist",
-                    notificationText, intentBack);
-
+            //    notification.setLatestEventInfo(getApplicationContext(), "MagicPlaylist",
+            //       notificationText, intentBack);
+//
 
 
 
@@ -108,10 +108,10 @@ public class FileStreamingMediaService extends Service implements MediaPlayer.On
             mediaPlayer.prepareAsync(); // prepare async to not block main thread
         } else if (intent.getAction().equals(ACTION_PAUSE)) {
 
-            Log.d(TAG, "has received intent with action pause, state is " + state + " is playing: " + isPlaying);
+            Log.d(TAG, "has received intent with action pause, state is " + state + " is playing: " + mediaPlayer.isPlaying());
 //            Log.d(TAG, "media player is playing: "+mediaPlayer.isPlaying());
 
-            if (state == AudioState.Playing && mediaPlayer.isPlaying()) {
+            if (state == AudioState.Playing || mediaPlayer.isPlaying()) {
                 Log.d(TAG, "set state to paused");
 
                 try {
@@ -133,6 +133,18 @@ public class FileStreamingMediaService extends Service implements MediaPlayer.On
                 } catch (IllegalStateException e) {
 
                     e.printStackTrace();
+                }
+            }
+
+
+        } else if (intent.getAction().equals(ACTION_STOP)) {
+            {
+
+                Log.d(TAG, "stop media player");
+
+                if (mediaPlayer != null) {
+                    mediaPlayer.stop();
+                    state = AudioState.Stopped;
                 }
             }
             // }
@@ -172,33 +184,18 @@ public class FileStreamingMediaService extends Service implements MediaPlayer.On
             e.printStackTrace();
         }
 
-        //Was tun, wenn die Exception auftritt?
-        //  Intent broadcastIntent = new Intent();
-        //  broadcastIntent.setAction(TRACK_FINISHED);
-        //  sendBroadcast(broadcastIntent);
-
-
-        //Intent broadcastIntent = new Intent("")
-
-        //this.stopSelf();
-
-        this.stopSelf();
-
-        /* evil hack! */
-
 
         if (PlayQueue.getInstance() != null) {
 
-            //     Log.d(TAG, "PlayQueue still visible!");
+            PlayQueue.getInstance().onTrackFinished();
 
-            //    if (PlayQueue.getInstance().isAutoPilotMode()) {
-            //     Log.d(TAG, "application running in background! trying to play next song");
-
-
-                PlayQueue.getInstance().onTrackFinished();
-
-            // }
         }
+
+        this.stopSelf();
+
+
+
+
     }
 
     @Override
