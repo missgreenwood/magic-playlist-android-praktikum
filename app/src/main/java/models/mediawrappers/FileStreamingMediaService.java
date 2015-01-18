@@ -77,20 +77,6 @@ public class FileStreamingMediaService extends Service implements MediaPlayer.On
             PendingIntent intentBack = PendingIntent.getActivity(getApplicationContext(), 0, toLaunch, PendingIntent.FLAG_UPDATE_CURRENT);
 
             String displayMediaWrapper = "";
-            Resources resources = getApplicationContext().getResources();
-            //  int resId = resources.getIdentifier(mediaWrapperType, "string", getPackageName());
-//            displayMediaWrapper = resources.getString(resId);
-            //      String notificationText = artist + " - " + songname + " in " + displayMediaWrapper;
-
-
-            //    notification.setLatestEventInfo(getApplicationContext(), "MagicPlaylist",
-            //       notificationText, intentBack);
-//
-
-
-
-           // startForeground(NOTIFICATION_ID, notification);
-
 
             Log.d(TAG, "start play");
 
@@ -109,7 +95,7 @@ public class FileStreamingMediaService extends Service implements MediaPlayer.On
             mediaPlayer.prepareAsync(); // prepare async to not block main thread
         } else if (intent.getAction().equals(ACTION_PAUSE)) {
 
-            Log.d(TAG, "has received intent with action pause, state is " + state + " is playing: " + mediaPlayer.isPlaying());
+            Log.d(TAG, "has received intent with action pause, state is " + state);
 //            Log.d(TAG, "media player is playing: "+mediaPlayer.isPlaying());
 
             if (state == AudioState.Playing || mediaPlayer.isPlaying()) {

@@ -12,9 +12,12 @@ import android.view.Menu;
 import android.view.MenuItem;
 import android.widget.FrameLayout;
 
+import com.loopj.android.http.AsyncHttpClient;
 import com.spotify.sdk.android.authentication.AuthenticationResponse;
 import com.spotify.sdk.android.authentication.SpotifyAuthentication;
 import com.spotify.sdk.android.playback.Config;
+
+import org.apache.http.conn.ssl.SSLSocketFactory;
 
 import java.util.ArrayList;
 
@@ -33,10 +36,11 @@ import tests.R;
  */
 public class MainActivity extends ActionBarActivity implements FragmentManager.OnBackStackChangedListener {
 
+    public static AsyncHttpClient asyncHttpClient = new AsyncHttpClient();
     private static boolean hasAlreadySentRequest = false;
+    private static int lastFragmentId = -1;
     private Config spotifyConfig;
     private MyBroadcastReceiver broadcastReceiver = null;
-    private static int lastFragmentId = -1;
     private FrameLayout layout;
 
     public Config getSpotifyConfig() {
@@ -106,6 +110,10 @@ public class MainActivity extends ActionBarActivity implements FragmentManager.O
         broadcastReceiver = new MyBroadcastReceiver();
         this.registerReceiver(broadcastReceiver, intentFilter);
         this.setTitle("Magic Playlist");
+
+        asyncHttpClient.setSSLSocketFactory(SSLSocketFactory.getSocketFactory());
+        asyncHttpClient.setMaxConnections(100);
+
         // Has to be set first!
         SpotifyLoginHandler.getInstance().setContext(this);
         Settings.getInstance().loadSettings(getPreferences(MODE_PRIVATE));
