@@ -65,7 +65,7 @@ public class PlaylistServiceImpl implements PlaylistService {
         });
 
         List<Playlist> similarPlaylists = new ArrayList<>();
-        for (int i = 0; i < quantity; i++) {
+        for (int i = 0; i < Math.min(quantity, playlists.size() - 1); i++) {
             similarPlaylists.add(playlists.get(i));
         }
         return similarPlaylists;
