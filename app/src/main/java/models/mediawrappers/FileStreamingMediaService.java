@@ -95,6 +95,7 @@ public class FileStreamingMediaService extends Service implements MediaPlayer.On
             Log.d(TAG, "start play");
 
             mediaPlayer = new MediaPlayer();  // initialize it here
+            mediaPlayer.setAudioStreamType(AudioManager.STREAM_MUSIC);
             mediaPlayer.setOnPreparedListener(this);
             mediaPlayer.setOnCompletionListener(this);
             mediaPlayer.setOnErrorListener(this);
@@ -141,28 +142,16 @@ public class FileStreamingMediaService extends Service implements MediaPlayer.On
             {
 
                 Log.d(TAG, "stop media player");
-        /*
-                try {
-                    if (mediaPlayer != null && (mediaPlayer.isPlaying()||mediaPlayer.) {
+
+
+                if (mediaPlayer != null)
                         mediaPlayer.stop();
                         state = AudioState.Stopped;
-                    }
-                }
-                catch (IllegalStateException e)
-                {
 
-                    e.printStackTrace();
-                }
-                */
 
                 // }
 
-                if (mediaPlayer != null) {
-                    mediaPlayer.reset();
-                    mediaPlayer.release();
-                    mediaPlayer = null;
 
-                }
             }
 
         }
