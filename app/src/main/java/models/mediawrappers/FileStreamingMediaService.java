@@ -131,16 +131,14 @@ public class FileStreamingMediaService extends Service implements MediaPlayer.On
                 if (mediaPlayer != null) {
                     try {
                         mediaPlayer.stop();
-<<<<<<< HEAD
+
                     } catch (IllegalStateException e) {
                         Log.e(TAG, "could not process stop: " + e.getMessage());
                     } finally {
                         mediaPlayer.release();
                         mediaPlayer = null;
-=======
-                    } catch (Exception e) {
 
->>>>>>> 6b5614e4eb2716443814135e1c5a240abed7fc38
+
                     }
                 }
                 state = AudioState.Stopped;
