@@ -5,6 +5,8 @@ import android.database.Cursor;
 import android.provider.MediaStore;
 import android.util.Log;
 
+import java.util.ArrayList;
+
 import models.mediaModels.Song;
 
 /**
@@ -46,45 +48,62 @@ public class LocalFileStreamingMediaWrapper extends FileStreamingMediaWrapper {
                 Log.v("", "compute playpath path: " + q.getString(0) + "\n");
             }
         } finally {
-            q.close();
+            if (q != null) {
+                q.close();
+            }
         }
 
         this.setPlayPath(path);
         //return path;
     }
 
-    @Override
-    public boolean lookForSong() {
+    public static void computePathMultiple (Context context, ArrayList<Song> songs) {
+        String[] projection = {
+                MediaStore.Audio.Media.TITLE,
+                MediaStore.Audio.Media.ARTIST,
+                MediaStore.Audio.Media.DATA
+        };
 
-      //  Log.d(TAG, "look for song: " + getSongDb().toString());
-
-        computePlayPath(getSong());
-
-        //TODO: in Methode
-
-
-    //    Log.d(TAG, "local playpath: " + getPlayPath());
-
-        if (getPlayPath() == null || getPlayPath().equals("")) {
-            // intent.setAction(PlayQueue.SONG_NOT_AVAILABLE);
-            //  Log.d(TAG, "send song not available");
-            sendSongAvailableIntent(false);
-        } else {
-            //  intent.setAction(PlayQueue.SONG_AVAILABLE);
-            //  Log.d(TAG, "send song available");
-            sendSongAvailableIntent(true);
-
+        String songsString = "(";
+        for (int i = 0; i < songs.size(); i++) {
+            if (i != 0) {
+                songsString += ", ";
+            }
+            Song song = songs.get(i);
+            songsString += song.getArtist() + " - " + song.getSongname();
         }
+        songsString += ")";
 
-        //  intent.putExtra(PlayQueue.SONG_ID, getSongDb().getId());
-        //  context.sendBroadcast(intent);
+        String where = MediaStore.Audio.Media.ARTIST + " || ' - ' || " + MediaStore.Audio.Media.TITLE + " IN " + songsString;
 
+        Cursor q = context.getContentResolver().query(MediaStore.Audio.Media.EXTERNAL_CONTENT_URI,
+                projection, where, null, MediaStore.Audio.Media.TITLE);
 
-        // play();
-
-        return true;
-
+        try {
+            while (q.moveToNext()) {
+//                path = q.getString(0);
+                Log.v("", "compute playpath path: " + q.getString(0) + "\n");
+            }
+        } finally {
+            if (q != null) {
+                q.close();
+            }
+        }
     }
 
-
+    @Override
+    public boolean lookForSong() {
+        new Thread(new Runnable() {
+            @Override
+            public void run() {
+                computePlayPath(getSong());
+                if (getPlayPath() == null || getPlayPath().equals("")) {
+                    sendSongAvailableIntent(false);
+                } else {
+                    sendSongAvailableIntent(true);
+                }
+            }
+        }).start();
+        return true;
+    }
 }

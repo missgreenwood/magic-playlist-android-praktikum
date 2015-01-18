@@ -145,7 +145,7 @@ public class PlaylistsManager implements Playlist.Listener {
 
     @Override
     public void onPlaylistChange(Playlist playlist) {
-        savePlaylist(playlist);
+//        savePlaylist(playlist);
     }
 
     public void savePlaylist(final Playlist playlist) {
@@ -156,6 +156,35 @@ public class PlaylistsManager implements Playlist.Listener {
                 databaseHandler.savePlaylist(playlist);
             }
         }).start();
+    }
+
+    public void playlistAddSong(final Playlist playlist, final Song song) {
+        new Thread(new Runnable() {
+            @Override
+            public void run() {
+                databaseHandler.playlistAddSong(playlist, song);
+            }
+        }).start();
+    }
+
+    public void playlistRemoveSong(final Playlist playlist, final Song song) {
+        new Thread(new Runnable() {
+            @Override
+            public void run() {
+                databaseHandler.playlistRemoveSong(playlist, song);
+            }
+        }).start();
+
+    }
+
+    public void saveSong(final Song song) {
+        new Thread(new Runnable() {
+            @Override
+            public void run() {
+                databaseHandler.saveSong(song);
+            }
+        }).start();
+
     }
 
     public Song getSong(String artist, String songname) {

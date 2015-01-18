@@ -53,21 +53,14 @@ public class SoundCloudStreamingMediaWrapper extends RemoteFileStreamingMediaWra
     @Override
     public void processWebCallResult(String result, String callback, Bundle data) {
 
-
         BasicNameValuePair clientIDPair = new BasicNameValuePair(SOUNDCLOUD_CLIENT_ID_STRING, SOUNDCLOUD_CLIENT_ID);
-
         Log.v(TAG, "call process Web Call Result");
-
         int trackID = 0;
 
-
         try {
-
             if (result!=null) // result)
             {
-
                 JSONArray jsonArray = new JSONArray(result);
-
 
                 for (int i = 0; i < jsonArray.length(); i++) {
                     JSONObject row = jsonArray.getJSONObject(i);
@@ -75,9 +68,7 @@ public class SoundCloudStreamingMediaWrapper extends RemoteFileStreamingMediaWra
                         trackID = row.getInt("id");
                         break;
                     }
-
                 }
-
             }
             //JSONObject first = (JSONObject) jsonArray.get(0);
             //  = first.getInt("id");
@@ -93,11 +84,8 @@ public class SoundCloudStreamingMediaWrapper extends RemoteFileStreamingMediaWra
 
                 Log.v(TAG, "track_url :" + newURL);
                 setPlayPath(newURL);
-
             }
             // play();
-
-
             // Intent intent = new Intent();
 
             if (newURL.equals("")) {
@@ -106,12 +94,9 @@ public class SoundCloudStreamingMediaWrapper extends RemoteFileStreamingMediaWra
             } else {
                 // intent.setAction(PlayQueue.SONG_AVAILABLE);
                 sendSongAvailableIntent(true);
-
             }
-
             //  intent.putExtra(PlayQueue.SONG_ID, getSongDb().getId());
             //  context.sendBroadcast(intent);
-
             // playState = false;
         } catch (JSONException e) {
            Log.e(TAG, "error while process webcall with callback: " + callback + " with message: " + e.getMessage());
