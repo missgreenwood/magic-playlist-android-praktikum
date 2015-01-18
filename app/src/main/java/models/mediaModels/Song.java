@@ -38,7 +38,7 @@ public class Song {
     private int songID = -1;
     private int length = -1;
 
-    private Listener listener;
+    private transient Listener listener;
 
     /**
      * Constructor for Song with songname and artist.
