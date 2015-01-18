@@ -311,7 +311,7 @@ if (mPlayer!=null) {
                 }
 
             } catch (JSONException e) {
-                e.printStackTrace();
+                Log.e(TAG, "Exception while getting track out of json: " + e.getMessage());
             }
 
         }

@@ -79,13 +79,13 @@ public class PlaylistFileHandler implements PlaylistHandler{
             }
             success = true;
         } catch (Exception e) {
-            e.printStackTrace();
+            Log.e("PlaylistFileHandler", "Exception trying to write playlist in .pls file: " + e.getMessage());
         } finally {
             if (writer != null) {
                 try {
                     writer.close();
                 } catch (Exception e) {
-                    e.printStackTrace();
+                    Log.e("PlaylistFileHandler", "Exception trying to close writer after writing playlist in .pls file: " + e.getMessage());
                 }
             }
         }
@@ -170,13 +170,13 @@ public class PlaylistFileHandler implements PlaylistHandler{
                 newPlaylist.addSong(song);
             }
         } catch (Exception e) {
-            e.printStackTrace();
+            Log.e("PlaylistFileHandler", "Exception trying to load Playlist of .pls file: " + e.getMessage());
         } finally {
             if (reader != null) {
                 try {
                     reader.close();
                 } catch(Exception e) {
-                    e.printStackTrace();
+                    Log.e("PlaylistFileHandler", "Exception trying to close reader after loading playlist of .pls file: " + e.getMessage());
                 }
             }
         }

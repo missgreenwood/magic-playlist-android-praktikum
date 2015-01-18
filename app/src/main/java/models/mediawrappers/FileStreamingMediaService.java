@@ -90,7 +90,7 @@ public class FileStreamingMediaService extends Service implements MediaPlayer.On
             try {
                 mediaPlayer.setDataSource(playPath);
             } catch (IOException e) {
-                e.printStackTrace();
+                Log.e(TAG, "Exception while play action: " + e.getMessage());
             }
             mediaPlayer.prepareAsync(); // prepare async to not block main thread
         } else if (intent.getAction().equals(ACTION_PAUSE)) {
