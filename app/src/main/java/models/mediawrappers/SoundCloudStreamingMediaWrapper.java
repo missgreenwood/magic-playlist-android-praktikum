@@ -8,11 +8,13 @@ import android.os.Handler;
 import android.util.JsonReader;
 import android.util.Log;
 
+import controllers.MainActivity;
 import models.apiwrappers.APIWrapper;
 import models.mediaModels.Song;
 
 import org.apache.http.Header;
 import org.apache.http.NameValuePair;
+import org.apache.http.conn.ssl.SSLSocketFactory;
 import org.apache.http.message.BasicHeader;
 import org.apache.http.message.BasicNameValuePair;
 import org.json.JSONArray;
@@ -39,15 +41,20 @@ public class SoundCloudStreamingMediaWrapper extends RemoteFileStreamingMediaWra
     // public static final String GET_METHOD = "GET";
     public static final String SOUNDCLOUD_TRACKS_BASE_URL = "https://api.soundcloud.com/tracks/";
     public static final String SOUNDCLOUD_STREAM_STRING = "stream";
+
+
     // private boolean playState = false;
 
 
     public SoundCloudStreamingMediaWrapper(Context context, String playPath) {
         super(context, playPath);
+
     }
 
     public SoundCloudStreamingMediaWrapper(Context context, Song songs) {
         super(context, songs);
+        MainActivity.asyncHttpClient.setMaxConnections(50);
+
     }
 
     @Override
@@ -121,7 +128,6 @@ public class SoundCloudStreamingMediaWrapper extends RemoteFileStreamingMediaWra
         final String url2 = APIWrapper.encodeURL(url, params);
 
 
-       final AsyncHttpClient asyncHttpClient = new AsyncHttpClient();
        final  Header[] headers = {new BasicHeader("Content-type", "application/json")};
 
         Handler handler = new Handler(getContext().getMainLooper());
@@ -145,7 +151,7 @@ public class SoundCloudStreamingMediaWrapper extends RemoteFileStreamingMediaWra
                     }
 
                 };
-                asyncHttpClient.get(getContext(), url2, headers, null, responseHandler);
+                MainActivity.asyncHttpClient.get(getContext(), url2, headers, null, responseHandler);
 
             }
 
