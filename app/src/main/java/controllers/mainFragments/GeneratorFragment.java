@@ -45,13 +45,11 @@ public class GeneratorFragment extends Fragment implements
 
         // Inflate the layout for this fragment
         View view = inflater.inflate(R.layout.fragment_generator, container, false);
-        // ((MainActivity)getActivity()).getSupportActionBar().setTitle("Playlist Generator");
         view.findViewById(R.id.songsCountLimitBtn).setOnClickListener(this);
         view.findViewById(R.id.genresBtn).setOnClickListener(this);
         view.findViewById(R.id.artistsBtn).setOnClickListener(this);
         view.findViewById(R.id.songsBtn).setOnClickListener(this);
         view.findViewById(R.id.startGeneratorBtn).setOnClickListener(this);
-
         getActivity().getSupportFragmentManager().addOnBackStackChangedListener(new FragmentManager.OnBackStackChangedListener() {
             @Override
             public void onBackStackChanged() {
@@ -65,7 +63,6 @@ public class GeneratorFragment extends Fragment implements
     @Override
     public void onResume() {
         super.onResume();
-        // ((MainActivity)getActivity()).getSupportActionBar().setTitle("Playlist Generator");
     }
 
     public void startGeneratorClicked(View view)

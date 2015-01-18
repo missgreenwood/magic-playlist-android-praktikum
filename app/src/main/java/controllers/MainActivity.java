@@ -38,11 +38,6 @@ public class MainActivity extends ActionBarActivity implements FragmentManager.O
     private MyBroadcastReceiver broadcastReceiver = null;
     private static int lastFragmentId = -1;
     private FrameLayout layout;
-    /* private Bitmap backgroundBmp;
-    private int dstWidth;
-    private int dstHeight;
-    private DisplayMetrics metrics;
-    private BitmapDrawable scaledBackground; */
 
     public Config getSpotifyConfig() {
         return spotifyConfig;
@@ -57,24 +52,10 @@ public class MainActivity extends ActionBarActivity implements FragmentManager.O
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
-
-        /* metrics = new DisplayMetrics();
-        getWindowManager().getDefaultDisplay().getMetrics(metrics);
-        dstHeight = metrics.heightPixels;
-        dstWidth = metrics.widthPixels; */
-
         layout = (FrameLayout)findViewById(R.id.mainViewGroup);
         layout.setBackgroundResource(R.drawable.listening);
-
-        /* backgroundBmp = (BitmapFactory.decodeResource(getResources(), R.drawable.listening));
-        backgroundBmp = Bitmap.createScaledBitmap(backgroundBmp, dstWidth, dstHeight, true);
-        scaledBackground = new BitmapDrawable(this.getResources(), backgroundBmp);
-        layout.setBackgroundDrawable(scaledBackground); */
-
         loadInitFragment();
-
         getSupportFragmentManager().addOnBackStackChangedListener(this);
-
         PlayQueue.getInstance().setContext(this);
     }
 
@@ -87,7 +68,6 @@ public class MainActivity extends ActionBarActivity implements FragmentManager.O
             transact.commit();
         }
     }
-
 
     @Override
     public boolean onCreateOptionsMenu(Menu menu) {
@@ -117,7 +97,6 @@ public class MainActivity extends ActionBarActivity implements FragmentManager.O
         }
     }
 
-
     @Override
     protected void onStart() {
         IntentFilter intentFilter = new IntentFilter();
@@ -127,12 +106,8 @@ public class MainActivity extends ActionBarActivity implements FragmentManager.O
         broadcastReceiver = new MyBroadcastReceiver();
         this.registerReceiver(broadcastReceiver, intentFilter);
         this.setTitle("Magic Playlist");
-
-
-/* has to be set first!*/
+        // Has to be set first!
         SpotifyLoginHandler.getInstance().setContext(this);
-
-
         Settings.getInstance().loadSettings(getPreferences(MODE_PRIVATE));
         Settings.getInstance().setOnMediaWrapperListChangeListener(new Settings.Listener() {
             @Override
@@ -141,22 +116,14 @@ public class MainActivity extends ActionBarActivity implements FragmentManager.O
                 PlayQueue.getInstance().setMediaWrappers(mediaWrappers);
             }
         });
-
-
         PlayQueue.getInstance().setMediaWrappers(Settings.getInstance().getMediaWrappers());
         PlayQueue.getInstance().setAutoPilotMode(false);
-
         Client.getInstance().setContext(getApplicationContext());
-
-
         LocalSongsManager.getInstance().setContext(getApplicationContext());
-
         PlaylistsManager.getInstance().setContext(getApplicationContext());
-
         if (!PlaylistsManager.getInstance().alreadyInitialized()) {
             PlaylistsManager.getInstance().loadPlaylists();
         }
-
         super.onStart();
     }
 
@@ -171,10 +138,8 @@ public class MainActivity extends ActionBarActivity implements FragmentManager.O
     protected void onDestroy() {
         super.onDestroy();
         PlaylistsManager.getInstance().closeDb();
-
         stopService(new Intent(this, SpotifyService.class));
         stopService(new Intent(this, FileStreamingMediaService.class));
-
         getSupportFragmentManager().removeOnBackStackChangedListener(this);
     }
 
@@ -196,7 +161,6 @@ public class MainActivity extends ActionBarActivity implements FragmentManager.O
 
             Uri uri = intent.getData();
             Log.d("TAG", "action: "+intent.getAction());
-            //TODO: intent filter oder sowas
             Log.d("", "spotify auth received");
 
           if (uri!=null) {
@@ -213,6 +177,4 @@ public class MainActivity extends ActionBarActivity implements FragmentManager.O
           }
         }
     }
-
-
 }

@@ -37,7 +37,6 @@ public class SettingsFragment extends ListFragment {
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
         ViewGroup rootView = (ViewGroup) inflater.inflate(R.layout.fragment_settings, container, false);
-        // ((MainActivity)getActivity()).getSupportActionBar().setTitle("Settings");
         settings = Settings.getInstance();
         confirmBtn = (Button) rootView.findViewById(R.id.confirmBtn);
         confirmBtn.setOnClickListener(new OnClickListener() {
@@ -131,12 +130,8 @@ public class SettingsFragment extends ListFragment {
                 holder.wrapper_name = (TextView) convertView.findViewById(R.id.wrapper_name);
                 holder.up_button = (Button) convertView.findViewById(R.id.upBtn);
                 holder.down_button = (Button) convertView.findViewById(R.id.downBtn);
-                //initialvalue should be set before Listener, otherwise unneeded actions are called
-                //also I removed  "all[position]" because the arrayAdapter should work with the given
-                //list at initialisation. This is important at this position, because when the List
-                //changes (priorityChange) you can recognize it here :) (andy)
+                // Initial value should be set before Listener, otherwise unneeded actions are called
                 holder.checkbox.setChecked(usedMediaWrappers.contains(this.getItem(position)));
-
                 holder.checkbox.setOnCheckedChangeListener(wrapperCheckedChangeListener);
                 final CheckBox checkBox = holder.checkbox;
                 holder.wrapper_name.setOnClickListener(new OnClickListener() {
@@ -152,12 +147,10 @@ public class SettingsFragment extends ListFragment {
             else {
                 holder = (SettingsViewHolder) convertView.getTag();
                 holder.checkbox.setOnCheckedChangeListener(null);
-                //reset checked state, even if loaded from old item (after up-/downgrading item, this has to be done!)
+                //Reset checked state, even if loaded from old item (after up-/downgrading item, this has to be done!)
                 holder.checkbox.setChecked(usedMediaWrappers.contains(this.getItem(position)));
                 holder.checkbox.setOnCheckedChangeListener(wrapperCheckedChangeListener);
             }
-
-            //see longer description
             holder.wrapper_name.setText(this.getItem(position));
             return convertView;
         }
