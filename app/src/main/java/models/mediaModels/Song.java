@@ -23,9 +23,9 @@ import tests.R;
 
 
 public class Song {
-    public static final String MEDIA_WRAPPER_LOCAL_FILE = "local_file";
-    public static final String MEDIA_WRAPPER_REMOTE_SOUNDCLOUD = "remote_soundcloud";
-    public static final String MEDIA_WRAPPER_SPOTIFY = "remote_spotify";
+    public static final String MEDIA_WRAPPER_LOCAL_FILE = "locall files";
+    public static final String MEDIA_WRAPPER_REMOTE_SOUNDCLOUD = "Soundcloud";
+    public static final String MEDIA_WRAPPER_SPOTIFY = "Spotify";
     public static final String MEDIA_WRAPPER_NONE="no-mediawrapper";
     public static final String MEDIA_WRAPPER_NOT_SET="mediawrapper_not_set";
     private static final Object countLock = new Object();
