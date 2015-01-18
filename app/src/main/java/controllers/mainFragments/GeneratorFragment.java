@@ -8,7 +8,6 @@ import android.os.Bundle;
 import android.support.v4.app.Fragment;
 import android.support.v4.app.FragmentManager;
 import android.support.v4.app.FragmentTransaction;
-import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -17,7 +16,6 @@ import android.widget.NumberPicker;
 
 import java.util.ArrayList;
 
-import controllers.MainActivity;
 import controllers.mainFragments.generatorFragments.ArtistsFragment;
 import controllers.mainFragments.generatorFragments.GenresListFragment;
 import controllers.mainFragments.generatorFragments.SongsFragment;
@@ -47,7 +45,7 @@ public class GeneratorFragment extends Fragment implements
 
         // Inflate the layout for this fragment
         View view = inflater.inflate(R.layout.fragment_generator, container, false);
-        ((MainActivity)getActivity()).getSupportActionBar().setTitle("Playlist Generator");
+        // ((MainActivity)getActivity()).getSupportActionBar().setTitle("Playlist Generator");
         view.findViewById(R.id.songsCountLimitBtn).setOnClickListener(this);
         view.findViewById(R.id.genresBtn).setOnClickListener(this);
         view.findViewById(R.id.artistsBtn).setOnClickListener(this);
@@ -67,7 +65,7 @@ public class GeneratorFragment extends Fragment implements
     @Override
     public void onResume() {
         super.onResume();
-        ((MainActivity)getActivity()).getSupportActionBar().setTitle("Playlist Generator");
+        // ((MainActivity)getActivity()).getSupportActionBar().setTitle("Playlist Generator");
     }
 
     public void startGeneratorClicked(View view)

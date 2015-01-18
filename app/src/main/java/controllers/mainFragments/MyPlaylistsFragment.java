@@ -18,7 +18,6 @@ import android.widget.TextView;
 import java.util.Comparator;
 import java.util.List;
 
-import controllers.MainActivity;
 import controllers.mainFragments.generatorFragments.PlaylistFragment;
 import models.mediaModels.Playlist;
 import models.playlist.PlaylistsManager;
@@ -39,7 +38,7 @@ public class MyPlaylistsFragment extends ListFragment implements AdapterView.OnI
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
         ViewGroup rootView = (ViewGroup) inflater.inflate(R.layout.fragment_playlists, container, false);
-        ((MainActivity)getActivity()).getSupportActionBar().setTitle("My Playlists");
+        // ((MainActivity)getActivity()).getSupportActionBar().setTitle("My Playlists");
 
         // Bind adapter to the ListFragment
         setListAdapter(new PlaylistArrayAdapter(getActivity(),R.layout.rows,R.id.txtview,PlaylistsManager.getInstance().getPlaylists()));
@@ -67,7 +66,7 @@ public class MyPlaylistsFragment extends ListFragment implements AdapterView.OnI
     @Override
     public void onResume() {
         super.onResume();
-        ((MainActivity)getActivity()).getSupportActionBar().setTitle("My Playlists");
+        // ((MainActivity)getActivity()).getSupportActionBar().setTitle("My Playlists");
     }
 
     @Override

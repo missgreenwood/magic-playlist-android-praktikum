@@ -27,7 +27,9 @@
         <activity
             android:name="controllers.MainActivity"
             android:label="@string/title_activity_test"
-            android:launchMode="singleInstance">
+            android:launchMode="singleInstance"
+            android:screenOrientation="portrait"
+            android:configChanges="keyboardHidden">
             <intent-filter>
                 <action android:name="android.intent.action.MAIN" />
 
