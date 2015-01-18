@@ -19,34 +19,22 @@ public class MyBroadcastReceiver extends BroadcastReceiver {
     public void onReceive(Context context, Intent intent) {
 
         if (intent.getAction().equals(FileStreamingMediaService.TRACK_FINISHED)) {
-
             if (context instanceof MainActivity) {
-
                 PlayQueue.getInstance().onTrackFinished();
-
                 Log.d(TAG, "intent received, track finished");
-
-
             }
         } else if (intent.getAction().equals(PlayQueue.SONG_AVAILABLE)) {
             Log.d(TAG, "received song available");
             if (context instanceof MainActivity) {
-
-
                 //   PlayQueue.getInstance().onTrackFinished();
-
                 PlayQueue.getInstance().onSongAvailable(intent.getIntExtra(PlayQueue.SONG_ID, -1));
-
             }
 
         } else if (intent.getAction().equals(PlayQueue.SONG_NOT_AVAILABLE)) {
-
             Log.d(TAG, "received song not available");
-
             if (context instanceof MainActivity) {
                 PlayQueue.getInstance()
                         .onSongNotAvailable(intent.getIntExtra(PlayQueue.SONG_ID, -1));
-
             }
         }
     }

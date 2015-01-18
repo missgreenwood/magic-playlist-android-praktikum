@@ -4,6 +4,11 @@ import java.util.List;
 
 import de.lmu.playlist.domain.entity.Playlist;
 
+/**
+ * @author martin
+ *         <p/>
+ *         service for business logic of playlist related tasks.
+ */
 public interface PlaylistService {
 
     /**
@@ -34,7 +39,7 @@ public interface PlaylistService {
      * Returns playlists similar to the given reference playlist.
      *
      * @param referencePlaylist the playlist to find similar ones for
-     * @param quantity the quantity of similar lists
+     * @param quantity          the quantity of similar lists
      * @return the most similar playlists.
      */
     List<Playlist> findSimilarPlaylists(Playlist referencePlaylist, int quantity);

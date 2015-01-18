@@ -1,17 +1,10 @@
 package models.mediaModels;
 
-import android.util.Log;
-
 import java.util.ArrayList;
 import java.util.HashMap;
 
 import models.mediawrappers.AbstractMediaWrapper;
-import models.mediawrappers.LocalFileStreamingMediaWrapper;
-import models.mediawrappers.SoundCloudStreamingMediaWrapper;
-import models.mediawrappers.SpotifyMediaWrapper;
 import models.playlist.PlaylistsManager;
-import models.playlist.database.Contracts;
-import tests.R;
 
 /**
  * Created by lotta on 02.12.14.
@@ -23,7 +16,7 @@ import tests.R;
 
 
 public class Song {
-    public static final String MEDIA_WRAPPER_LOCAL_FILE = "locall files";
+    public static final String MEDIA_WRAPPER_LOCAL_FILE = "local files";
     public static final String MEDIA_WRAPPER_REMOTE_SOUNDCLOUD = "Soundcloud";
     public static final String MEDIA_WRAPPER_SPOTIFY = "Spotify";
     public static final String MEDIA_WRAPPER_NONE="no-mediawrapper";
@@ -38,7 +31,7 @@ public class Song {
     private int songID = -1;
     private int length = -1;
 
-    private transient Listener listener;
+    private transient ArrayList<Listener> observers;
 
     /**
      * Constructor for Song with songname and artist.
@@ -64,8 +57,20 @@ public class Song {
         this.wrapperType = wrapperType;
     }
 
-    public void setListener (Listener listener) {
-        this.listener = listener;
+    public Song(String artist, String songname, String mediaWrapperType, int id, String url, int length) {
+        this(artist, songname, mediaWrapperType);
+        this.songID = id;
+        this.setSongUrl(url);
+        this.length = length;
+    }
+
+    public void addObserver(Listener observer) {
+        if (observers == null) observers = new ArrayList<>();
+        this.observers.add(observer);
+    }
+    public void removeObserver(Listener observer) {
+        if (observers == null) observers = new ArrayList<>();
+        this.observers.remove(observer);
     }
 
     @Override
@@ -112,7 +117,7 @@ public class Song {
      */
     public void setMediaWrapperType(String type) {
         this.wrapperType = type;
-
+//        notifyChange();
     }
 
     public String getArtist() {
@@ -121,6 +126,7 @@ public class Song {
 
     public void setArtist(String artist) {
         this.artist = artist;
+        PlaylistsManager.getInstance().saveSong(this);
         notifyChange();
     }
 
@@ -130,6 +136,7 @@ public class Song {
 
     public void setSongname(String songname) {
         this.songname = songname;
+        PlaylistsManager.getInstance().saveSong(this);
         notifyChange();
     }
 
@@ -144,7 +151,7 @@ public class Song {
      */
     public void setSongUrl(String url) {
 //        this.url = url;
-//        notifyChange();
+//        notifyChange(true);
     }
 
     public int getLength() {
@@ -153,6 +160,7 @@ public class Song {
 
     public void setLength(int length) {
         this.length = length;
+        PlaylistsManager.getInstance().saveSong(this);
         notifyChange();
     }
 
@@ -181,8 +189,10 @@ public class Song {
     }
 
     private void notifyChange() {
-        if (listener != null) {
-            listener.onSongChange();
+        if (observers != null) {
+            for (Listener observer : observers) {
+                observer.onSongChange();
+            }
         }
     }
 
@@ -210,10 +220,7 @@ public class Song {
         public static Song getSongDb(int id, String artist, String songname, String mediaWrapperType, String url, int length) {
             Song song = songs.get(id);
             if (song == null && artist != null && artist.length() > 0 && songname != null && songname.length() > 0) {
-                song = new Song(artist, songname, mediaWrapperType);
-                song.setSongID(id);
-                song.setSongUrl(url);
-                song.setLength(length);
+                song = new Song(artist, songname, mediaWrapperType, id, url, length);
                 //save unloaded songs to hashmap
                 songs.put(song.getId(), song);
             }

@@ -4,8 +4,6 @@ import android.content.Context;
 import android.text.TextUtils;
 import android.util.Log;
 
-import models.mediaModels.Playlist;
-import models.mediaModels.Song;
 import models.mediawrappers.AbstractMediaWrapper;
 import models.mediawrappers.LocalFileStreamingMediaWrapper;
 import models.mediawrappers.SoundCloudStreamingMediaWrapper;
@@ -50,6 +48,8 @@ public class PlayQueue {
     private ArrayList<Listener> observers;
     private boolean autoPilotMode = false;
     private AbstractMediaWrapper currentSongMediaWrapper;
+    private ArrayList<Song> initLocalSongs;
+    private boolean initializing = false;
 
     /**
      * This class should be used to create a playlist/queue with a list of songs.
@@ -80,7 +80,7 @@ public class PlayQueue {
         Log.d(TAG, "import playlist called!");
 
         currentPlaylist = playlist;
-        songs = playlist.getSongsList(true);
+        songs = playlist.getSongsList();
         if (songs.size() > 0) {
             initializePlaylist(true);
             stopCurrentSong();
@@ -213,20 +213,28 @@ public class PlayQueue {
         }
     }
 
-    private void initializeSong(Song song) {
+    private void initializeSong(final Song song) {
       //  Log.d(TAG, "song "+song+" is initialized... mediawrappers are: "+TextUtils.join(", ", mediaWrappers));
-        String mediaWrapperType = song.getMediaWrapperType();
-        if (mediaWrapperType.equals(Song.MEDIA_WRAPPER_NOT_SET)) {
-            setDefaultMediaWrapperTypeInQueue(song);
-        }
+        new Thread(new Runnable() {
+            @Override
+            public void run() {
+                String mediaWrapperType = song.getMediaWrapperType();
+                if (mediaWrapperType.equals(Song.MEDIA_WRAPPER_NOT_SET)) {
+                    setDefaultMediaWrapperTypeInQueue(song);
+                }
 
-        setMediaWrapperForType(song);
+                setMediaWrapperForType(song);
 
-        if (song.getMediaWrapper() != null) {
-         Log.d(TAG, "no look for song: "+song);
-            song.getMediaWrapper().lookForSong();
-        }
+                if (song.getMediaWrapperType() == Song.MEDIA_WRAPPER_LOCAL_FILE) {
 
+                }
+
+                if (song.getMediaWrapper() != null) {
+                    Log.d(TAG, "no look for song: "+song);
+                    song.getMediaWrapper().lookForSong();
+                }
+            }
+        }).start();
     }
 
 
@@ -263,18 +271,20 @@ public class PlayQueue {
      * @param overwrite Will overwrite existing media wrappers if true
      */
     public void initializePlaylist(final boolean overwrite) {
-                if(songs!=null)
-                {
-                    for (Song song : songs) {
-                        Log.v(TAG, "initialize song: " + song.toString());
+        if(songs!=null) {
+            initLocalSongs = new ArrayList<>();
+            initializing = true;
+            for (Song song : songs) {
+                Log.v(TAG, "initialize song: " + song.toString());
 
-                        // if (overwrite) {
-                            song.setMediaWrapperType(Song.MEDIA_WRAPPER_NOT_SET);
-                        initializeSong(song);
-                        // }
-                    }
+                // if (overwrite) {
+                    song.setMediaWrapperType(Song.MEDIA_WRAPPER_NOT_SET);
+                    initializeSong(song);
+                // }
+            }
+            initializing = false;
 
-                }
+        }
     }
 
     /**
@@ -440,20 +450,15 @@ public class PlayQueue {
     }
 
     public void onSongAvailable(int songID) {
-
         Log.d(TAG, "intent received, playpath available for song " + getSongForID(songID));
-
         Song song = getSongForID(songID);
-
+        song.setNotPlayable(false);
         if (song != null) {
             Log.v(TAG, "state at onSongAvailable: " + getState() + " currentSong: " + getCurrentSong() + " song: " + song);
-
             if (getState() == STATE_WAITING && song == getCurrentSong()) {
                 Log.d(TAG, "state is waiting and song is current song...");
                 playCurrentSong();
-
             }
-
         }
         // getCurrentSong().getMediaWrapper().play();
     }

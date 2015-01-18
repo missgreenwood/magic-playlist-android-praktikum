@@ -1,5 +1,8 @@
 package de.lmu.playlist.service;
 
+/**
+ * @author martin
+ */
 public final class SpotifyConstants {
 
     public static final String CLIENT_ID = "605ac27c70444b499869422e93a492f8";

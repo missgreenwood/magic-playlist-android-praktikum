@@ -2,7 +2,6 @@ package models.mediaModels;
 
 import android.os.Parcel;
 import android.os.Parcelable;
-import android.util.Log;
 
 import java.util.ArrayList;
 
@@ -24,6 +23,7 @@ public class Playlist implements Parcelable, Song.Listener {
     private transient boolean alreadyLiked;
     private transient boolean alreadyUploaded;
     private transient int id = -1;
+    private boolean initializing = false;
 
     public Playlist() {
         name = "new Playlist " + uniqueId++;
@@ -34,6 +34,15 @@ public class Playlist implements Parcelable, Song.Listener {
     public Playlist(String name) {
         this();
         this.name = name;
+    }
+
+    public Playlist(String name, int id, String genre, int likes, boolean alreadyLiked, boolean alreadyUploaded) {
+        this(name);
+        this.id = id;
+        this.genre = genre;
+        this.likes = likes;
+        this.alreadyLiked = alreadyLiked;
+        this.alreadyUploaded = alreadyUploaded;
     }
 
     public int getId() {
@@ -54,13 +63,20 @@ public class Playlist implements Parcelable, Song.Listener {
 
     public void addSong(Song newSong) {
         songs.add(newSong);
-        newSong.setListener(this);
+        newSong.addObserver(this);
+        PlaylistsManager.getInstance().playlistAddSong(this, newSong);
         notifyChange();
+    }
+
+    public void addSong(Song song, boolean fromDB) {
+        songs.add(song);
+        song.addObserver(this);
     }
 
     public void removeSong(Song song) {
         songs.remove(song);
-        song.setListener(null);
+        song.removeObserver(this);
+        PlaylistsManager.getInstance().playlistRemoveSong(this, song);
         notifyChange();
     }
 
@@ -84,6 +100,7 @@ public class Playlist implements Parcelable, Song.Listener {
         String oldName = this.name;
         this.name = name;
         PlaylistsManager.getInstance().renamePlaylist(oldName, name);
+        notifyChange();
     }
 
     public int getLikes() {
@@ -92,16 +109,19 @@ public class Playlist implements Parcelable, Song.Listener {
 
     public void setLikes(int likes) {
         this.likes = likes;
+        PlaylistsManager.getInstance().savePlaylist(this);
         notifyChange();
     }
 
     public void resetInitialization()
     {
         if (songs != null) {
+            initializing = true;
             for (Song song : getSongsList()) {
                 // song.setMediaWrapper(null);
                 song.setNotPlayable(false);
             }
+            initializing = false;
             notifyChange();
         }
     }
@@ -118,6 +138,7 @@ public class Playlist implements Parcelable, Song.Listener {
 
     public void setGenre(String genre) {
         this.genre = genre;
+        PlaylistsManager.getInstance().savePlaylist(this);
         notifyChange();
     }
 
@@ -174,6 +195,7 @@ public class Playlist implements Parcelable, Song.Listener {
 
     public void setAlreadyLiked(boolean alreadyLiked) {
         this.alreadyLiked = alreadyLiked;
+        PlaylistsManager.getInstance().savePlaylist(this);
         notifyChange();
     }
 
@@ -183,11 +205,13 @@ public class Playlist implements Parcelable, Song.Listener {
 
     public void setAlreadyUploaded(boolean alreadyUploaded) {
         this.alreadyUploaded = alreadyUploaded;
+        PlaylistsManager.getInstance().savePlaylist(this);
         notifyChange();
     }
 
     @Override
     public void onSongChange() {
+        if (!initializing)
         notifyChange();
     }
 

@@ -95,6 +95,7 @@ public class FileStreamingMediaService extends Service implements MediaPlayer.On
             Log.d(TAG, "start play");
 
             mediaPlayer = new MediaPlayer();  // initialize it here
+            mediaPlayer.setAudioStreamType(AudioManager.STREAM_MUSIC);
             mediaPlayer.setOnPreparedListener(this);
             mediaPlayer.setOnCompletionListener(this);
             mediaPlayer.setOnErrorListener(this);
@@ -134,7 +135,7 @@ public class FileStreamingMediaService extends Service implements MediaPlayer.On
 
                     e.printStackTrace();
                 }
-            }
+            } else Log.d(TAG, "state is NOT paused...");
 
 
         } else if (intent.getAction().equals(ACTION_STOP)) {
@@ -142,13 +143,16 @@ public class FileStreamingMediaService extends Service implements MediaPlayer.On
 
                 Log.d(TAG, "stop media player");
 
-                if (mediaPlayer != null) {
-                    mediaPlayer.stop();
-                    state = AudioState.Stopped;
-                }
-            }
-            // }
 
+                if (mediaPlayer != null)
+                        mediaPlayer.stop();
+                        state = AudioState.Stopped;
+
+
+                // }
+
+
+            }
 
         }
 
@@ -221,6 +225,8 @@ public class FileStreamingMediaService extends Service implements MediaPlayer.On
             Log.e(TAG, "Media Player Error");
 
             mediaPlayer.reset();
+            mediaPlayer.release();
+            mediaPlayer = null;
 
             //TODO: should I send a song completed or a song not available intent??
             // mediaPlayer = null;

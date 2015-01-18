@@ -15,6 +15,9 @@ import de.lmu.playlist.PlaylistModule;
 import de.lmu.playlist.domain.dao.PlaylistDao;
 import de.lmu.playlist.domain.entity.Playlist;
 
+/**
+ * @author martin
+ */
 @Test
 public class PlaylistServiceTest {
 

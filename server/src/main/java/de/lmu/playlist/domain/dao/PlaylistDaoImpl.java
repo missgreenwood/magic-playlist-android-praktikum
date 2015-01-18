@@ -10,6 +10,9 @@ import java.util.List;
 import de.lmu.playlist.domain.entity.Playlist;
 import de.lmu.playlist.service.MongoService;
 
+/**
+ * @author martin
+ */
 public class PlaylistDaoImpl extends AbstractDao<Playlist> implements PlaylistDao {
 
     @Inject

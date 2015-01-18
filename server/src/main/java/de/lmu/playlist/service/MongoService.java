@@ -2,6 +2,11 @@ package de.lmu.playlist.service;
 
 import com.mongodb.DB;
 
+/**
+ * @author martin
+ *         <p/>
+ *         simple service encapsulating mongo db.
+ */
 public interface MongoService {
 
     /**

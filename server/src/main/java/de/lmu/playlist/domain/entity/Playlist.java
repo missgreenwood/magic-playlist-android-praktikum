@@ -8,6 +8,9 @@ import java.util.Set;
 
 import javax.xml.bind.annotation.XmlRootElement;
 
+/**
+ * @author martin
+ */
 @XmlRootElement
 @JsonIgnoreProperties(ignoreUnknown = true)
 public class Playlist implements Comparable<Playlist> {

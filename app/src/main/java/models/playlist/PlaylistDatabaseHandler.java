@@ -178,17 +178,12 @@ public class PlaylistDatabaseHandler extends SQLiteOpenHelper implements Playlis
 
 
                     if (playlist == null || playlist.getId() != pId) {
-                        playlist = new Playlist(pName);
-                        playlist.setId(pId);
-                        playlist.setGenre(pGenre);
-                        playlist.setLikes(pLikes);
-                        playlist.setAlreadyLiked(pAlreadyLiked == 1);
-                        playlist.setAlreadyUploaded(pAlreadyUploaded == 1);
+                        playlist = new Playlist(pName, pId, pGenre, pLikes, (pAlreadyLiked == 1), (pAlreadyUploaded == 1));
                         playlists.add(playlist);
                     }
                     Song song = Song.Builder.getSongDb(sId, sArtist, sName, sMediaType, sUrl, sLength);
                     if (song != null) {
-                        playlist.addSong(song);
+                        playlist.addSong(song, true);
                     }
                 }
             }
@@ -219,6 +214,76 @@ public class PlaylistDatabaseHandler extends SQLiteOpenHelper implements Playlis
         } finally {
             db.endTransaction();
         }
+        return success;
+    }
+
+    public boolean playlistAddSong(Playlist playlist, Song song) {
+        SQLiteDatabase db = getWritableDatabase();
+        boolean success = false;
+        db.beginTransaction();
+        try {
+            if (!saveSong(song, playlist)) {
+                success = false;
+            } else {
+                success = true;
+            }
+            db.setTransactionSuccessful();
+        } finally {
+            db.endTransaction();
+        }
+        return success;
+    }
+
+    public boolean playlistRemoveSong(Playlist playlist, Song song) {
+        SQLiteDatabase db = getWritableDatabase();
+        boolean success = false;
+        db.beginTransaction();
+        try {
+            success = removeLink(playlist, song);
+            db.setTransactionSuccessful();
+        } finally {
+            db.endTransaction();
+        }
+        return success;
+    }
+
+    private boolean removeLink(Playlist playlist, Song song) {
+        song.setSongID(getSongId(song.getArtist(), song.getSongname()));
+        String[] selectionArgs = {String.valueOf(playlist.getId()), String.valueOf(song.getId())};
+        boolean success = false;
+
+        SQLiteDatabase db = getWritableDatabase();
+        db.beginTransaction();
+        try {
+            db.delete(
+                    Contracts.PlaylistSongLinks.TABLE_NAME,
+                    Contracts.PlaylistSongLinks.COLUMN_NAME_PLAYLIST_ID + "=? and " + Contracts.PlaylistSongLinks.COLUMN_NAME_SONG_ID + "=?",
+                    selectionArgs
+            );
+            removeUnusedSongs();
+            success = true;
+            db.setTransactionSuccessful();
+        } finally {
+            db.endTransaction();
+        }
+        return success;
+    }
+
+    public boolean saveSong(Song song) {
+        boolean success = true;
+        SQLiteDatabase db = getWritableDatabase();
+        db.beginTransaction();
+        try {
+            if (!updateSong(song)) {
+                success = createNewSong(song);
+            }
+            //has to be synchronous with db, so to be shure, set SongId
+            song.setSongID(getSongId(song.getArtist(), song.getSongname()));
+            db.setTransactionSuccessful();
+        } finally {
+            db.endTransaction();
+        }
+
         return success;
     }
 
@@ -279,12 +344,6 @@ public class PlaylistDatabaseHandler extends SQLiteOpenHelper implements Playlis
             );
             success = affectedRowsCount > 0;
             if (success) {
-                db.delete(
-                        Contracts.PlaylistSongLinks.TABLE_NAME,
-                        Contracts.PlaylistSongLinks.COLUMN_NAME_PLAYLIST_ID + "=?",
-                        selectionArgs
-                );
-
                 for (Song song : playlist.getSongsList()) {
                     if (!saveSong(song, playlist)) {
                         success = false;

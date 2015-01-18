@@ -191,7 +191,8 @@ public class Client {
                 @Override
                 public void onSuccess(int i, Header[] headers, String s) {
                     try {
-                        playlist.setLikes(Integer.parseInt(s));
+                        Playlist persistedPlaylist = gson.fromJson(s, Playlist.class);
+                        playlist.setLikes(persistedPlaylist.getLikes());
                         playlist.setAlreadyLiked(true);
                     } catch(Exception e) {}
                     if (listener != null) {

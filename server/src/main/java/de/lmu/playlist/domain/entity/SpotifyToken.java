@@ -5,6 +5,9 @@ import com.fasterxml.jackson.annotation.JsonProperty;
 
 import javax.xml.bind.annotation.XmlRootElement;
 
+/**
+ * @author martin
+ */
 @XmlRootElement
 @JsonIgnoreProperties(ignoreUnknown = true)
 public class SpotifyToken {

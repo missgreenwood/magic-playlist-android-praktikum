@@ -86,7 +86,7 @@ public class PlaylistGenerator implements LastFmListener {
     private void startGeneration() {
         running = true;
         while (getRequestsCount() == 0) {
-            if (finished || playlist.getSongsList().size() == songsCountLimit) {
+            if (finished || playlist.getSongsList().size() >= songsCountLimit) {
                 finishGeneration();
                 return;
             }

@@ -8,6 +8,7 @@ import android.graphics.Color;
 import android.graphics.Paint;
 import android.graphics.Point;
 import android.os.Bundle;
+import android.os.Handler;
 import android.support.v4.app.ListFragment;
 import android.util.Log;
 import android.view.LayoutInflater;
@@ -349,15 +350,21 @@ public class PlaylistFragment extends ListFragment implements
     }
 
     @Override
-    public void onPlaylistChange(Playlist playlist) {
-        if (playlist.equals(this.playlist)) {
-            if (playlist.getSongsList().size() == 0) {
-                disableBtn(uploadBtn, "Cannot upload Playlist with no songs!");
-            }
-            SongArrayAdapter adapter = (SongArrayAdapter)getListAdapter();
-            if (adapter != null) {
-                adapter.notifyDataSetChanged();
-            }
+    public void onPlaylistChange(final Playlist playlist) {
+        if (playlist.getId() == this.playlist.getId()) {
+            getActivity().runOnUiThread(new Runnable() {
+                @Override
+                public void run() {
+                    if (playlist.getSongsList().size() == 0) {
+                        disableBtn(uploadBtn, "Cannot upload Playlist with no songs!");
+                    }
+
+                    SongArrayAdapter adapter = (SongArrayAdapter)getListAdapter();
+                    if (adapter != null) {
+                        adapter.notifyDataSetChanged();
+                    }
+                }
+            });
         }
     }
 
