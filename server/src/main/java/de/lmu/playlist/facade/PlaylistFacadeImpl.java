@@ -10,6 +10,9 @@ import de.lmu.playlist.domain.entity.SpotifyToken;
 import de.lmu.playlist.service.PlaylistService;
 import de.lmu.playlist.service.SpotifyService;
 
+/**
+ * @author martin
+ */
 public class PlaylistFacadeImpl implements PlaylistFacade {
 
     private final PlaylistService playlistService;

@@ -23,6 +23,9 @@ import de.lmu.playlist.service.PlaylistServiceImpl;
 import de.lmu.playlist.service.SpotifyService;
 import de.lmu.playlist.service.SpotifyServiceImpl;
 
+/**
+ * @author martin
+ */
 public class PlaylistModule extends ServletModule {
 
     @Override

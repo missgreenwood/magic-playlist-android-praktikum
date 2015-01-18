@@ -14,6 +14,11 @@ import javax.ws.rs.core.MediaType;
 import de.lmu.playlist.domain.entity.Playlist;
 import de.lmu.playlist.domain.entity.SpotifyToken;
 
+/**
+ * @author martin
+ *         <p/>
+ *         this facade contains all end points for incoming rest calls.
+ */
 @Path("/playlist")
 public interface PlaylistFacade {
 

@@ -6,12 +6,14 @@ import java.util.ArrayList;
 import java.util.Collections;
 import java.util.Comparator;
 import java.util.List;
-import java.util.PriorityQueue;
 
 import de.lmu.playlist.domain.dao.PlaylistDao;
 import de.lmu.playlist.domain.entity.Playlist;
 import de.lmu.playlist.domain.entity.Song;
 
+/**
+ * @author martin
+ */
 public class PlaylistServiceImpl implements PlaylistService {
 
     private final PlaylistDao playlistDao;

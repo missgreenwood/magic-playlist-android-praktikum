@@ -4,6 +4,9 @@ import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 
 import javax.xml.bind.annotation.XmlRootElement;
 
+/**
+ * @author martin
+ */
 @XmlRootElement
 @JsonIgnoreProperties(ignoreUnknown = true)
 public class Song {

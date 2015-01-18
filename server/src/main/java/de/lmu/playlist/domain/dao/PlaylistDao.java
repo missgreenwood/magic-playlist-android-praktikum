@@ -4,6 +4,9 @@ import java.util.List;
 
 import de.lmu.playlist.domain.entity.Playlist;
 
+/**
+ * @author martin
+ */
 public interface PlaylistDao {
 
     public void savePlaylist(Playlist playlist);
