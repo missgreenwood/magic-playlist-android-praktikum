@@ -153,17 +153,14 @@ public class Playlist implements Parcelable, Song.Listener {
         ArrayList<Song> ownTracks = getSongsList(),
                         otherTracks = playlist.getSongsList();
 
-        Log.d("P", "size " + ownTracks.size() + " = " + otherTracks.size());
         if (ownTracks.size() != otherTracks.size()) {
             return false;
         }
-        Log.d("P", "other in own");
         for (Song song : otherTracks) {
             if (!ownTracks.contains(song)) {
                 return false;
             }
         }
-        Log.d("P", "own in other");
         for (Song song : ownTracks) {
             if (!otherTracks.contains(song)) {
                 return false;
