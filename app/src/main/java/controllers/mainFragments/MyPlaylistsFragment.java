@@ -19,6 +19,7 @@ import java.util.Comparator;
 import java.util.List;
 
 import controllers.mainFragments.generatorFragments.PlaylistFragment;
+import controllers.mainFragments.myplaylistsFragments.PlaylistArrayAdapter;
 import models.mediaModels.Playlist;
 import models.playlist.PlaylistsManager;
 import tests.R;
@@ -112,29 +113,6 @@ public class MyPlaylistsFragment extends ListFragment implements AdapterView.OnI
     @Override
     public void onPlaylistsListChange() {
         ((ArrayAdapter<Playlist>)getListAdapter()).notifyDataSetChanged();
-    }
-
-    private class PlaylistArrayAdapter extends ArrayAdapter<Playlist>
-    {
-
-        public PlaylistArrayAdapter(Context context, int resource, int textViewResourceId, List<Playlist> objects) {
-            super(context, resource, textViewResourceId, objects);
-        }
-
-        @Override
-        public void sort(Comparator<? super Playlist> comparator) {
-            super.sort(comparator);
-        }
-
-        @Override
-        public View getView(int position, View convertView, ViewGroup parent)
-        {
-            LinearLayout view = (LinearLayout) super.getView(position, convertView, parent);
-            view.setLayoutParams(new ListView.LayoutParams(ListView.LayoutParams.MATCH_PARENT,100));
-            TextView textView = (TextView)view.findViewById(R.id.txtview);
-            textView.setText(getItem(position).getName());
-            return view;
-        }
     }
 }
 

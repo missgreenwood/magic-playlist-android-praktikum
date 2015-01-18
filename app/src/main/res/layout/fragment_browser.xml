@@ -24,6 +24,18 @@
             android:layout_weight="0.6"
             android:orientation="vertical">
             <Button
+                android:id="@+id/fastSearch"
+                android:text="@string/playlists"
+                android:layout_width="223dp"
+                android:layout_height="wrap_content"
+                style="@style/btnStyleOrange"
+                android:layout_weight="0.1"
+                android:layout_marginRight="10dp"/>
+            <LinearLayout
+                android:layout_weight="0.1"
+                android:layout_height="0dp"
+                android:layout_width="0dp"/>
+            <Button
                 android:id="@+id/searchGenre"
                 android:text="@string/genres"
                 android:layout_width="223dp"

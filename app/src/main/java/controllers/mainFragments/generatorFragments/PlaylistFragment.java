@@ -85,8 +85,9 @@ public class PlaylistFragment extends ListFragment implements
         View v = inflater.inflate(R.layout.fragment_playlist, container, false);
         uploadBtn = (Button) v.findViewById(R.id.uploadBtn);
         if (playlist.getSongsList().size() == 0) {
-            disableBtn(uploadBtn, "Cannot upload Playlist with no songs!");
+            disableBtn(uploadBtn, "Cannot upload Playlist without songs!");
         }
+        Log.d("PlaylistFragment", "startFindPlaylistByName: " + playlist.getName());
         Client.getInstance().findPlaylistByName(playlist.getName(), this);
         if (playlist.isAlreadyUploaded()) {
             disableBtn(uploadBtn, "already uploaded");
@@ -381,11 +382,12 @@ public class PlaylistFragment extends ListFragment implements
 
     @Override
     public void onFindSinglePlaylistSuccess(Playlist onlinePlaylist) {
-        if (playlist.getName() != onlinePlaylist.getName()) {
+        if (!playlist.getName().equals(onlinePlaylist.getName())) {
             return;
         }
         if (onlinePlaylist.equals(playlist)) {
             disableBtn(uploadBtn, "already uploaded!");
+            playlist.setAlreadyUploaded(true);
         } else {
             disableBtn(uploadBtn, "Not uploadable, playlist with this name already exists!");
         }

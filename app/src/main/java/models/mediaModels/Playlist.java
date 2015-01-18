@@ -13,7 +13,6 @@ import models.playlist.PlaylistsManager;
  *
  */
 public class Playlist implements Parcelable, Song.Listener {
-    //TODO save in DB
     private static int uniqueId = 0;
 
     private transient ArrayList<Listener> observers;

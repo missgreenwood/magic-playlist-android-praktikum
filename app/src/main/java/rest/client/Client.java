@@ -132,6 +132,47 @@ public class Client {
         });
     }
 
+    public RequestHandle findSimilarPlaylists(Playlist playlist, final ClientListener.FindPlaylistsListener listener) {
+        AsyncHttpClient asyncHttpClient = new AsyncHttpClient();
+        try {
+            String json = gson.toJson(playlist);
+
+            ByteArrayEntity entity = new ByteArrayEntity(json.getBytes("UTF-8"));
+            entity.setContentType("application/json");
+            entity.setContentEncoding("UTF-8");
+            return asyncHttpClient.post(context, ClientConstants.SEARCH_SIMILAR, entity, null, new TextHttpResponseHandler() {
+                @Override
+                public void onFailure(int i, Header[] headers, String s, Throwable throwable) {
+                    Log.e("Client", "search similar playlists failed: " + s + " status code: " + i);
+                    if (listener != null) {
+                        listener.onFindPlaylistsError();
+                    }
+                }
+
+                @Override
+                public void onSuccess(int i, Header[] headers, String s) {
+                    try {
+                        Type type = new TypeToken<ArrayList<Playlist>>() {}.getType();
+                        List<Playlist> playlists = gson.fromJson(s, type);
+                        if (listener != null) {
+                            listener.onFindPlaylistsSuccess(playlists);
+                        }
+                    } catch (com.google.gson.JsonSyntaxException e) {
+                        Log.e("Client", "could not parse playlists to json (search similar)");
+                        if (listener != null) {
+                            listener.onFindPlaylistsError();
+                        }
+                    }
+                }
+            });
+        } catch (Exception e) {
+            if (listener != null) {
+                listener.onFindPlaylistsError();
+            }
+            return null;
+        }
+    }
+
     public RequestHandle likePlaylist(final Playlist playlist, final ClientListener.LikePlaylistListener listener) {
         AsyncHttpClient asyncHttpClient = new AsyncHttpClient();
         return asyncHttpClient.get(

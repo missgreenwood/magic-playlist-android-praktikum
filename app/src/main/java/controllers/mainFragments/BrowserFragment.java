@@ -12,11 +12,13 @@ import android.widget.Toast;
 
 import com.loopj.android.http.RequestHandle;
 
+import java.util.ArrayList;
 import java.util.List;
 
 import controllers.mainFragments.browserFragments.playlistFragment.BrowserPlaylistFragment;
 import controllers.mainFragments.generatorFragments.GenresListFragment;
 import controllers.mainFragments.generatorFragments.SingleArtistFragment;
+import controllers.mainFragments.myplaylistsFragments.PlaylistArrayAdapter;
 import models.mediaModels.Playlist;
 import models.playlist.PlaylistsManager;
 import rest.client.Client;
@@ -45,6 +47,7 @@ public class BrowserFragment extends android.support.v4.app.Fragment implements
                              Bundle savedInstanceState) {
         View view = inflater.inflate(R.layout.fragment_browser, container, false);
         // ((MainActivity) getActivity()).getSupportActionBar().setTitle("Playlist Browser");
+        view.findViewById(R.id.fastSearch).setOnClickListener(this);
         view.findViewById(R.id.searchGenre).setOnClickListener(this);
         view.findViewById(R.id.searchArtist).setOnClickListener(this);
         view.findViewById(R.id.startSearch).setOnClickListener(this);
@@ -56,7 +59,7 @@ public class BrowserFragment extends android.support.v4.app.Fragment implements
         if (browserPlaylistFragment==null) {
             browserPlaylistFragment = new BrowserPlaylistFragment();
             FragmentTransaction transact = getActivity().getSupportFragmentManager().beginTransaction();
-            transact.add(R.id.mainViewGroup,browserPlaylistFragment,"browserPlaylistFragment");
+            transact.replace(R.id.mainViewGroup, browserPlaylistFragment, "browserPlaylistFragment");
             //transact.add(R.id.browserMainViewGroup,browserPlaylistFragment,"browserPlaylistFragment");
             transact.addToBackStack(null);
             transact.commit();
@@ -95,7 +98,7 @@ public class BrowserFragment extends android.support.v4.app.Fragment implements
             genresFragment = new GenresListFragment();
             genresFragment.setListener(this);
             FragmentTransaction transact = getActivity().getSupportFragmentManager().beginTransaction();
-            transact.add(R.id.mainViewGroup,genresFragment,"genresSearchFragment");
+            transact.replace(R.id.mainViewGroup, genresFragment, "genresSearchFragment");
             // transact.add(R.id.browserMainViewGroup,genresFragment,"genresSearchFragment");
             transact.addToBackStack(null);
             transact.commit();
@@ -108,7 +111,7 @@ public class BrowserFragment extends android.support.v4.app.Fragment implements
             artistsFragment = new SingleArtistFragment();
             artistsFragment.setListener(this);
             FragmentTransaction transact = getActivity().getSupportFragmentManager().beginTransaction();
-            transact.add(R.id.mainViewGroup,artistsFragment, "artistSearchFragment");
+            transact.replace(R.id.mainViewGroup, artistsFragment, "artistSearchFragment");
             // transact.add(R.id.browserMainViewGroup,artistsFragment, "artistSearchFragment");
             transact.addToBackStack(null);
             transact.commit();
@@ -129,9 +132,38 @@ public class BrowserFragment extends android.support.v4.app.Fragment implements
         requestHandle = Client.getInstance().findPlaylistsByGenreAndArtist(genre, artist, this);
     }
 
+    private void fastSearchClicked(View v) {
+        final ArrayList<Playlist> ownPlaylists = PlaylistsManager.getInstance().getPlaylists();
+        if (ownPlaylists == null || ownPlaylists.size() == 0) {
+            AlertDialog.Builder createPlaylists = new AlertDialog.Builder(getActivity());
+            createPlaylists.setTitle("You have no playlists yet!");
+            createPlaylists.setNeutralButton("Okay", null);
+            createPlaylists.setMessage("You need some playlists first. This feature searches for playlists depending on yours.");
+            createPlaylists.create().show();
+            return;
+        } else {
+            final BrowserFragment _this = this;
+            final AlertDialog.Builder createPlaylists = new AlertDialog.Builder(getActivity());
+            createPlaylists.setTitle("Select one of your playlists!");
+            createPlaylists.setMessage("Please select one of you playlists, to find similar ones!");
+            createPlaylists.setSingleChoiceItems(new PlaylistArrayAdapter(createPlaylists.getContext(), R.layout.rows, R.id.txtview, ownPlaylists), 0, new DialogInterface.OnClickListener() {
+                @Override
+                public void onClick(DialogInterface dialog, int which) {
+                    setLoading(true);
+                    requestHandle = Client.getInstance().findSimilarPlaylists(ownPlaylists.get(which), _this);
+                }
+            });
+            createPlaylists.create().show();
+
+        }
+    }
+
     @Override
     public void onClick(View v) {
         switch (v.getId()) {
+            case R.id.fastSearch:
+                fastSearchClicked(v);
+                break;
             case R.id.searchGenre:
                 searchGenreClicked(v);
                 break;

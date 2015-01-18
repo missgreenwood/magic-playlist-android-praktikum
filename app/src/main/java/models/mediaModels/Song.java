@@ -203,7 +203,6 @@ public class Song {
 
                 song = new Song(artist, songname);
             }
-            Log.v("Song.Builder", "existing song loaded: " + song);
             return song;
         }
 
@@ -217,7 +216,6 @@ public class Song {
                 song.setLength(length);
                 //save unloaded songs to hashmap
                 songs.put(song.getId(), song);
-                Log.v("Song.Builder", "create new (DB: " + id + "): " + song.getArtist() + " - " + song.getSongname() );
             }
             return song;
         }

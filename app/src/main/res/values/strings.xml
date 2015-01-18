@@ -34,4 +34,5 @@
     <string name="save">Save this playlist?</string>
     <string name="spotify_login">Spotify-Login</string>
     <string name="confirm">Confirm changes!</string>
+    <string name="playlists">Start fast search</string>
 </resources>
