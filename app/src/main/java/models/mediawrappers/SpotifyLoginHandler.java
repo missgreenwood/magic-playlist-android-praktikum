@@ -161,7 +161,7 @@ public class SpotifyLoginHandler {
     public void startSpotifyLogin() {
         //TODO: Abfrage nach Access Token?
 
-        if (getCurrentAccessToken() != null && !(currentAccessToken.equals(""))) {
+        if ((getCurrentAccessToken() != null) && !(currentAccessToken.equals(""))) {
             Log.d(TAG, "already has access token");
 
         } else if (hasSpotifyRequestToken()) {
