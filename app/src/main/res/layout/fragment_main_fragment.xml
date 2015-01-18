@@ -4,8 +4,7 @@
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    tools:context="controllers.mainFragments.mainViewGroup"
-    android:background="@drawable/listening">
+    tools:context="controllers.mainFragments.mainViewGroup">
 <RelativeLayout
     android:orientation="horizontal"
     android:layout_height="fill_parent"

@@ -6,8 +6,7 @@
     android:layout_width="fill_parent"
     android:layout_height="fill_parent"
     android:orientation="horizontal"
-    android:baselineAligned="false"
-    android:background="@drawable/listening">
+    android:baselineAligned="false">
     <LinearLayout
         android:orientation="vertical"
         android:layout_height="fill_parent"
@@ -15,13 +14,13 @@
         android:weightSum="1.0"
         android:layout_alignParentRight="true">
         <LinearLayout
-            android:layout_weight="0.2"
+            android:layout_weight="0.15"
             android:layout_height="0dp"
             android:layout_width="0dp"/>
         <LinearLayout
             android:layout_width="wrap_content"
             android:layout_height="0dp"
-            android:layout_weight="0.6"
+            android:layout_weight="0.7"
             android:orientation="vertical">
             <Button
                 android:id="@+id/fastSearch"
@@ -68,7 +67,7 @@
                 style="@style/btnStyleOrange"
                 android:layout_marginRight="10dp"/>
             <LinearLayout
-                android:layout_weight="0.1"
+                android:layout_weight="0.15"
                 android:layout_height="0dp"
                 android:layout_width="0dp"/>
             </LinearLayout>

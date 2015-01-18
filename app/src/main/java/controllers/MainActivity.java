@@ -10,6 +10,7 @@ import android.support.v7.app.ActionBarActivity;
 import android.util.Log;
 import android.view.Menu;
 import android.view.MenuItem;
+import android.widget.FrameLayout;
 
 import com.spotify.sdk.android.authentication.AuthenticationResponse;
 import com.spotify.sdk.android.authentication.SpotifyAuthentication;
@@ -50,6 +51,8 @@ public class MainActivity extends ActionBarActivity implements FragmentManager.O
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
+        FrameLayout layout = (FrameLayout)findViewById(R.id.mainViewGroup);
+        layout.setBackgroundResource(R.drawable.listening);
 
         loadInitFragment();
 
