@@ -42,13 +42,13 @@ public class LocalFileStreamingMediaWrapper extends FileStreamingMediaWrapper {
         Cursor q = context.getContentResolver().query(MediaStore.Audio.Media.EXTERNAL_CONTENT_URI,
                 projection, where, params, MediaStore.Audio.Media.TITLE);
 
-        try {
-            while (q.moveToNext()) {
-                path = q.getString(0);
-                Log.v("", "compute playpath path: " + q.getString(0) + "\n");
-            }
-        } finally {
-            if (q != null) {
+        if (q != null) {
+            try {
+                while (q.moveToNext()) {
+                    path = q.getString(0);
+                    Log.v("", "compute playpath path: " + q.getString(0) + "\n");
+                }
+            } finally {
                 q.close();
             }
         }
@@ -93,17 +93,17 @@ public class LocalFileStreamingMediaWrapper extends FileStreamingMediaWrapper {
 
     @Override
     public boolean lookForSong() {
-        new Thread(new Runnable() {
-            @Override
-            public void run() {
+//        new Thread(new Runnable() {
+//            @Override
+//            public void run() {
                 computePlayPath(getSong());
                 if (getPlayPath() == null || getPlayPath().equals("")) {
                     sendSongAvailableIntent(false);
                 } else {
                     sendSongAvailableIntent(true);
                 }
-            }
-        }).start();
+//            }
+//        }).start();
         return true;
     }
 }

@@ -177,7 +177,7 @@ public class GeneratorFragment extends Fragment implements
 
         final NumberPicker nmbrPickr = new NumberPicker(countDialog.getContext());
         nmbrPickr.setMinValue(1);
-        nmbrPickr.setMaxValue(9999);
+        nmbrPickr.setMaxValue(100);
         nmbrPickr.setWrapSelectorWheel(false);
         nmbrPickr.setValue(songsCountLimit);
 
