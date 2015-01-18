@@ -281,7 +281,7 @@ public class PlayQueue {
      * Can be used by the GUI to go to the next track (forward button).
      *
      */
-    public void nextTrack() {
+    public synchronized void nextTrack() {
 
         Log.v(TAG, "next track called");
 
@@ -306,7 +306,7 @@ public class PlayQueue {
      * Can be used by the GUI to go to the next track (back button).
      *
      */
-    public void previousTrack() {
+    public synchronized void previousTrack() {
 
         Log.v(TAG, "previous track called");
 
@@ -348,7 +348,7 @@ public class PlayQueue {
      *
      * @param index track index
      */
-    public void jumpToTrack(int index) {
+    public synchronized void jumpToTrack(int index) {
 
 
         StackTraceElement[] stacktrace = Thread.currentThread().getStackTrace();
@@ -480,7 +480,7 @@ public class PlayQueue {
         }
     }
 
-    public void stopCurrentSong()
+    public synchronized void stopCurrentSong()
     {
         // Song currentSong = getCurrentSong();
         //  if (currentSong != null) {
@@ -492,7 +492,12 @@ public class PlayQueue {
 
         if (currentSongMediaWrapper != null) {
 
+            Log.d(TAG, "no it should STOP current song: " + currentSongMediaWrapper);
             currentSongMediaWrapper.stopPlayer();
+
+        } else {
+
+            Log.d(TAG, "it should stop current song here, but currentSongMediaWrapper seems to be null...");
         }
     }
 
