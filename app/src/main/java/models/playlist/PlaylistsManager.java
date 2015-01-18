@@ -146,13 +146,13 @@ public class PlaylistsManager implements Playlist.Listener {
     }
 
     public void savePlaylist(final Playlist playlist) {
-//        new Thread(new Runnable() {
-//            @Override
-//            public void run() {
+        new Thread(new Runnable() {
+            @Override
+            public void run() {
                 fileHandler.savePlaylist(playlist);
                 databaseHandler.savePlaylist(playlist);
-//            }
-//        }).start();
+            }
+        }).start();
     }
 
     public Song getSong(String artist, String songname) {
