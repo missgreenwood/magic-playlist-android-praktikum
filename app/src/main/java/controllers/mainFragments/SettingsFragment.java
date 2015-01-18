@@ -48,14 +48,14 @@ public class SettingsFragment extends ListFragment {
         rootView.findViewById(R.id.confirmBtn).setOnClickListener(new OnClickListener() {
             @Override
             public void onClick(View v) {
-                setLoading(true);
+//                setLoading(true);
                 settings.confirmWrapperChanges(new Settings.finishReinitListener() {
                     @Override
                     public void onFinishReinitPlaylists() {
                         new Handler(Looper.getMainLooper()).post(new Runnable() {
                                 @Override
                                 public void run() {
-                                    setLoading(false);
+//                                    setLoading(false);
                                 }
                             });
                     }
