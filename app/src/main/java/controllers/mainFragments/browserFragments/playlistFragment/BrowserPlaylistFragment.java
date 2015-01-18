@@ -35,7 +35,7 @@ public class BrowserPlaylistFragment extends ListFragment {
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
         ViewGroup rootView = (ViewGroup) inflater.inflate(R.layout.fragment_search_results, container, false);
-        ((MainActivity)getActivity()).getSupportActionBar().setTitle("Search Results");
+        // ((MainActivity)getActivity()).getSupportActionBar().setTitle("Search Results");
 
         setListAdapter(new PlaylistArrayAdapter(getActivity(),R.layout.rows,R.id.txtview, playlists));
 

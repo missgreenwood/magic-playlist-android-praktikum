@@ -4,7 +4,6 @@ import android.content.Intent;
 import android.content.IntentFilter;
 import android.net.Uri;
 import android.os.Bundle;
-import android.support.v4.app.Fragment;
 import android.support.v4.app.FragmentManager;
 import android.support.v4.app.FragmentTransaction;
 import android.support.v7.app.ActionBarActivity;
@@ -19,8 +18,8 @@ import com.spotify.sdk.android.playback.Config;
 import java.util.ArrayList;
 
 import models.Settings;
-import models.mediawrappers.FileStreamingMediaService;
 import models.mediaModels.PlayQueue;
+import models.mediawrappers.FileStreamingMediaService;
 import models.mediawrappers.SpotifyLoginHandler;
 import models.mediawrappers.SpotifyService;
 import models.playlist.LocalSongsManager;
@@ -142,13 +141,6 @@ public class MainActivity extends ActionBarActivity implements FragmentManager.O
     }
 
     @Override
-    public void onResume() {
-        PlayQueue.getInstance().setAutoPilotMode(false);
-        super.onResume();
-        // this.setTitle("Magic Playlist");
-    }
-
-    @Override
     protected void onStop() {
         PlayQueue.getInstance().setAutoPilotMode(true);
         unregisterReceiver(broadcastReceiver);
@@ -164,6 +156,17 @@ public class MainActivity extends ActionBarActivity implements FragmentManager.O
         stopService(new Intent(this, FileStreamingMediaService.class));
 
         getSupportFragmentManager().removeOnBackStackChangedListener(this);
+    }
+
+    @Override
+    public void onBackPressed() {
+        if (getFragmentManager().getBackStackEntryCount() > 0) {
+            getFragmentManager().popBackStack();
+            getFragmentManager().beginTransaction().commit();
+        }
+        else {
+            super.onBackPressed();
+        }
     }
 
     @Override

@@ -19,7 +19,6 @@ import android.widget.Toast;
 import java.util.ArrayList;
 import java.util.List;
 
-import controllers.MainActivity;
 import models.Settings;
 import tests.R;
 
@@ -38,7 +37,7 @@ public class SettingsFragment extends ListFragment {
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
         ViewGroup rootView = (ViewGroup) inflater.inflate(R.layout.fragment_settings, container, false);
-        ((MainActivity)getActivity()).getSupportActionBar().setTitle("Settings");
+        // ((MainActivity)getActivity()).getSupportActionBar().setTitle("Settings");
         settings = Settings.getInstance();
         confirmBtn = (Button) rootView.findViewById(R.id.confirmBtn);
         confirmBtn.setOnClickListener(new OnClickListener() {
