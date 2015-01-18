@@ -147,6 +147,7 @@ public class BrowserFragment extends android.support.v4.app.Fragment implements
                 @Override
                 public void onClick(DialogInterface dialog, int which) {
                     setLoading(true);
+                    dialog.dismiss();
                     Playlist p = ownPlaylists.get(which);
                     requestHandle = Client.getInstance().findSimilarPlaylists(p, _this);
                 }
@@ -182,8 +183,8 @@ public class BrowserFragment extends android.support.v4.app.Fragment implements
     @Override
     public void onFindPlaylistsSuccess(List<Playlist> playlists) {
         setLoading(false);
-        playlists.removeAll(PlaylistsManager.getInstance().getPlaylists());
         if (playlists != null && playlists.size() > 0) {
+            playlists.removeAll(PlaylistsManager.getInstance().getPlaylists());
             createSearchView(playlists);
         } else {
             Toast.makeText(getActivity(), "No playlists found for given search filters!", Toast.LENGTH_LONG).show();

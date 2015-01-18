@@ -62,14 +62,14 @@ public class BrowserPlaylistFragment extends ListFragment {
             }
         });
         treeSet.addAll(playlists);
-        for (Playlist playlist : treeSet) {
-            //Only add external playlist if we don't have the same locally! Otherwise add rating info
-            Playlist ownPlaylist = PlaylistsManager.getInstance().getEqualPlaylist(playlist);
-            if (ownPlaylist != null) {
-                ownPlaylist.setLikes(playlist.getLikes());
-                this.playlists.add(ownPlaylist);
-            } else {
-                this.playlists.add(playlist);
+                for (Playlist playlist : treeSet) {
+                    //Only add external playlist if we don't have the same locally! Otherwise add rating info
+                    Playlist ownPlaylist = PlaylistsManager.getInstance().getEqualPlaylist(playlist);
+                    if (ownPlaylist != null) {
+                        ownPlaylist.setLikes(playlist.getLikes());
+                        this.playlists.add(ownPlaylist);
+                    } else {
+                        this.playlists.add(playlist);
             }
         }
         PlaylistArrayAdapter adapter = (PlaylistArrayAdapter)getListAdapter();
