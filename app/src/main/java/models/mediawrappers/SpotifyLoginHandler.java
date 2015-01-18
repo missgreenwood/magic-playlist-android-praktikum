@@ -142,8 +142,6 @@ public class SpotifyLoginHandler {
                 }
 
 
-
-
             }
 
 
@@ -187,28 +185,19 @@ public class SpotifyLoginHandler {
 
         String url = ClientConstants.BASE_URL + "/spotify/get_tokens";
         url = APIWrapper.encodeURL(url, params);
-
-        Log.d(TAG, url);
-
-
         AsyncHttpClient asyncHttpClient = new AsyncHttpClient();
-       // Header[] headers = {new BasicHeader("Content-type", "application/json")};
 
-        Log.d(TAG, url);
 
         asyncHttpClient.get(getContext(), url, null, null, new TextHttpResponseHandler() {
             @Override
             public void onFailure(int i, Header[] headers, String s, Throwable throwable) {
-                Log.d(TAG, "back result is: " + s + throwable.getStackTrace() + " " + throwable.getMessage() + " " + throwable.getCause() + " " + throwable.toString());
+                Log.e(TAG, "failed");
 
             }
 
             @Override
             public void onSuccess(int i, Header[] headers, String s) {
                 Log.d(TAG, "success! " + s);
-                //  processWebCallResult(s, SPOTIFY_TOKENS_CALLBACK, null);
-                //  Log.d(TAG, "back result is: "+s);
-
                 try {
                     JSONObject tokens = new JSONObject(s);
                     String accessToken = tokens.getString("access_token");

@@ -34,8 +34,9 @@ import java.util.ArrayList;
 
 /**
  * Created by lotta on 02.12.14.
+ *
  * @author charlotte
- * MediaWrapper for Spotify; uses Spotify SDK
+ *         MediaWrapper for Spotify; uses Spotify SDK
  */
 public class SpotifyMediaWrapper extends RemoteFileStreamingMediaWrapper implements PlayerNotificationCallback, ConnectionStateCallback {
 
@@ -45,47 +46,24 @@ public class SpotifyMediaWrapper extends RemoteFileStreamingMediaWrapper impleme
     public static final String SET_TO_FOREGROUND = "set_to_foreground";
     public static String SPOTIFY_SEARCH_URL = "https://api.spotify.com/v1/search";
     public static String TYPE_TRACK_STRING = "type";
-    // public int counter;
     public static String TYPE_TRACK = "track";
     public static String SPOTIFY_QUERY_STRING = "q";
     private static boolean firstTime = false;
     private static Player mPlayer;
-    // private List<Song> songs;
-    // private String playPath;
-    // private  Context context;
     private Spotify spotify;
     private SharedPreferences preferences;
     private SpotifyLoginHandler spotifyLoginHandler;
-    //  private static AsyncHttpClient asyncHttpClient=new AsyncHttpClient();
 
 
     public SpotifyMediaWrapper(Context context, Song songsTemp) {
         super(context, songsTemp);
-        //  openAuthWindow();
-        //  preferences = context.getSharedPreferences(SPOTIFY_SHARED_PREF_STRING, 0);
-        // this.context=context;
-        //  setSong(songsTemp);
         spotifyLoginHandler = SpotifyLoginHandler.getInstance();
-        //  this.spotifyLoginHandler.setContext(getContext());
-        //  MainActivity.asyncHttpClient.setMaxConnections(50);
-        //  Log.d(TAG, "get max connections: "+asyncHttpClient.getMaxConnections()+" "+asyncHttpClient);
+
 
     }
 
     @Override
     public boolean play() {
-
-
-        /*
-        if (spotifyLoginHandler.getCurrentAccessToken()==null || spotifyLoginHandler.getCurrentAccessToken().equals(""))
-
-        {
-            spotifyLoginHandler.setContext(getContext());
-            spotifyLoginHandler.startSpotifyLogin();
-
-        }*/
-
-
         Log.d(TAG, "play song: " + getPlayPath());
 
 
@@ -134,8 +112,6 @@ public class SpotifyMediaWrapper extends RemoteFileStreamingMediaWrapper impleme
     }
 
 
-
-
     public void computePlayPath(Song song) {
 
 
@@ -149,11 +125,9 @@ public class SpotifyMediaWrapper extends RemoteFileStreamingMediaWrapper impleme
         ArrayList<NameValuePair> params = new ArrayList<NameValuePair>();
         params.add(queryStringPair);
         params.add(trackTypePair);
-       final String url2 = APIWrapper.encodeURL(url, params);
-        //APIWrapper asyncHTTP = new APIWrapper(this, DEFAULT_CALLBACK, APIWrapper.GET_METHOD);
-       // asyncHTTP.execute(url);
+        final String url2 = APIWrapper.encodeURL(url, params);
 
-        final AsyncHttpClient asyncHttpClient = new AsyncHttpClient();
+
         final Header[] headers = {new BasicHeader("Content-type", "application/json")};
 
         Handler handler = new Handler(getContext().getMainLooper());
@@ -181,10 +155,6 @@ public class SpotifyMediaWrapper extends RemoteFileStreamingMediaWrapper impleme
 
                 };
 
-
-                // responseHandler.setUseSynchronousMode(false);
-
-
                 MainActivity.asyncHttpClient.get(getContext(), url2, headers, null, responseHandler);
 
             }
@@ -206,7 +176,7 @@ public class SpotifyMediaWrapper extends RemoteFileStreamingMediaWrapper impleme
 
     @Override
     public void stopPlayer() {
-        if (mPlayer!=null) {
+        if (mPlayer != null) {
             mPlayer.pause();
         }
     }
@@ -293,7 +263,7 @@ public class SpotifyMediaWrapper extends RemoteFileStreamingMediaWrapper impleme
     public void processWebCallResult(String result, String callback, Bundle data) {
         String uri = "";
 
-        if (result!=null)
+        if (result != null)
 
         {
 

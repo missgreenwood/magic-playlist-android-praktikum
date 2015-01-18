@@ -19,14 +19,43 @@ public class LocalFileStreamingMediaWrapper extends FileStreamingMediaWrapper {
 
     public static final String TAG = "main.java.models.mediawrappers.LocalFileStreamingMediaWrapper";
 
-    /*
-    public LocalFileStreamingMediaWrapper(Context context, String playPath) {
-        super(context, playPath);
-    }*/
 
     public LocalFileStreamingMediaWrapper(Context context, Song song) {
         super(context, song);
         //computePlayPath(song);
+    }
+
+    public static void computePathMultiple (Context context, ArrayList<Song> songs) {
+        String[] projection = {
+                MediaStore.Audio.Media.TITLE,
+                MediaStore.Audio.Media.ARTIST,
+                MediaStore.Audio.Media.DATA
+        };
+
+        String songsString = "(";
+        for (int i = 0; i < songs.size(); i++) {
+            if (i != 0) {
+                songsString += ", ";
+            }
+            Song song = songs.get(i);
+            songsString += song.getArtist() + " - " + song.getSongname();
+        }
+        songsString += ")";
+
+        String where = MediaStore.Audio.Media.ARTIST + " || ' - ' || " + MediaStore.Audio.Media.TITLE + " IN " + songsString;
+
+        Cursor q = context.getContentResolver().query(MediaStore.Audio.Media.EXTERNAL_CONTENT_URI,
+                projection, where, null, MediaStore.Audio.Media.TITLE);
+
+        try {
+            while (q.moveToNext()) {
+                Log.v("", "compute playpath path: " + q.getString(0) + "\n");
+            }
+        } finally {
+            if (q != null) {
+                q.close();
+            }
+        }
     }
 
     @Override
@@ -54,56 +83,17 @@ public class LocalFileStreamingMediaWrapper extends FileStreamingMediaWrapper {
         }
 
         this.setPlayPath(path);
-        //return path;
-    }
-
-    public static void computePathMultiple (Context context, ArrayList<Song> songs) {
-        String[] projection = {
-                MediaStore.Audio.Media.TITLE,
-                MediaStore.Audio.Media.ARTIST,
-                MediaStore.Audio.Media.DATA
-        };
-
-        String songsString = "(";
-        for (int i = 0; i < songs.size(); i++) {
-            if (i != 0) {
-                songsString += ", ";
-            }
-            Song song = songs.get(i);
-            songsString += song.getArtist() + " - " + song.getSongname();
-        }
-        songsString += ")";
-
-        String where = MediaStore.Audio.Media.ARTIST + " || ' - ' || " + MediaStore.Audio.Media.TITLE + " IN " + songsString;
-
-        Cursor q = context.getContentResolver().query(MediaStore.Audio.Media.EXTERNAL_CONTENT_URI,
-                projection, where, null, MediaStore.Audio.Media.TITLE);
-
-        try {
-            while (q.moveToNext()) {
-//                path = q.getString(0);
-                Log.v("", "compute playpath path: " + q.getString(0) + "\n");
-            }
-        } finally {
-            if (q != null) {
-                q.close();
-            }
-        }
     }
 
     @Override
     public boolean lookForSong() {
-//        new Thread(new Runnable() {
-//            @Override
-//            public void run() {
                 computePlayPath(getSong());
                 if (getPlayPath() == null || getPlayPath().equals("")) {
                     sendSongAvailableIntent(false);
                 } else {
                     sendSongAvailableIntent(true);
                 }
-//            }
-//        }).start();
+
         return true;
     }
 }

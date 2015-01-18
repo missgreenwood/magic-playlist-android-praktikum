@@ -19,7 +19,10 @@ import controllers.MainActivity;
 import tests.R;
 
 /**
- * Created by charlotte on 15.01.15.
+ * @author charlotte
+ *         Created by charlotte on 15.01.15.
+ *         <p/>
+ *         Not in use at the moment.
  */
 public class SpotifyService extends Service {
 

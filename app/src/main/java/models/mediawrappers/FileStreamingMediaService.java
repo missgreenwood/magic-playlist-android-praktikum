@@ -129,10 +129,11 @@ public class FileStreamingMediaService extends Service implements MediaPlayer.On
                 if (mediaPlayer != null) {
                     try {
                         mediaPlayer.stop();
+                        mediaPlayer.reset();
                     } catch (IllegalStateException e) {
                         Log.e(TAG, "could not process stop: " + e.getMessage());
                     } finally {
-                        mediaPlayer.reset();
+                        Log.d(TAG, "finally block");
                         mediaPlayer.release();
                         mediaPlayer = null;
                     }
@@ -202,9 +203,21 @@ public class FileStreamingMediaService extends Service implements MediaPlayer.On
         {
 
             Log.e(TAG, "Media Player Error " + i + " " + i2);
-            mediaPlayer.reset();
-            mediaPlayer.release();
+            if (this.mediaPlayer != null) {
+                try {
+                    this.mediaPlayer.stop();
+                    this.mediaPlayer.reset();
+                } catch (IllegalStateException e) {
+                    Log.e(TAG, "could not process stop: " + e.getMessage());
+                } finally {
+                    Log.d(TAG, "finally block");
+                    this.mediaPlayer.release();
+                    this.mediaPlayer = null;
+                }
+            }
+            state = AudioState.Stopped;
             PlayQueue.getInstance().cancelCurrentSong();
+
         }
 
         return true;
