@@ -106,7 +106,7 @@ public class APIWrapper extends AsyncTask<String, Void, String> {
         try {
             httpResponse = httpClient.execute(httpMessage);
         } catch (IOException e) {
-            e.printStackTrace();
+            Log.e(TAG, "IO exception in API wrapper doInBackground: " + e.getMessage());
         }
 
         if (httpResponse != null) {
@@ -115,7 +115,7 @@ public class APIWrapper extends AsyncTask<String, Void, String> {
             try {
                 response = EntityUtils.toString(httpEntity);
             } catch (IOException e) {
-                e.printStackTrace();
+                Log.e(TAG, "IO exception in API wrapper doInBackground: " + e.getMessage());
             }
 
         }

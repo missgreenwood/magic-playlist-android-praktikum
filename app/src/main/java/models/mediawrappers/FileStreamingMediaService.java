@@ -90,7 +90,7 @@ public class FileStreamingMediaService extends Service implements MediaPlayer.On
             try {
                 mediaPlayer.setDataSource(playPath);
             } catch (IOException e) {
-                e.printStackTrace();
+                Log.e(TAG, "Exception while play action: " + e.getMessage());
             }
             mediaPlayer.prepareAsync(); // prepare async to not block main thread
         } else if (intent.getAction().equals(ACTION_PAUSE)) {
@@ -131,11 +131,16 @@ public class FileStreamingMediaService extends Service implements MediaPlayer.On
                 if (mediaPlayer != null) {
                     try {
                         mediaPlayer.stop();
+<<<<<<< HEAD
                     } catch (IllegalStateException e) {
-                        Log.e(TAG, "could not stop...");
+                        Log.e(TAG, "could not process stop: " + e.getMessage());
                     } finally {
                         mediaPlayer.release();
                         mediaPlayer = null;
+=======
+                    } catch (Exception e) {
+
+>>>>>>> 6b5614e4eb2716443814135e1c5a240abed7fc38
                     }
                 }
                 state = AudioState.Stopped;

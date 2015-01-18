@@ -138,7 +138,7 @@ public class SpotifyLoginHandler {
                     int expiresIn = tokens.getInt("expires_in");
                     setCurrentAccessToken(accessToken, expiresIn);
                 } catch (JSONException e) {
-                    e.printStackTrace();
+                    Log.e(TAG, "Exception while get spotify refreshtoken out of json: " + e.getMessage());
                 }
 
 
@@ -232,7 +232,7 @@ public class SpotifyLoginHandler {
 
 
                 } catch (JSONException e) {
-                    e.printStackTrace();
+                    Log.e(TAG, "Exception while get spotify token out of json: " + e.getMessage());
                 }
             }
 
