@@ -215,26 +215,22 @@ public class PlayQueue {
 
     private void initializeSong(final Song song) {
       //  Log.d(TAG, "song "+song+" is initialized... mediawrappers are: "+TextUtils.join(", ", mediaWrappers));
-        new Thread(new Runnable() {
-            @Override
-            public void run() {
-                String mediaWrapperType = song.getMediaWrapperType();
-                if (mediaWrapperType.equals(Song.MEDIA_WRAPPER_NOT_SET)) {
-                    setDefaultMediaWrapperTypeInQueue(song);
-                }
+        String mediaWrapperType = song.getMediaWrapperType();
+        if (mediaWrapperType.equals(Song.MEDIA_WRAPPER_NOT_SET)) {
+            setDefaultMediaWrapperTypeInQueue(song);
+        }
 
-                setMediaWrapperForType(song);
+        setMediaWrapperForType(song);
 
-                if (song.getMediaWrapperType() == Song.MEDIA_WRAPPER_LOCAL_FILE) {
-
-                }
-
-                if (song.getMediaWrapper() != null) {
-                    Log.d(TAG, "no look for song: "+song);
+        if (song.getMediaWrapper() != null) {
+//            new Thread(new Runnable() {
+//                @Override
+//                public void run() {
+                    Log.d(TAG, "no look for song: " + song);
                     song.getMediaWrapper().lookForSong();
-                }
-            }
-        }).start();
+//                }
+//            }).start();
+        }
     }
 
 

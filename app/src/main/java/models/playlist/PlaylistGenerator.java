@@ -71,6 +71,10 @@ public class PlaylistGenerator implements LastFmListener {
         }
 
         for (Song song : playlist.getSongsList()) {
+            if (playlist.getSongsList().size() >= songsCountLimit) {
+                finishGeneration();
+                return;
+            }
             initializeSong(song);
         }
         if (initArtists != null) {

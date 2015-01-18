@@ -1,5 +1,6 @@
 package controllers.mainFragments.generatorFragments;
 
+import android.app.Activity;
 import android.app.AlertDialog;
 import android.app.ProgressDialog;
 import android.content.Context;
@@ -352,7 +353,12 @@ public class PlaylistFragment extends ListFragment implements
     @Override
     public void onPlaylistChange(final Playlist playlist) {
         if (playlist.getId() == this.playlist.getId()) {
-            getActivity().runOnUiThread(new Runnable() {
+            Activity activity = getActivity();
+            if (activity == null) {
+                Log.d("PlaylistFragment", "what...?");
+                return;
+            }
+            activity.runOnUiThread(new Runnable() {
                 @Override
                 public void run() {
                     if (playlist.getSongsList().size() == 0) {
